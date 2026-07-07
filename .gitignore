@@ -5,6 +5,9 @@ dist/
 .DS_Store
 *.local
 
+# Generated at publish time from templates/starter by create-sim-game's prepack.
+packages/create-sim-game/template/
+
 # Local dogfood built from the private game repo (real, git-crypt content).
 # Kept out of the framework repo; replaced by a clean starter in Phase 4.
 examples/university/

@@ -4,6 +4,13 @@
   "type": "module",
   "description": "The sim game framework CLI — dev server, single-file build, and content editor.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChemicalLuck/sim-framework.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/ChemicalLuck/sim-framework/wiki",
+  "bugs": "https://github.com/ChemicalLuck/sim-framework/issues",
   "bin": {
     "sim": "./dist/index.js"
   },

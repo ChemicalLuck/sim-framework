@@ -4,6 +4,16 @@
   "type": "module",
   "description": "Shared TypeScript, ESLint, and Prettier presets for sim games and the framework.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChemicalLuck/sim-framework.git",
+    "directory": "packages/config"
+  },
+  "homepage": "https://github.com/ChemicalLuck/sim-framework/wiki",
+  "bugs": "https://github.com/ChemicalLuck/sim-framework/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "tsconfig",
     "eslint",

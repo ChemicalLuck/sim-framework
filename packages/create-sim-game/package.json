@@ -4,6 +4,13 @@
   "type": "module",
   "description": "Scaffold a new sim game — `npm create sim-game my-game`.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChemicalLuck/sim-framework.git",
+    "directory": "packages/create-sim-game"
+  },
+  "homepage": "https://github.com/ChemicalLuck/sim-framework/wiki",
+  "bugs": "https://github.com/ChemicalLuck/sim-framework/issues",
   "bin": {
     "create-sim-game": "./dist/index.js"
   },
