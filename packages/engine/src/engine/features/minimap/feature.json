@@ -1,0 +1,9 @@
+{
+  "setup": [
+    {
+      "jsonFile": "minimap.json",
+      "from": "./lib/minimap",
+      "call": "configureMinimap"
+    }
+  ]
+}

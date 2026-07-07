@@ -1,0 +1,10 @@
+{
+  "setup": [
+    {
+      "jsonFile": "linguistics.json",
+      "optional": true,
+      "from": "./lib/config",
+      "call": "configureLinguistics"
+    }
+  ]
+}

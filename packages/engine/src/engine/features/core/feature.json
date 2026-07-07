@@ -1,0 +1,8 @@
+{
+  "content": [
+    { "jsonFile": "items.json", "contentKey": "items" },
+    { "jsonFile": "wearable-templates.json", "contentKey": "templates" },
+    { "jsonFile": "scripts.json", "contentKey": "scripts" },
+    { "jsonFile": "scenes.json", "contentKey": "scenes" }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "setup": [
+    {
+      "jsonFile": "player.json",
+      "from": "./lib/containers-setup",
+      "call": "storeContainerSetup"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "wearables",
+      "source": "root",
+      "from": "./lib/containers-setup",
+      "call": "resolveContainerItems"
+    }
+  ]
+}

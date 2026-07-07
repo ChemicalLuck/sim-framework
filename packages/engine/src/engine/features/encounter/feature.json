@@ -1,0 +1,18 @@
+{
+  "contentExtensions": [
+    {
+      "jsonFile": "encounters.json",
+      "contentKey": "encounters",
+      "optional": true,
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateEncounters"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "encounters",
+      "from": "./effects",
+      "call": "configureEncounters"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "contentExtensions": [
+    {
+      "jsonFile": "events.json",
+      "contentKey": "events",
+      "optional": true,
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateEvents"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "events",
+      "from": "./lib/events",
+      "call": "configureEvents"
+    }
+  ]
+}

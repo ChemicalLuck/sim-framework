@@ -1,0 +1,22 @@
+{
+  "name": "sim-framework",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "The sim game framework — engine, editor, CLI, and scaffolder.",
+  "scripts": {
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "lint": "pnpm -r run lint",
+    "format": "prettier --write \"packages/*/src/**/*.{ts,tsx}\""
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+    "prettier": "3.6.2",
+    "typescript": "~5.9.3"
+  },
+  "packageManager": "pnpm@11.10.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

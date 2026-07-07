@@ -1,0 +1,28 @@
+{
+  "setup": [
+    {
+      "jsonFile": "player.json",
+      "from": "./lib/player-defaults",
+      "call": "configurePlayerDefaults"
+    },
+    {
+      "jsonFile": "skills.json",
+      "optional": true,
+      "from": "./lib/skills",
+      "call": "configureSkills"
+    },
+    {
+      "jsonFile": "player.json",
+      "from": "./lib/player-setup",
+      "call": "storePlayerSetup"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "wearables",
+      "source": "root",
+      "from": "./lib/player-setup",
+      "call": "resolvePlayerSetup"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "setup": [
+    {
+      "jsonFile": "quest-templates.json",
+      "optional": true,
+      "from": "./lib/templates",
+      "call": "initQuestTemplates"
+    }
+  ],
+  "contentExtensions": [
+    {
+      "jsonFile": "quests.json",
+      "contentKey": "quests"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "quests",
+      "from": "./initializer",
+      "call": "registerInitialQuests"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "contentExtensions": [
+    {
+      "contentKey": "world",
+      "inputs": [
+        { "jsonFile": "locations.json", "inputKey": "locations" },
+        { "jsonFile": "edges.json", "inputKey": "edges" }
+      ],
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateWorld"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "world",
+      "from": "./lib/world",
+      "call": "configureWorld"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "setup": [
+    {
+      "jsonFile": "needs.json",
+      "from": "./slice",
+      "call": "configureNeeds"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "setup": [
+    {
+      "jsonFile": "names.json",
+      "from": "./lib/npcs",
+      "call": "initNpcNames"
+    },
+    {
+      "jsonFile": "professions.json",
+      "from": "./lib/professions",
+      "call": "configureProfessions"
+    },
+    {
+      "jsonFile": "appearance.json",
+      "optional": true,
+      "from": "./lib/appearance-config",
+      "call": "configureAppearance"
+    },
+    {
+      "jsonFile": "conversations.json",
+      "optional": true,
+      "from": "./lib/conversation-topics",
+      "call": "initConversationTopics"
+    },
+    {
+      "jsonFile": "named-npcs.json",
+      "optional": true,
+      "from": "./lib/named-npcs",
+      "call": "setNamedNpcs"
+    }
+  ]
+}

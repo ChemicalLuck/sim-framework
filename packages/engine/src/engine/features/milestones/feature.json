@@ -1,0 +1,15 @@
+{
+  "contentExtensions": [
+    {
+      "jsonFile": "milestones.json",
+      "contentKey": "milestones"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "milestones",
+      "from": "./initializer",
+      "call": "registerInitialMilestones"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "setup": [
+    {
+      "jsonFile": "wearables-config.json",
+      "from": "./lib/wearable-config",
+      "call": "configureWearables"
+    }
+  ]
+}

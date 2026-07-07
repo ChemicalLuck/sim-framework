@@ -1,0 +1,14 @@
+{
+  "setup": [
+    {
+      "jsonFile": "currency.json",
+      "from": "./lib/currency",
+      "call": "configureCurrency"
+    },
+    {
+      "jsonFile": "initial-money.json",
+      "from": "./slice",
+      "call": "configureMoney"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "setup": [
+    {
+      "jsonFile": "time.json",
+      "from": "./slice",
+      "call": "setGameStartFromISO"
+    }
+  ]
+}

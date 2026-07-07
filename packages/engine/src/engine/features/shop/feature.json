@@ -1,0 +1,10 @@
+{
+  "contextSlots": [
+    {
+      "jsonFile": "shops.json",
+      "contextKey": "shops",
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateShops"
+    }
+  ]
+}
