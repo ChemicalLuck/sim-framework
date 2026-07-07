@@ -1,0 +1,31 @@
+{
+  "name": "sim",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The sim game framework CLI — dev server, single-file build, and content editor.",
+  "license": "MIT",
+  "bin": {
+    "sim": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@sim/engine": "workspace:*",
+    "@tailwindcss/vite": "^4.1.16",
+    "@vitejs/plugin-react": "^5.0.4",
+    "lightningcss": "^1.32.0",
+    "vite": "^7.1.7",
+    "vite-plugin-singlefile": "^2.3.0"
+  },
+  "devDependencies": {
+    "@sim/config": "workspace:*",
+    "@types/node": "^24.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "~5.9.3"
+  }
+}

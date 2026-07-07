@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import type { Plugin } from 'vite';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const EDITOR_HTML = path.resolve(__dirname, 'index.html');
+const DEFAULT_EDITOR_APP_DIR = __dirname;
 
 const VIRTUAL_STYLES_ID = 'virtual:editor-game-styles';
 const RESOLVED_VIRTUAL_STYLES_ID = '\0' + VIRTUAL_STYLES_ID;
@@ -170,6 +170,14 @@ export interface EditorPluginOptions {
   gameStyles?: string;
   /** Additional editor slots to include alongside the built-in ones */
   extraEditorSlots?: EditorSlot[];
+  /**
+   * Absolute path to the directory containing the editor SPA's `index.html`
+   * (i.e. `@sim/engine/src/engine/editor`). Defaults to this plugin file's own
+   * directory, which is correct when the plugin runs from source. The `sim`
+   * CLI passes the resolved path so the editor is served even when the
+   * plugin's Node entry is compiled elsewhere.
+   */
+  editorAppDir?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,7 +292,10 @@ export function editorPlugin(options: EditorPluginOptions): Plugin {
     engineFeaturesDir,
     gameStyles,
     extraEditorSlots = [],
+    editorAppDir = DEFAULT_EDITOR_APP_DIR,
   } = options;
+
+  const EDITOR_HTML = path.resolve(editorAppDir, 'index.html');
 
   return {
     name: 'editor-plugin',
@@ -318,6 +329,13 @@ export function editorPlugin(options: EditorPluginOptions): Plugin {
           if (url.startsWith('/editor') && !url.startsWith('/editor/api')) {
             try {
               let html = await fs.readFile(EDITOR_HTML, 'utf-8');
+              // The editor entry lives next to index.html (in node_modules when
+              // installed), not under the game's own /src. Point Vite at its
+              // real filesystem location so it resolves regardless of root.
+              const mainEntry = `/@fs/${path
+                .resolve(editorAppDir, 'main.tsx')
+                .replace(/\\/g, '/')}`;
+              html = html.replace('/src/engine/editor/main.tsx', mainEntry);
               html = await server.transformIndexHtml('/editor/', html);
               res.setHeader('Content-Type', 'text/html');
               res.end(html);

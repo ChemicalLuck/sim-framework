@@ -9,18 +9,26 @@
   ],
   "files": [
     "src",
+    "dist",
     "README.md"
   ],
   "exports": {
     ".": "./src/engine/index.tsx",
-    "./game-plugin": "./src/engine/game-plugin.ts",
-    "./editor/editor-plugin": "./src/engine/editor/editor-plugin.ts",
+    "./game-plugin": {
+      "types": "./dist/game-plugin.d.ts",
+      "default": "./dist/game-plugin.js"
+    },
+    "./editor/editor-plugin": {
+      "types": "./dist/editor/editor-plugin.d.ts",
+      "default": "./dist/editor/editor-plugin.js"
+    },
     "./editor/index.html": "./src/engine/editor/index.html",
     "./vite-env": "./src/engine/vite-env.d.ts",
     "./package.json": "./package.json",
     "./*": "./src/engine/*"
   },
   "scripts": {
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -83,6 +91,7 @@
     "jsdom": "^29.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "tsup": "^8.3.5",
     "typescript": "~5.9.3",
     "vite": "^7.1.7",
     "vitest": "^4.1.6"

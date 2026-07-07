@@ -125,6 +125,14 @@ function containerFromAggregation(
 export interface GamePluginOptions {
   /** Absolute path to src/game/ */
   gameDir: string;
+  /**
+   * Absolute path to the engine source root (the directory containing
+   * `features/` and `data/`). Defaults to this plugin file's own directory,
+   * which is correct when the plugin runs from source. The `sim` CLI passes
+   * the resolved `@sim/engine/src/engine` path so the plugin works even when
+   * its Node entry is compiled to a different location.
+   */
+  engineDir?: string;
   /** Absolute path to docs/ folder (optional, enables /docs route) */
   docsDir?: string;
   /** Additional slot specs to include alongside the built-in defaults */
@@ -532,11 +540,12 @@ function toCamelCase(s: string): string {
 
 function generateSetupModule(
   gameDir: string,
+  engineRoot: string,
   manifestData: ManifestData,
 ): string {
   const dataDir = path.join(gameDir, DATA_SUBDIR);
   const extensionsDir = path.join(gameDir, EXTENSIONS_SUBDIR);
-  const dataModulePath = path.join(ENGINE_DIR, 'data');
+  const dataModulePath = path.join(engineRoot, 'data');
 
   const {
     setupBindings,
@@ -730,8 +739,9 @@ ${contentSetupCalls.join('\n')}
 
 export function gamePlugin(options: GamePluginOptions): Plugin {
   const { gameDir, extraSlots = [] } = options;
+  const engineRoot = options.engineDir ?? ENGINE_DIR;
   const extensionsDir = path.join(gameDir, EXTENSIONS_SUBDIR);
-  const engineFeaturesDir = path.join(ENGINE_DIR, 'features');
+  const engineFeaturesDir = path.join(engineRoot, 'features');
 
   let manifestCache: ManifestData | null = null;
 
@@ -759,7 +769,7 @@ export function gamePlugin(options: GamePluginOptions): Plugin {
     ],
     [
       RESOLVED_VIRTUAL_SETUP_ID,
-      () => generateSetupModule(gameDir, getManifestData()),
+      () => generateSetupModule(gameDir, engineRoot, getManifestData()),
     ],
     [
       RESOLVED_VIRTUAL_CONDITIONS_ID,
