@@ -26,10 +26,17 @@ function resolveTemplateDir(): string {
 function copyTemplate(from: string, to: string): void {
   fs.cpSync(from, to, {
     recursive: true,
-    filter: (p) =>
-      !p.split(path.sep).includes('node_modules') &&
-      path.basename(p) !== 'dist' &&
-      !p.endsWith('.tsbuildinfo'),
+    // Test paths *relative to the template root* — when this package is
+    // installed, `from` itself lives under node_modules, so an absolute-path
+    // check would reject everything.
+    filter: (src) => {
+      const rel = path.relative(from, src);
+      return (
+        !rel.split(path.sep).includes('node_modules') &&
+        path.basename(src) !== 'dist' &&
+        !src.endsWith('.tsbuildinfo')
+      );
+    },
   });
 }
 
