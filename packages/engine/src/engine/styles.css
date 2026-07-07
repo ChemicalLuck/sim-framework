@@ -1,0 +1,14 @@
+/*
+ * Registers the engine's own source with Tailwind so that games consuming the
+ * engine generate its utility classes.
+ *
+ * The engine ships as source under node_modules, which Tailwind v4 skips during
+ * automatic content detection — so without this, none of the engine's classes
+ * (app shell, sidebar layout, etc.) are emitted and the UI renders unstyled.
+ * @source paths resolve relative to THIS file, so it works regardless of where
+ * the engine is installed.
+ *
+ * Consume it from a game's stylesheet, right after `@import 'tailwindcss'`:
+ *   @import '@chemicalluck/sim-engine/styles.css';
+ */
+@source "./**/*.{ts,tsx}";

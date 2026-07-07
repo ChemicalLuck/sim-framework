@@ -2,6 +2,9 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Generates the engine's Tailwind classes (it ships as source; see the file). */
+@import '@chemicalluck/sim-engine/styles.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
