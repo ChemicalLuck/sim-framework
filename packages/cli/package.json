@@ -1,6 +1,6 @@
 {
   "name": "@chemicalluck/sim-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "The sim game framework CLI — dev server, single-file build, and content editor.",
   "license": "MIT",
