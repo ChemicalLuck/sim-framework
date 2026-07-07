@@ -1,6 +1,6 @@
-# @chemicalluck/create-sim-game
+# @chemicalluck/sim-cli
 
-## 0.1.2
+## 0.1.1
 
 ### Patch Changes
 
@@ -19,11 +19,5 @@
     `@import '@chemicalluck/sim-engine/styles.css'`. The starter template does
     this by default.
 
-## 0.1.1
-
-### Patch Changes
-
-- b2d8cd4: Fix scaffolding when the package is installed from npm. The template-copy filter
-  rejected every path because the installed template lives under `node_modules`;
-  it now tests paths relative to the template root, so `create-sim-game` copies
-  the starter correctly.
+- Updated dependencies [b5fd33c]
+  - @chemicalluck/sim-engine@0.1.1
