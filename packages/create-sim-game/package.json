@@ -27,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@chemicalluck/config": "workspace:*",
+    "@chemicalluck/sim-config": "workspace:*",
     "@types/node": "^24.10.0",
     "tsup": "^8.3.5",
     "typescript": "~5.9.3"

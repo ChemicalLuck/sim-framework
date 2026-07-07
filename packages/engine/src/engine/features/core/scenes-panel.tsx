@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -8,35 +8,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@chemicalluck/engine/components/ui/form';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
-import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
+} from '@chemicalluck/sim-engine/components/ui/form';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
+import { ActionGroupsEditor } from '@chemicalluck/sim-engine/editor/components/action-groups-editor';
 import {
   AddEffectForm,
   EffectChip,
-} from '@chemicalluck/engine/editor/components/effect-form';
+} from '@chemicalluck/sim-engine/editor/components/effect-form';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@chemicalluck/engine/editor/components/panel-layout';
-import { PreviewPane } from '@chemicalluck/engine/editor/components/preview/preview-pane';
-import { ReferencedBy } from '@chemicalluck/engine/editor/components/referenced-by';
-import { editorTemplateContext } from '@chemicalluck/engine/editor/components/template-context';
-import { TemplateEditor } from '@chemicalluck/engine/editor/components/template-editor';
-import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
+} from '@chemicalluck/sim-engine/editor/components/panel-layout';
+import { PreviewPane } from '@chemicalluck/sim-engine/editor/components/preview/preview-pane';
+import { ReferencedBy } from '@chemicalluck/sim-engine/editor/components/referenced-by';
+import { editorTemplateContext } from '@chemicalluck/sim-engine/editor/components/template-context';
+import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
+import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
 import {
   type AvailableData,
   useAvailableData,
-} from '@chemicalluck/engine/editor/lib/use-available-data';
-import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
-import type { JsonScene } from '@chemicalluck/engine/features/core/types';
-import { NpcSelectionEditor } from '@chemicalluck/engine/features/npcs/npc-selection-editor';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
-import type { Scene } from '@chemicalluck/engine/types/scene.types';
+} from '@chemicalluck/sim-engine/editor/lib/use-available-data';
+import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
+import type { JsonScene } from '@chemicalluck/sim-engine/features/core/types';
+import { NpcSelectionEditor } from '@chemicalluck/sim-engine/features/npcs/npc-selection-editor';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
+import type { Scene } from '@chemicalluck/sim-engine/types/scene.types';
 
 type RawScene = Scene & { id: string };
 

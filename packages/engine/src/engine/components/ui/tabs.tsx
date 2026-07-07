@@ -1,6 +1,6 @@
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import * as React from 'react';
-import { cn } from '@chemicalluck/engine/lib/css';
+import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 function Tabs({
   className,

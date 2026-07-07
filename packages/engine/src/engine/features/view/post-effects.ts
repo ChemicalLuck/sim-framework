@@ -1,7 +1,7 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
+} from '@chemicalluck/sim-engine/features/core/types';
 
 import { setDescription } from './slice';
 

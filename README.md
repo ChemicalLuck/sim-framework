@@ -11,10 +11,10 @@ and depend on them.
 
 | Package | Description |
 | --- | --- |
-| [`@chemicalluck/engine`](./packages/engine) | Game-agnostic runtime, content editor, and Vite plugins (shipped as source). |
-| [`@chemicalluck/sim`](./packages/cli) | CLI (bin `sim`): `dev` / `build` / `editor` / `preview` / `check`. |
+| [`@chemicalluck/sim-engine`](./packages/engine) | Game-agnostic runtime, content editor, and Vite plugins (shipped as source). |
+| [`@chemicalluck/sim-cli`](./packages/cli) | CLI (bin `sim`): `dev` / `build` / `editor` / `preview` / `check`. |
 | [`@chemicalluck/create-sim-game`](./packages/create-sim-game) | Scaffolder — `npm create @chemicalluck/sim-game my-game`. |
-| [`@chemicalluck/config`](./packages/config) | Shared TypeScript / ESLint / Prettier presets. |
+| [`@chemicalluck/sim-config`](./packages/config) | Shared TypeScript / ESLint / Prettier presets. |
 
 `examples/` and `templates/` are private workspace packages (not published).
 

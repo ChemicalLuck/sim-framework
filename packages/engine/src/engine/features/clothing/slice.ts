@@ -63,7 +63,7 @@ export const { ensureItems, addWearMinutes, setWet, cleanItems } =
 
 export default clothingSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     clothing: ReturnType<typeof clothingSlice.reducer>;
   }

@@ -1,6 +1,6 @@
-import type { Character } from '@chemicalluck/engine/types/character.types';
-import type { BaseEffect, Effect } from '@chemicalluck/engine/types/effect.types';
-import type { NpcFilter } from '@chemicalluck/engine/types/npc-filter.types';
+import type { Character } from '@chemicalluck/sim-engine/types/character.types';
+import type { BaseEffect, Effect } from '@chemicalluck/sim-engine/types/effect.types';
+import type { NpcFilter } from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 export type JsonNpcSelection =
   | { npcIds: string[] }
@@ -62,7 +62,7 @@ export interface NpcEffect extends BaseEffect<'npc'> {
   readonly operation: 'meet';
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     npc: NpcEffect;
   }

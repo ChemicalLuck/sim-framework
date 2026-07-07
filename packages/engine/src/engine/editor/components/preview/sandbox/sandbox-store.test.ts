@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import type { EngineDispatch } from '@chemicalluck/engine/state/store';
-import { processEffects } from '@chemicalluck/engine/state/thunks';
+import type { EngineDispatch } from '@chemicalluck/sim-engine/state/store';
+import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 
 import { DEFAULT_PREVIEW_STATE } from '../mock-state';
 import { createMockNpc } from './mock-npc';

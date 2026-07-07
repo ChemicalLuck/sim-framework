@@ -1,11 +1,11 @@
-import type { RootState } from '@chemicalluck/engine/state/store';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 export interface NpcNeedExpr {
   kind: 'npcNeed';
   need: string;
 }
 
-declare module '@chemicalluck/engine/types/condition.types' {
+declare module '@chemicalluck/sim-engine/types/condition.types' {
   interface ExprMap {
     npcNeed: NpcNeedExpr;
   }

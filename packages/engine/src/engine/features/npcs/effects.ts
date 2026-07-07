@@ -1,8 +1,8 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { meetNpc } from '@chemicalluck/engine/features/relationships/slice';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { meetNpc } from '@chemicalluck/sim-engine/features/relationships/slice';
 
 import type { NpcEffect } from './types';
 

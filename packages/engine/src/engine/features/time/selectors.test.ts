@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { RootState } from '@chemicalluck/engine/state/store';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { selectTimeOfDay } from './selectors';
 

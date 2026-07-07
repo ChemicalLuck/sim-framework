@@ -4,11 +4,11 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
-import { getNamedNpcs } from '@chemicalluck/engine/features/npcs/lib/named-npcs';
-import { createNpc } from '@chemicalluck/engine/features/npcs/lib/npcs';
-import type { NPC } from '@chemicalluck/engine/features/npcs/types';
-import { Mulberry32 } from '@chemicalluck/engine/features/rng/lib/rng';
-import { logTimed } from '@chemicalluck/engine/features/time/lib/time';
+import { getNamedNpcs } from '@chemicalluck/sim-engine/features/npcs/lib/named-npcs';
+import { createNpc } from '@chemicalluck/sim-engine/features/npcs/lib/npcs';
+import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
+import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import { logTimed } from '@chemicalluck/sim-engine/features/time/lib/time';
 
 function generateNPCs(seed: number, count = 10000): NPC[] {
   const npcs: NPC[] = [];
@@ -71,7 +71,7 @@ export const { regenerateNpcs, setNearby } = npcsSlice.actions;
 
 export default npcsSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     npcs: ReturnType<typeof npcsSlice.reducer>;
   }

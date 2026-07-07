@@ -1,7 +1,7 @@
-import { ActionButton } from '@chemicalluck/engine/components/action-button';
-import { selectEquipment } from '@chemicalluck/engine/features/player/selectors';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
-import type { Wearable } from '@chemicalluck/engine/types';
+import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
+import { selectEquipment } from '@chemicalluck/sim-engine/features/player/selectors';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import type { Wearable } from '@chemicalluck/sim-engine/types';
 
 export default function RemoveEquipment() {
   const equipment = useEngineSelector(selectEquipment);

@@ -1,6 +1,6 @@
-import { NumField } from '@chemicalluck/engine/editor/components/effect-form-primitives';
-import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
-import { formatMoney } from '@chemicalluck/engine/features/money/lib/currency';
+import { NumField } from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
+import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
+import { formatMoney } from '@chemicalluck/sim-engine/features/money/lib/currency';
 
 interface MoneyFormState {
   amount: string;
@@ -28,7 +28,7 @@ const money = defineEffectEditor<MoneyFormState>({
   ),
 });
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     money: typeof money;
   }

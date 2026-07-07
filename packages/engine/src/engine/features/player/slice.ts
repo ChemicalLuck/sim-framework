@@ -1,9 +1,9 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { getBodyAttributes } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import { conflictingSlots } from '@chemicalluck/engine/features/outfits/lib/wearable-config';
-import type { Player } from '@chemicalluck/engine/features/player/types';
-import { makeConfig } from '@chemicalluck/engine/lib/core';
-import { clampAdd } from '@chemicalluck/engine/lib/maths';
+import { getBodyAttributes } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import { conflictingSlots } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
+import type { Player } from '@chemicalluck/sim-engine/features/player/types';
+import { makeConfig } from '@chemicalluck/sim-engine/lib/core';
+import { clampAdd } from '@chemicalluck/sim-engine/lib/maths';
 import type {
   BodyAttributes,
   CharacterProfile,
@@ -11,7 +11,7 @@ import type {
   Slot,
   Trait,
   Wearable,
-} from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/types';
 
 export interface PlayerConfig {
   startLocation?: string;
@@ -153,7 +153,7 @@ export const {
 
 export default playerSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     player: ReturnType<typeof playerSlice.reducer>;
   }

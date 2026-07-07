@@ -3,7 +3,7 @@ import type {
   ComparisonCondition,
   Condition,
   Expr,
-} from '@chemicalluck/engine/types/condition.types';
+} from '@chemicalluck/sim-engine/types/condition.types';
 
 function serializeExpr(e: Expr): string {
   switch (e.kind) {

@@ -1,5 +1,5 @@
-import type { Registry } from '@chemicalluck/engine/data';
-import type { Wearable } from '@chemicalluck/engine/types';
+import type { Registry } from '@chemicalluck/sim-engine/data';
+import type { Wearable } from '@chemicalluck/sim-engine/types';
 
 import { configureContainers } from '../slice';
 

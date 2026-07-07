@@ -1,4 +1,4 @@
-import type { Effect, Scene, Script } from '@chemicalluck/engine/types';
+import type { Effect, Scene, Script } from '@chemicalluck/sim-engine/types';
 
 export const viewDefault = (): Effect[] => [
   { kind: 'view', activeViewId: 'DefaultView', props: {} },

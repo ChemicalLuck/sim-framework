@@ -1,22 +1,22 @@
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
+} from '@chemicalluck/sim-engine/components/ui/select';
 import {
   IdSelect,
   TwoCol,
-} from '@chemicalluck/engine/editor/components/effect-form-primitives';
+} from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
 import {
   type DataRequirement,
   defineEffectEditor,
-} from '@chemicalluck/engine/editor/lib/effect-editor';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
+} from '@chemicalluck/sim-engine/editor/lib/effect-editor';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 import type { ContainerEffect } from './types';
 
@@ -222,7 +222,7 @@ const container = defineEffectEditor<ContainerFormState>({
 
 export const editorDataRequirements: DataRequirement[] = [{ key: 'items' }];
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     container: typeof container;
   }

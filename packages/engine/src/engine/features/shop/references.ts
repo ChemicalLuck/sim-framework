@@ -4,7 +4,7 @@ import {
   type NodeRefRewriter,
   type ReferenceProvider,
   type ReferenceRewriter,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 import type { JsonShop } from './authoring.types';
 

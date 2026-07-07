@@ -1,7 +1,7 @@
-import { Badge } from '@chemicalluck/engine/components/ui/badge';
-import { conditionToString } from '@chemicalluck/engine/editor/lib/condition-utils';
-import { isConditionMet } from '@chemicalluck/engine/lib/conditions';
-import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
+import { conditionToString } from '@chemicalluck/sim-engine/editor/lib/condition-utils';
+import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 import { usePreviewState } from './mock-state';
 

@@ -1,14 +1,14 @@
-import { ActionButton } from '@chemicalluck/engine/components/action-button';
+import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@chemicalluck/engine/components/ui/tabs';
-import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
-import { renderText } from '@chemicalluck/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
-import * as effects from '@chemicalluck/engine/features/view/helpers';
+} from '@chemicalluck/sim-engine/components/ui/tabs';
+import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
+import { renderText } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistics/use-template-context';
+import * as effects from '@chemicalluck/sim-engine/features/view/helpers';
 
 import type { Shop } from '../types';
 import ShopCard from './shop-item-card';

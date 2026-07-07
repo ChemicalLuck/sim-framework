@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { EffectContext } from '@chemicalluck/engine/features/core/types';
-import type { RootState } from '@chemicalluck/engine/state/store';
-import type { Equipment } from '@chemicalluck/engine/types/character.types';
-import type { Wearable } from '@chemicalluck/engine/types/item.types';
+import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
+import type { Equipment } from '@chemicalluck/sim-engine/types/character.types';
+import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 import { handleApplyOutfitEffect } from './effects';
 import type { ApplyOutfitEffect, Outfit } from './types';

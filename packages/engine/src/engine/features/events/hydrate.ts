@@ -1,9 +1,9 @@
-import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
+import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
 
 import type { JsonRandomEvent } from './authoring.types';
 import type { RandomEvent } from './types';
 
-declare module '@chemicalluck/engine/data' {
+declare module '@chemicalluck/sim-engine/data' {
   interface ContentExtensions {
     events: RandomEvent[];
   }

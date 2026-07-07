@@ -4,25 +4,25 @@ import { Slot } from '@radix-ui/react-slot';
 import { type VariantProps, cva } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
 import * as React from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Separator } from '@chemicalluck/engine/components/ui/separator';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Separator } from '@chemicalluck/sim-engine/components/ui/separator';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@chemicalluck/engine/components/ui/sheet';
-import { Skeleton } from '@chemicalluck/engine/components/ui/skeleton';
+} from '@chemicalluck/sim-engine/components/ui/sheet';
+import { Skeleton } from '@chemicalluck/sim-engine/components/ui/skeleton';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@chemicalluck/engine/components/ui/tooltip';
-import { useIsMobile } from '@chemicalluck/engine/hooks/use-mobile';
-import { cn } from '@chemicalluck/engine/lib/css';
+} from '@chemicalluck/sim-engine/components/ui/tooltip';
+import { useIsMobile } from '@chemicalluck/sim-engine/hooks/use-mobile';
+import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

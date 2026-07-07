@@ -1,7 +1,7 @@
 import { Clock } from 'lucide-react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { useEngineDispatch } from '@chemicalluck/engine/state/store';
-import { processEffects } from '@chemicalluck/engine/state/thunks';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { useEngineDispatch } from '@chemicalluck/sim-engine/state/store';
+import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 
 export default function WaitButton() {
   const dispatch = useEngineDispatch();

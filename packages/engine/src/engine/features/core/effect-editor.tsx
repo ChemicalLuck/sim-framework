@@ -1,8 +1,8 @@
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Label } from '@chemicalluck/engine/components/ui/label';
-import { editorTemplateContext } from '@chemicalluck/engine/editor/components/template-context';
-import { TemplateEditor } from '@chemicalluck/engine/editor/components/template-editor';
-import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
+import { editorTemplateContext } from '@chemicalluck/sim-engine/editor/components/template-context';
+import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
+import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
 interface DescFormState {
   text: string;
@@ -32,7 +32,7 @@ const desc = defineEffectEditor<DescFormState>({
   ),
 });
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     desc: typeof desc;
   }

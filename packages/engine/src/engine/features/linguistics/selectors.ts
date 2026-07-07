@@ -1,12 +1,12 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { selectNearbyNpcsCount } from '@chemicalluck/engine/features/npcs/selectors';
-import { selectHour, selectTimeOfDay } from '@chemicalluck/engine/features/time/selectors';
+import { selectNearbyNpcsCount } from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { selectHour, selectTimeOfDay } from '@chemicalluck/sim-engine/features/time/selectors';
 import {
   selectSeason,
   selectTemperature,
   selectWeather,
   selectWeatherConditionId,
-} from '@chemicalluck/engine/features/weather/selectors';
+} from '@chemicalluck/sim-engine/features/weather/selectors';
 
 /**
  * Global narrative variables exposed to description templates: current weather,

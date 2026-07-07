@@ -1,5 +1,5 @@
-import type { JsonEffect } from '@chemicalluck/engine/features/core/types';
-import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export interface JsonViewEncounterEffect {
   kind: 'view';
@@ -8,7 +8,7 @@ export interface JsonViewEncounterEffect {
   npcId: string;
 }
 
-declare module '@chemicalluck/engine/data/authoring.types' {
+declare module '@chemicalluck/sim-engine/data/authoring.types' {
   interface JsonEffectMap {
     view_encounter: JsonViewEncounterEffect;
   }

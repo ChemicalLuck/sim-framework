@@ -26,7 +26,7 @@ export const { loadMilestones, addMilestone } = milestonesSlice.actions;
 
 export default milestonesSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     milestones: ReturnType<typeof milestonesSlice.reducer>;
   }

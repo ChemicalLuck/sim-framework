@@ -1,4 +1,4 @@
-# @chemicalluck/sim
+# @chemicalluck/sim-cli
 
 The CLI for the **sim** game framework. Installs the `sim` binary and owns the build
 config, so a game never manages its own `vite.config.ts`.
@@ -11,7 +11,7 @@ sim preview   # preview a production build
 sim check     # validate content references (CI-friendly exit code)
 ```
 
-It resolves [`@chemicalluck/engine`](https://www.npmjs.com/package/@chemicalluck/engine)
+It resolves [`@chemicalluck/sim-engine`](https://www.npmjs.com/package/@chemicalluck/sim-engine)
 from your project and assembles the Vite pipeline (React, Tailwind, the engine's
 game/editor plugins, single-file build). Optional overrides go in a `sim.config.js`.
 

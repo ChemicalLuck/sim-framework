@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
-import { useReportDirty } from '@chemicalluck/engine/editor/lib/unsaved-changes';
-import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
-import type { SkillDefinition } from '@chemicalluck/engine/features/player/lib/skills';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
+import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
+import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
+import type { SkillDefinition } from '@chemicalluck/sim-engine/features/player/lib/skills';
 
 function SkillRow({
   skill,

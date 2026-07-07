@@ -2,9 +2,9 @@ import { toast } from 'sonner';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
-import type { Effect } from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
+import type { Effect } from '@chemicalluck/sim-engine/types';
 
 import { getQuestTemplate, instantiateQuestTemplate } from './lib/templates';
 import { addQuest, updateQuestObjective } from './slice';

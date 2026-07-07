@@ -1,4 +1,4 @@
-import type { LocationNode, WorldGraph } from '@chemicalluck/engine/features/travel/types';
+import type { LocationNode, WorldGraph } from '@chemicalluck/sim-engine/features/travel/types';
 
 let _world: WorldGraph = { locations: [], edges: [] };
 

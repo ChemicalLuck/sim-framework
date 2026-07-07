@@ -3,7 +3,7 @@ import {
   type NodeRefRewriter,
   type ReferenceProvider,
   type ReferenceRewriter,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 const equipRef: NodeRefExtractor = (node) => {
   if ('kind' in node && node.kind === 'equip' && 'wearable' in node) {

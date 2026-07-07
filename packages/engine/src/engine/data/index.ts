@@ -2,15 +2,15 @@ import {
   type HydrationContext,
   hydrateScene,
   hydrateScript,
-} from '@chemicalluck/engine/features/core/hydrate';
-import type { JsonSceneWithId, JsonScript } from '@chemicalluck/engine/features/core/types';
-import type { Scene, Script } from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/features/core/hydrate';
+import type { JsonSceneWithId, JsonScript } from '@chemicalluck/sim-engine/features/core/types';
+import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type {
   InventoryItem,
   Item,
   Wearable,
   WearableTemplate,
-} from '@chemicalluck/engine/types/item.types';
+} from '@chemicalluck/sim-engine/types/item.types';
 
 import { Registry, buildRegistry } from './registry';
 
@@ -22,7 +22,7 @@ interface JsonTemplateWithId extends WearableTemplate {
  * Map of extension-registered hydrated content, keyed by extension key.
  * Extensions augment this interface to declare their content shape:
  *
- *   declare module '@chemicalluck/engine/data' {
+ *   declare module '@chemicalluck/sim-engine/data' {
  *     interface ContentExtensions {
  *       myExtension: { foo: Foo[] };
  *     }
@@ -139,4 +139,4 @@ export function loadContent(raw: RawContent): Content {
 }
 
 export { Registry, buildRegistry } from './registry';
-export type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
+export type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';

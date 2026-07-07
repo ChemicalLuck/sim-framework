@@ -1,7 +1,7 @@
-import { Progress } from '@chemicalluck/engine/components/ui/progress';
-import { selectNeeds } from '@chemicalluck/engine/features/needs/selectors';
-import { cn } from '@chemicalluck/engine/lib/css';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
+import { Progress } from '@chemicalluck/sim-engine/components/ui/progress';
+import { selectNeeds } from '@chemicalluck/sim-engine/features/needs/selectors';
+import { cn } from '@chemicalluck/sim-engine/lib/css';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
 export default function NeedsDisplay() {
   const needs = useEngineSelector(selectNeeds);

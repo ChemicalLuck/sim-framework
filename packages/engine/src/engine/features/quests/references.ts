@@ -5,8 +5,8 @@ import {
   type ReferenceProvider,
   type ReferenceRewriter,
   flattenConditions,
-} from '@chemicalluck/engine/lib/validation';
-import type { Condition } from '@chemicalluck/engine/types/condition.types';
+} from '@chemicalluck/sim-engine/lib/validation';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 import type { Quest } from './types';
 

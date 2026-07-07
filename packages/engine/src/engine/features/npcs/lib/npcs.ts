@@ -1,14 +1,14 @@
-import type { NPC, NpcRelationship } from '@chemicalluck/engine/features/npcs/types';
-import { getSkills } from '@chemicalluck/engine/features/player/lib/skills';
+import type { NPC, NpcRelationship } from '@chemicalluck/sim-engine/features/npcs/types';
+import { getSkills } from '@chemicalluck/sim-engine/features/player/lib/skills';
 import {
   type RNG,
   buildWeightedCDF,
   sample,
   worldRng,
-} from '@chemicalluck/engine/features/rng/lib/rng';
-import { WeightsBuilder } from '@chemicalluck/engine/features/rng/lib/weights';
-import type { Weights } from '@chemicalluck/engine/features/rng/weights.types';
-import type { CharacterProfile } from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import { WeightsBuilder } from '@chemicalluck/sim-engine/features/rng/lib/weights';
+import type { Weights } from '@chemicalluck/sim-engine/features/rng/weights.types';
+import type { CharacterProfile } from '@chemicalluck/sim-engine/types';
 
 import {
   getAppearanceDisplay,

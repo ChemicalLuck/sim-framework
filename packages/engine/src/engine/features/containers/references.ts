@@ -1,7 +1,7 @@
 import type {
   NodeRefExtractor,
   NodeRefRewriter,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 // Authored inventory/container effects reference an item by id. (Adds use
 // `itemId`; removes carry the bare item `id`.)

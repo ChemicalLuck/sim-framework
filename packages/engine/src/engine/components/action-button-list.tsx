@@ -1,4 +1,4 @@
-import type { Action, Effect } from '@chemicalluck/engine/types';
+import type { Action, Effect } from '@chemicalluck/sim-engine/types';
 
 import { ActionButton } from './action-button';
 

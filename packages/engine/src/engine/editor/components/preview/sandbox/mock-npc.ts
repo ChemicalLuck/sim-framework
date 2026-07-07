@@ -1,5 +1,5 @@
-import type { NamedNpcDefinition } from '@chemicalluck/engine/features/npcs/types';
-import type { Equipment } from '@chemicalluck/engine/types/character.types';
+import type { NamedNpcDefinition } from '@chemicalluck/sim-engine/features/npcs/types';
+import type { Equipment } from '@chemicalluck/sim-engine/types/character.types';
 
 export const MOCK_NPC_ID = 'preview_npc';
 

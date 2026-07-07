@@ -1,8 +1,8 @@
 import type {
   ConversationTopic,
   NpcRelationship,
-} from '@chemicalluck/engine/features/npcs/types';
-import type { Effect } from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/features/npcs/types';
+import type { Effect } from '@chemicalluck/sim-engine/types';
 
 let _topics: ConversationTopic[] = [];
 

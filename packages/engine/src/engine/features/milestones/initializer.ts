@@ -1,9 +1,9 @@
-import type { EngineStore } from '@chemicalluck/engine/state/store';
+import type { EngineStore } from '@chemicalluck/sim-engine/state/store';
 
 import { loadMilestones } from './slice';
 import type { Milestone } from './types';
 
-declare module '@chemicalluck/engine/data' {
+declare module '@chemicalluck/sim-engine/data' {
   interface ContentExtensions {
     milestones: Milestone[];
   }

@@ -1,4 +1,4 @@
-import { Checkbox } from '@chemicalluck/engine/components/ui/checkbox';
+import { Checkbox } from '@chemicalluck/sim-engine/components/ui/checkbox';
 import {
   Field,
   FieldDescription,
@@ -6,7 +6,7 @@ import {
   FieldLabel,
   FieldSeparator,
   FieldSet,
-} from '@chemicalluck/engine/components/ui/field';
+} from '@chemicalluck/sim-engine/components/ui/field';
 
 export default function FieldGroupExample() {
   return (

@@ -1,10 +1,10 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { getNamedNpcDefs } from '@chemicalluck/engine/features/npcs/lib/named-npcs';
-import { worldRng } from '@chemicalluck/engine/features/rng/lib/rng';
-import { getLocationById } from '@chemicalluck/engine/features/travel/selectors';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { getNamedNpcDefs } from '@chemicalluck/sim-engine/features/npcs/lib/named-npcs';
+import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import { getLocationById } from '@chemicalluck/sim-engine/features/travel/selectors';
 
 import { setNearby } from './slice';
 

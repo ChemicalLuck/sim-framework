@@ -25,7 +25,7 @@ import {
   requiredFiles,
   reverseReferences,
   validateReferences,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 import {
   preloadEditorData,

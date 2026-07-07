@@ -29,21 +29,21 @@ interface ResolvedEngine {
 }
 
 /**
- * Resolve `@chemicalluck/engine` from the *game's* directory (not the CLI's), so a game
+ * Resolve `@chemicalluck/sim-engine` from the *game's* directory (not the CLI's), so a game
  * always builds against the engine version it depends on. The Node-side
  * plugins are compiled JS and imported dynamically.
  */
 async function loadEngine(cwd: string): Promise<ResolvedEngine> {
-  const enginePkg = require.resolve('@chemicalluck/engine/package.json', {
+  const enginePkg = require.resolve('@chemicalluck/sim-engine/package.json', {
     paths: [cwd],
   });
   const engineRoot = path.dirname(enginePkg);
   const engineDir = path.join(engineRoot, 'src', 'engine');
 
-  const gamePluginPath = require.resolve('@chemicalluck/engine/game-plugin', {
+  const gamePluginPath = require.resolve('@chemicalluck/sim-engine/game-plugin', {
     paths: [cwd],
   });
-  const editorPluginPath = require.resolve('@chemicalluck/engine/editor/editor-plugin', {
+  const editorPluginPath = require.resolve('@chemicalluck/sim-engine/editor/editor-plugin', {
     paths: [cwd],
   });
 
@@ -116,14 +116,14 @@ export async function buildConfig({
         // Resolve the engine to its source directory so Vite does normal
         // file/index resolution (package `exports` wildcards don't probe for
         // directory `index` files) and transforms the .tsx as source.
-        '@chemicalluck/engine': engineDir,
+        '@chemicalluck/sim-engine': engineDir,
         '~': path.join(cwd, 'src'),
         ...(user.alias ?? {}),
       },
     },
     // The engine ships as source; keep it out of dep pre-bundling so Vite
     // transforms its .ts/.tsx through the normal pipeline.
-    optimizeDeps: { exclude: ['@chemicalluck/engine'] },
+    optimizeDeps: { exclude: ['@chemicalluck/sim-engine'] },
     esbuild: isBuild ? { drop: ['console', 'debugger'] } : undefined,
     build: {
       cssMinify: 'lightningcss',

@@ -4,9 +4,9 @@ import { type ReactElement, type ReactNode } from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
-import { SaveHandlerProvider } from '@chemicalluck/engine/editor/lib/save-context';
-import { UnsavedChangesProvider } from '@chemicalluck/engine/editor/lib/unsaved-changes';
-import type { EditorDataHandle } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import { SaveHandlerProvider } from '@chemicalluck/sim-engine/editor/lib/save-context';
+import { UnsavedChangesProvider } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
+import type { EditorDataHandle } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 
 // Reducers come in many shapes across features; tests use this loosely.
 type TestReducers = Parameters<typeof configureStore>[0]['reducer'];

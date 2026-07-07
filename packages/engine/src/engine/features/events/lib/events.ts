@@ -1,4 +1,4 @@
-import type { RandomEvent } from '@chemicalluck/engine/features/events/types';
+import type { RandomEvent } from '@chemicalluck/sim-engine/features/events/types';
 
 let _events: RandomEvent[] = [];
 

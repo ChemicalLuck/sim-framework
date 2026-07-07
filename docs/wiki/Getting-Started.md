@@ -14,7 +14,7 @@ npm install
 ```
 
 This creates a minimal but complete game — a couple of locations, an item, and all the
-required content files — wired to `@chemicalluck/engine` and the `sim` CLI.
+required content files — wired to `@chemicalluck/sim-engine` and the `sim` CLI.
 
 ## Run it
 

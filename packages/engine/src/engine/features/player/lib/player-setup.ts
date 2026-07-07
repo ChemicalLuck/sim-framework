@@ -1,5 +1,5 @@
-import type { Registry } from '@chemicalluck/engine/data';
-import type { BodyAttributes, Wearable } from '@chemicalluck/engine/types';
+import type { Registry } from '@chemicalluck/sim-engine/data';
+import type { BodyAttributes, Wearable } from '@chemicalluck/sim-engine/types';
 
 import { configurePlayer } from '../slice';
 

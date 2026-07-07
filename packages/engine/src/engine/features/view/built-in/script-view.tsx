@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ActionButtonList } from '@chemicalluck/engine/components/action-button-list';
-import { ActionGroup } from '@chemicalluck/engine/components/action-group';
-import { ItemActionsButtonsList } from '@chemicalluck/engine/components/item-actions-button-list';
-import { Progress } from '@chemicalluck/engine/components/ui/progress';
-import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
-import { renderText } from '@chemicalluck/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
-import { selectNpcsByIds } from '@chemicalluck/engine/features/npcs/selectors';
-import { worldRng } from '@chemicalluck/engine/features/rng/lib/rng';
-import { selectTimestamp } from '@chemicalluck/engine/features/time/selectors';
-import * as effects from '@chemicalluck/engine/features/view/helpers';
-import { selectDescription } from '@chemicalluck/engine/features/view/selectors';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
-import { processEffects } from '@chemicalluck/engine/state/thunks';
-import type { Script } from '@chemicalluck/engine/types';
+import { ActionButtonList } from '@chemicalluck/sim-engine/components/action-button-list';
+import { ActionGroup } from '@chemicalluck/sim-engine/components/action-group';
+import { ItemActionsButtonsList } from '@chemicalluck/sim-engine/components/item-actions-button-list';
+import { Progress } from '@chemicalluck/sim-engine/components/ui/progress';
+import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
+import { renderText } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistics/use-template-context';
+import { selectNpcsByIds } from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import { selectTimestamp } from '@chemicalluck/sim-engine/features/time/selectors';
+import * as effects from '@chemicalluck/sim-engine/features/view/helpers';
+import { selectDescription } from '@chemicalluck/sim-engine/features/view/selectors';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
+import type { Script } from '@chemicalluck/sim-engine/types';
 
 interface ScriptViewProps {
   script: Script;

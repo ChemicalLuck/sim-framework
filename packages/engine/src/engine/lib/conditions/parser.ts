@@ -1,5 +1,5 @@
 import { conditionParsers, exprKinds, exprParsers } from 'virtual:conditions';
-import type { ComparisonCondition, Condition, Expr } from '@chemicalluck/engine/types';
+import type { ComparisonCondition, Condition, Expr } from '@chemicalluck/sim-engine/types';
 
 import { type Token, tokenize } from './tokenizer';
 

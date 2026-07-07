@@ -1,8 +1,8 @@
 import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Checkbox } from '@chemicalluck/engine/components/ui/checkbox';
-import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Checkbox } from '@chemicalluck/sim-engine/components/ui/checkbox';
+import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -10,40 +10,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@chemicalluck/engine/components/ui/form';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+} from '@chemicalluck/sim-engine/components/ui/form';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import { ActionGroupsEditor } from '@chemicalluck/sim-engine/editor/components/action-groups-editor';
 import {
   AddEffectForm,
   EffectChip,
-} from '@chemicalluck/engine/editor/components/effect-form';
+} from '@chemicalluck/sim-engine/editor/components/effect-form';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@chemicalluck/engine/editor/components/panel-layout';
-import { PreviewPane } from '@chemicalluck/engine/editor/components/preview/preview-pane';
-import { ReferencedBy } from '@chemicalluck/engine/editor/components/referenced-by';
-import { editorTemplateContext } from '@chemicalluck/engine/editor/components/template-context';
-import { TemplateEditor } from '@chemicalluck/engine/editor/components/template-editor';
-import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
-import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
-import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
-import type { JsonScript } from '@chemicalluck/engine/features/core/types';
-import { NpcSelectionEditor } from '@chemicalluck/engine/features/npcs/npc-selection-editor';
-import type { ActionGroup } from '@chemicalluck/engine/types/action-group.types';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
-import type { NpcSelection } from '@chemicalluck/engine/types/npc-filter.types';
+} from '@chemicalluck/sim-engine/editor/components/panel-layout';
+import { PreviewPane } from '@chemicalluck/sim-engine/editor/components/preview/preview-pane';
+import { ReferencedBy } from '@chemicalluck/sim-engine/editor/components/referenced-by';
+import { editorTemplateContext } from '@chemicalluck/sim-engine/editor/components/template-context';
+import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
+import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
+import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
+import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
+import type { JsonScript } from '@chemicalluck/sim-engine/features/core/types';
+import { NpcSelectionEditor } from '@chemicalluck/sim-engine/features/npcs/npc-selection-editor';
+import type { ActionGroup } from '@chemicalluck/sim-engine/types/action-group.types';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
+import type { NpcSelection } from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 interface RawScriptScene {
   kind: 'scene';

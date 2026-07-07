@@ -1,6 +1,6 @@
 import * as ScrollAreaPrimitive from '@radix-ui/react-scroll-area';
 import * as React from 'react';
-import { cn } from '@chemicalluck/engine/lib/css';
+import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 function ScrollArea({
   className,

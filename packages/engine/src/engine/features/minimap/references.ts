@@ -1,7 +1,7 @@
 import type {
   ReferenceProvider,
   ReferenceRewriter,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 export const referenceProviders: ReferenceProvider[] = [
   {

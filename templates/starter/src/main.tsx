@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { GameEngine } from '@chemicalluck/engine';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import { GameEngine } from '@chemicalluck/sim-engine';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
 import '~/game/index.css';
 

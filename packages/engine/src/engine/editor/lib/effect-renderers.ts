@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 import { useEffectEditors } from './effect-editor';
 

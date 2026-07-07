@@ -1,10 +1,10 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
+} from '@chemicalluck/sim-engine/features/core/types';
 // NPC needs live on the active encounter state — encounter slice owns them
-import { updateNpcNeed } from '@chemicalluck/engine/features/encounter/slice';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import { updateNpcNeed } from '@chemicalluck/sim-engine/features/encounter/slice';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
 import { increaseNeedByAmount } from './slice';
 import type { NeedsEffect } from './types';

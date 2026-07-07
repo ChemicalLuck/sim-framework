@@ -1,17 +1,17 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import type { NpcFilter, NpcSelection } from '@chemicalluck/engine/types/npc-filter.types';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import type { NpcFilter, NpcSelection } from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 import { NpcFiltersEditor } from './npc-filters-editor';
 

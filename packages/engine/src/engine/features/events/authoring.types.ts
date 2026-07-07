@@ -1,4 +1,4 @@
-import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export interface JsonRandomEvent {
   id: string;

@@ -1,11 +1,11 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { Scene, Script } from '@chemicalluck/engine/types';
+import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 
 /**
  * Maps each view ID to its required props.
  * Game code can extend this via TypeScript module augmentation:
  *
- *   declare module '@chemicalluck/engine/features/view/slice' {
+ *   declare module '@chemicalluck/sim-engine/features/view/slice' {
  *     interface ViewPropsMap {
  *       MyGameView: Record<string, never>;
  *     }
@@ -74,7 +74,7 @@ export const { setView, setDescription } = viewSlice.actions;
 
 export default viewSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     view: ReturnType<typeof viewSlice.reducer>;
   }

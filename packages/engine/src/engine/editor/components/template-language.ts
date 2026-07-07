@@ -15,8 +15,8 @@ import { tags } from '@lezer/highlight';
 import {
   type TemplateLintContext,
   lintTemplate,
-} from '@chemicalluck/engine/features/linguistics/lib/lint';
-import { ENTITY_FIELD_NAMES } from '@chemicalluck/engine/features/linguistics/lib/variables';
+} from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
+import { ENTITY_FIELD_NAMES } from '@chemicalluck/sim-engine/features/linguistics/lib/variables';
 
 interface TokenizerState {
   brace: boolean;

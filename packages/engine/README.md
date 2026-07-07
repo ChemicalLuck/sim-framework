@@ -1,4 +1,4 @@
-# @chemicalluck/engine
+# @chemicalluck/sim-engine
 
 The game-agnostic core of the **sim** framework: the React/Redux runtime, the content
 editor, and the two Vite plugins (`game-plugin`, `editor-plugin`) that wire a game's content
@@ -12,10 +12,10 @@ with `npm create @chemicalluck/sim-game` instead.
 
 | Import | What |
 | --- | --- |
-| `@chemicalluck/engine` | `GameEngine`, `GameConfig` — the React root a game renders. |
-| `@chemicalluck/engine/game-plugin` | `gamePlugin(options)` — Vite plugin, feature/extension auto-discovery. |
-| `@chemicalluck/engine/editor/editor-plugin` | `editorPlugin(options)` — dev-only content editor server. |
-| `@chemicalluck/engine/*` | Deep access to any engine module (features, lib, components, state, data, types). |
+| `@chemicalluck/sim-engine` | `GameEngine`, `GameConfig` — the React root a game renders. |
+| `@chemicalluck/sim-engine/game-plugin` | `gamePlugin(options)` — Vite plugin, feature/extension auto-discovery. |
+| `@chemicalluck/sim-engine/editor/editor-plugin` | `editorPlugin(options)` — dev-only content editor server. |
+| `@chemicalluck/sim-engine/*` | Deep access to any engine module (features, lib, components, state, data, types). |
 
 ## Boundary rule
 

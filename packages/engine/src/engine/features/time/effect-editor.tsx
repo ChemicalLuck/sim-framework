@@ -1,17 +1,17 @@
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
+} from '@chemicalluck/sim-engine/components/ui/select';
 import {
   NumField,
   TwoCol,
-} from '@chemicalluck/engine/editor/components/effect-form-primitives';
-import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
+} from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
+import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
 interface TimeFormState {
   hours: string;
@@ -130,7 +130,7 @@ const sleep = defineEffectEditor<SleepFormState>({
   ),
 });
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     time: typeof time;
     sleep: typeof sleep;

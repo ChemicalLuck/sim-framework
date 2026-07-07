@@ -1,8 +1,8 @@
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { regenerateNpcs } from '@chemicalluck/engine/features/npcs/slice';
-import { setGameSeed } from '@chemicalluck/engine/features/rng/slice';
-import { setView } from '@chemicalluck/engine/features/view/slice';
-import { useEngineDispatch } from '@chemicalluck/engine/state/store';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { regenerateNpcs } from '@chemicalluck/sim-engine/features/npcs/slice';
+import { setGameSeed } from '@chemicalluck/sim-engine/features/rng/slice';
+import { setView } from '@chemicalluck/sim-engine/features/view/slice';
+import { useEngineDispatch } from '@chemicalluck/sim-engine/state/store';
 
 export function NewGameButton() {
   const dispatch = useEngineDispatch();

@@ -9,8 +9,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@chemicalluck/engine/components/ui/alert-dialog';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+} from '@chemicalluck/sim-engine/components/ui/alert-dialog';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -19,12 +19,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@chemicalluck/engine/components/ui/dialog';
-import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
-import { ScrollArea } from '@chemicalluck/engine/components/ui/scroll-area';
-import { Skeleton } from '@chemicalluck/engine/components/ui/skeleton';
+} from '@chemicalluck/sim-engine/components/ui/dialog';
+import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
+import { ScrollArea } from '@chemicalluck/sim-engine/components/ui/scroll-area';
+import { Skeleton } from '@chemicalluck/sim-engine/components/ui/skeleton';
 
 // ── InlineEdit ───────────────────────────────────────────────────
 

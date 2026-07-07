@@ -6,8 +6,8 @@ import {
   collectEffectRefs,
   rewriteActionGroupRefs,
   rewriteEffectRefs,
-} from '@chemicalluck/engine/lib/validation';
-import type { Item, Wearable } from '@chemicalluck/engine/types/item.types';
+} from '@chemicalluck/sim-engine/lib/validation';
+import type { Item, Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 import type { JsonSceneWithId, JsonScript } from './types';
 

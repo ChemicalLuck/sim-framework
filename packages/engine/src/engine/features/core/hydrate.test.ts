@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { buildRegistry } from '@chemicalluck/engine/data/registry';
-import type { Scene, Script } from '@chemicalluck/engine/types';
+import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
+import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type {
   Item,
   Wearable,
   WearableTemplate,
-} from '@chemicalluck/engine/types/item.types';
+} from '@chemicalluck/sim-engine/types/item.types';
 
 import {
   hydrateAction,

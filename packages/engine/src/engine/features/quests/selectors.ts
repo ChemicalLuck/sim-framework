@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { isConditionMet } from '@chemicalluck/engine/lib/conditions';
-import type { RootState } from '@chemicalluck/engine/state/store';
-import type { Action, ActionGroup } from '@chemicalluck/engine/types';
+import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
+import type { Action, ActionGroup } from '@chemicalluck/sim-engine/types';
 
 import { questObjectiveComplete } from './effects';
 

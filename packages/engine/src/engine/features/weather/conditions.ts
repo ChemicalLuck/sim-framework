@@ -1,9 +1,9 @@
-import type { RootState } from '@chemicalluck/engine/state/store';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { computeDayWeather, getSeason } from './lib/weather';
 import type { SeasonCondition, WeatherConditionExpr } from './types';
 
-declare module '@chemicalluck/engine/types/condition.types' {
+declare module '@chemicalluck/sim-engine/types/condition.types' {
   interface ConditionMap {
     season: SeasonCondition;
     weather: WeatherConditionExpr;

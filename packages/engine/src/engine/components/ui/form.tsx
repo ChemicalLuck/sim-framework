@@ -12,8 +12,8 @@ import {
   useFormContext,
   useFormState,
 } from 'react-hook-form';
-import { Label } from '@chemicalluck/engine/components/ui/label';
-import { cn } from '@chemicalluck/engine/lib/css';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
+import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 const Form = FormProvider;
 

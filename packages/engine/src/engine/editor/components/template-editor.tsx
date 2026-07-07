@@ -2,7 +2,7 @@ import { lintGutter } from '@codemirror/lint';
 import { EditorView } from '@codemirror/view';
 import CodeMirror from '@uiw/react-codemirror';
 import { useMemo, useRef } from 'react';
-import type { TemplateLintContext } from '@chemicalluck/engine/features/linguistics/lib/lint';
+import type { TemplateLintContext } from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
 
 import { templateExtensions } from './template-language';
 

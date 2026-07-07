@@ -1,6 +1,6 @@
-import type { BodyAttributes, Character } from '@chemicalluck/engine/types/character.types';
-import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
-import type { InventoryItem, Wearable } from '@chemicalluck/engine/types/item.types';
+import type { BodyAttributes, Character } from '@chemicalluck/sim-engine/types/character.types';
+import type { BaseEffect } from '@chemicalluck/sim-engine/types/effect.types';
+import type { InventoryItem, Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 export interface Player extends Character {
   id: 'player';
@@ -34,7 +34,7 @@ export interface BodyAttributeEffect extends BaseEffect<'bodyAttribute'> {
   readonly delta: number;
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     equip: EquipEffect;
     inventory: InventoryEffect;

@@ -1,10 +1,10 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import type { Encounter } from '@chemicalluck/engine/features/encounter/types';
-import { handleViewEffect } from '@chemicalluck/engine/features/view/effects';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+} from '@chemicalluck/sim-engine/features/core/types';
+import type { Encounter } from '@chemicalluck/sim-engine/features/encounter/types';
+import { handleViewEffect } from '@chemicalluck/sim-engine/features/view/effects';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
 import { startEncounter } from './slice';
 import type { EncounterEffect } from './types';

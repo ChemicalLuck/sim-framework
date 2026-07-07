@@ -1,5 +1,5 @@
-import type { BodyAttributes } from '@chemicalluck/engine/types/character.types';
-import type { Wearable } from '@chemicalluck/engine/types/item.types';
+import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
+import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 import { resolveMetric } from './body';
 import type {

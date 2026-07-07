@@ -22,7 +22,7 @@ const weatherSlice = createSlice({
 export const { setWeatherOverride } = weatherSlice.actions;
 export default weatherSlice.reducer;
 
-declare module '@chemicalluck/engine/state/store' {
+declare module '@chemicalluck/sim-engine/state/store' {
   interface PresentState {
     weather: ReturnType<typeof weatherSlice.reducer>;
   }

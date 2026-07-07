@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
+} from '@chemicalluck/sim-engine/features/core/types';
 
 import { addMilestone } from './slice';
 import type { MilestoneEffect } from './types';

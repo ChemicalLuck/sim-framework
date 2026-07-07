@@ -11,7 +11,7 @@ export interface JsonContainerInsertEffect {
   itemId: string;
 }
 
-declare module '@chemicalluck/engine/data/authoring.types' {
+declare module '@chemicalluck/sim-engine/data/authoring.types' {
   interface JsonEffectMap {
     inventory_add: JsonInventoryAddEffect;
     container_insert: JsonContainerInsertEffect;

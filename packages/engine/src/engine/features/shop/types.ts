@@ -1,10 +1,10 @@
-import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
+import type { BaseEffect } from '@chemicalluck/sim-engine/types/effect.types';
 import type {
   InventoryItem,
   Item,
   Wearable,
   WearableTemplate,
-} from '@chemicalluck/engine/types/item.types';
+} from '@chemicalluck/sim-engine/types/item.types';
 
 export interface Shop {
   text: string;
@@ -21,7 +21,7 @@ export interface PurchaseEffect extends BaseEffect<'purchase'> {
   cost: number;
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     purchase: PurchaseEffect;
   }
@@ -37,7 +37,7 @@ export interface ShopTab {
   items: ShopEntry[];
 }
 
-declare module '@chemicalluck/engine/features/view/slice' {
+declare module '@chemicalluck/sim-engine/features/view/slice' {
   interface ViewPropsMap {
     ShopView: { shop: Shop };
   }

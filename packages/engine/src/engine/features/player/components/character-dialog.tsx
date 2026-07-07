@@ -1,29 +1,29 @@
 import { Package, User } from 'lucide-react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@chemicalluck/engine/components/ui/dialog';
+} from '@chemicalluck/sim-engine/components/ui/dialog';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@chemicalluck/engine/components/ui/tabs';
+} from '@chemicalluck/sim-engine/components/ui/tabs';
 import {
   getBodyAttributes,
   isBodyAttributeVisible,
-} from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import { getSkills } from '@chemicalluck/engine/features/player/lib/skills';
+} from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import { getSkills } from '@chemicalluck/sim-engine/features/player/lib/skills';
 import {
   selectAppearanceDescription,
   selectPlayerDescription,
   selectPlayerSizes,
-} from '@chemicalluck/engine/features/player/selectors';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
+} from '@chemicalluck/sim-engine/features/player/selectors';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
 export default function CharacterDialog() {
   const profile = useEngineSelector((s) => s.present.player.profile);

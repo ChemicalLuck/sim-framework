@@ -2,9 +2,9 @@ import { toast } from 'sonner';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { equipItem } from '@chemicalluck/engine/features/player/slice';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { equipItem } from '@chemicalluck/sim-engine/features/player/slice';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
 import type { ApplyOutfitEffect } from './types';
 

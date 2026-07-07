@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { EffectContext } from '@chemicalluck/engine/features/core/types';
+import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
 
 import { handleCalendarEffect } from './effects';
 import type { CalendarEffect, ScheduledEvent } from './types';

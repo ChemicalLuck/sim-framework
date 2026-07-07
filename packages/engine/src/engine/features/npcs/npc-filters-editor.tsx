@@ -1,16 +1,16 @@
 import { Plus, Trash2, X } from 'lucide-react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import { getAppearanceLists } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import { getProfessions } from '@chemicalluck/engine/features/npcs/lib/professions';
-import type { NpcFilter } from '@chemicalluck/engine/types/npc-filter.types';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import { getProfessions } from '@chemicalluck/sim-engine/features/npcs/lib/professions';
+import type { NpcFilter } from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 const TRAITS = ['Introverted', 'Extroverted'] as const;
 

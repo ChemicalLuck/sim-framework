@@ -1,13 +1,13 @@
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
 import type { WeatherConditionId } from './types';
 
@@ -69,7 +69,7 @@ const weather = defineEffectEditor<WeatherFormState>({
   ),
 });
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     weather: typeof weather;
   }

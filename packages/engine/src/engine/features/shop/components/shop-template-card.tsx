@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { ActionButton } from '@chemicalluck/engine/components/action-button';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@chemicalluck/engine/components/ui/card';
+} from '@chemicalluck/sim-engine/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -16,28 +16,28 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@chemicalluck/engine/components/ui/dialog';
+} from '@chemicalluck/sim-engine/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import { formatMoney } from '@chemicalluck/engine/features/money/lib/currency';
-import { formatSize, idealSizeLabels } from '@chemicalluck/engine/features/outfits/lib/fit';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import { formatMoney } from '@chemicalluck/sim-engine/features/money/lib/currency';
+import { formatSize, idealSizeLabels } from '@chemicalluck/sim-engine/features/outfits/lib/fit';
 import {
   getAppearanceKeys,
   getEstimatedMetrics,
   getSizeSystems,
-} from '@chemicalluck/engine/features/outfits/lib/wearable-config';
-import { generateWearableFromTemplate } from '@chemicalluck/engine/features/outfits/lib/wearables';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
+} from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
+import { generateWearableFromTemplate } from '@chemicalluck/sim-engine/features/outfits/lib/wearables';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 import type {
   WearableAppearance,
   WearableAppearanceKey,
   WearableTemplate,
-} from '@chemicalluck/engine/types/item.types';
+} from '@chemicalluck/sim-engine/types/item.types';
 
 interface ShopTemplateCardProps {
   template: WearableTemplate;

@@ -1,5 +1,5 @@
 {
-  "extends": "@chemicalluck/config/tsconfig/node.json",
+  "extends": "@chemicalluck/sim-config/tsconfig/node.json",
   "compilerOptions": {
     "types": ["node"]
   },

@@ -1,8 +1,8 @@
-import { IdSelect } from '@chemicalluck/engine/editor/components/effect-form-primitives';
+import { IdSelect } from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
 import {
   type DataRequirement,
   defineEffectEditor,
-} from '@chemicalluck/engine/editor/lib/effect-editor';
+} from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
 interface TravelFormState {
   locationId: string;
@@ -35,7 +35,7 @@ const travel = defineEffectEditor<TravelFormState>({
 
 export const editorDataRequirements: DataRequirement[] = [{ key: 'locations' }];
 
-declare module '@chemicalluck/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/sim-engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     travel: typeof travel;
   }

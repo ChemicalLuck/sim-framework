@@ -3,7 +3,7 @@
  * Each key is the Expr's `kind` discriminator.
  *
  * @example
- * declare module '@chemicalluck/engine/types/condition.types' {
+ * declare module '@chemicalluck/sim-engine/types/condition.types' {
  *   interface ExprMap {
  *     my_expr: MyExpr;
  *   }
@@ -42,7 +42,7 @@ export interface NotCondition {
  * Each key is the condition's `kind` discriminator.
  *
  * @example
- * declare module '@chemicalluck/engine/types/condition.types' {
+ * declare module '@chemicalluck/sim-engine/types/condition.types' {
  *   interface ConditionMap {
  *     my_condition: MyCondition;
  *   }

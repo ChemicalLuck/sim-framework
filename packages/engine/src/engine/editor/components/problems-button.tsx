@@ -1,14 +1,14 @@
 import { AlertTriangle, Check } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@chemicalluck/engine/components/ui/dialog';
-import { ScrollArea } from '@chemicalluck/engine/components/ui/scroll-area';
+} from '@chemicalluck/sim-engine/components/ui/dialog';
+import { ScrollArea } from '@chemicalluck/sim-engine/components/ui/scroll-area';
 
 import { sourceToPath, useValidationIssues } from '../lib/validation';
 

@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useState } from 'react';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
-import { useReportDirty } from '@chemicalluck/engine/editor/lib/unsaved-changes';
-import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
+import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
+import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 
 function TimeConfigPanel() {
   const {

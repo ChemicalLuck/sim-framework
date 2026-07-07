@@ -1,14 +1,14 @@
 import { type ReactNode } from 'react';
-import { Field } from '@chemicalluck/engine/components/ui/field';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Field } from '@chemicalluck/sim-engine/components/ui/field';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
+} from '@chemicalluck/sim-engine/components/ui/select';
 
 export function TwoCol({ children }: { children: ReactNode }) {
   return <div className="grid grid-cols-2 gap-2">{children}</div>;

@@ -1,5 +1,5 @@
 {
-  "name": "@chemicalluck/sim",
+  "name": "@chemicalluck/sim-cli",
   "version": "0.1.0",
   "type": "module",
   "description": "The sim game framework CLI — dev server, single-file build, and content editor.",
@@ -25,7 +25,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@chemicalluck/engine": "workspace:*",
+    "@chemicalluck/sim-engine": "workspace:*",
     "@tailwindcss/vite": "^4.1.16",
     "@vitejs/plugin-react": "^5.0.4",
     "lightningcss": "^1.32.0",
@@ -33,7 +33,7 @@
     "vite-plugin-singlefile": "^2.3.0"
   },
   "devDependencies": {
-    "@chemicalluck/config": "workspace:*",
+    "@chemicalluck/sim-config": "workspace:*",
     "@types/node": "^24.10.0",
     "tsup": "^8.3.5",
     "typescript": "~5.9.3"

@@ -10,7 +10,7 @@ export interface JsonViewScriptEffect {
   scriptId: string;
 }
 
-declare module '@chemicalluck/engine/data/authoring.types' {
+declare module '@chemicalluck/sim-engine/data/authoring.types' {
   interface JsonEffectMap {
     view_scene: JsonViewSceneEffect;
     view_script: JsonViewScriptEffect;

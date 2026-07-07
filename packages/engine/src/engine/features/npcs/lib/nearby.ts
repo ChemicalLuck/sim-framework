@@ -1,7 +1,7 @@
 import type {
   NearbyConditions,
   NearbyScheduleSlot,
-} from '@chemicalluck/engine/features/travel/types';
+} from '@chemicalluck/sim-engine/features/travel/types';
 
 export type { NearbyScheduleSlot };
 

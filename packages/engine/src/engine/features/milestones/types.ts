@@ -1,4 +1,4 @@
-import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
+import type { BaseEffect } from '@chemicalluck/sim-engine/types/effect.types';
 
 export interface Milestone {
   id: string;
@@ -14,7 +14,7 @@ export interface MilestoneEffect extends BaseEffect<'milestone'> {
   readonly milestoneId: string;
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     milestone: MilestoneEffect;
   }

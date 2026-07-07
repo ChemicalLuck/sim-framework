@@ -1,12 +1,12 @@
 import { Moon, Sun } from 'lucide-react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@chemicalluck/engine/components/ui/dropdown-menu';
-import { useTheme } from '@chemicalluck/engine/components/ui/theme-provider';
+} from '@chemicalluck/sim-engine/components/ui/dropdown-menu';
+import { useTheme } from '@chemicalluck/sim-engine/components/ui/theme-provider';
 
 export function ModeToggle() {
   const { setTheme } = useTheme();

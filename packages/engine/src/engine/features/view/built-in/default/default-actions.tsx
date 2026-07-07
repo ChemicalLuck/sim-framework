@@ -1,17 +1,17 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { actionGroupProviders } from 'virtual:game-extensions';
-import { ActionButtonList } from '@chemicalluck/engine/components/action-button-list';
-import { selectItemActions } from '@chemicalluck/engine/features/player/selectors';
-import { questActions } from '@chemicalluck/engine/features/quests/selectors';
+import { ActionButtonList } from '@chemicalluck/sim-engine/components/action-button-list';
+import { selectItemActions } from '@chemicalluck/sim-engine/features/player/selectors';
+import { questActions } from '@chemicalluck/sim-engine/features/quests/selectors';
 import {
   adjacentTravelActions,
   currentLocationActions,
   edgeTravelActions,
   parentTravelActions,
-} from '@chemicalluck/engine/features/travel/selectors';
-import type { RootState } from '@chemicalluck/engine/state/store';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
-import type { ActionGroup } from '@chemicalluck/engine/types';
+} from '@chemicalluck/sim-engine/features/travel/selectors';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import type { ActionGroup } from '@chemicalluck/sim-engine/types';
 
 const selectActionGroups = createSelector(
   (state: RootState) => state.present.player.locationId,

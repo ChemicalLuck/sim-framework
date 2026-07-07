@@ -1,12 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { TemplateEditor } from '@chemicalluck/engine/editor/components/template-editor';
-import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
-import { useReportDirty } from '@chemicalluck/engine/editor/lib/unsaved-changes';
-import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
-import { getAppearanceLists } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
+import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
+import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
+import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
+import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 
 import type { TemplateLintContext } from './lib/lint';
 import { NARRATIVE_VAR_NAMES, PRONOUN_FIELDS } from './lib/variables';

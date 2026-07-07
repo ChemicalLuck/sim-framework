@@ -1,7 +1,7 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -9,36 +9,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@chemicalluck/engine/components/ui/form';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+} from '@chemicalluck/sim-engine/components/ui/form';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
+} from '@chemicalluck/sim-engine/components/ui/select';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@chemicalluck/engine/editor/components/panel-layout';
-import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
-import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
-import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
+} from '@chemicalluck/sim-engine/editor/components/panel-layout';
+import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
+import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
+import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
 import {
   getAppearanceLists,
   getAppearanceWeights,
-} from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import { getProfessions } from '@chemicalluck/engine/features/npcs/lib/professions';
+} from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import { getProfessions } from '@chemicalluck/sim-engine/features/npcs/lib/professions';
 import type {
   NamedNpcDefinition,
   NpcScheduleEntry,
-} from '@chemicalluck/engine/features/npcs/types';
-import type { ConversationTopic } from '@chemicalluck/engine/features/npcs/types';
+} from '@chemicalluck/sim-engine/features/npcs/types';
+import type { ConversationTopic } from '@chemicalluck/sim-engine/features/npcs/types';
 
 import { AddTopicDialog, TopicDetail } from './conversations-panel';
 

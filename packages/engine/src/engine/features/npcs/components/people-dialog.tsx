@@ -1,35 +1,35 @@
 import { RefreshCw, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Card } from '@chemicalluck/engine/components/ui/card';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Card } from '@chemicalluck/sim-engine/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@chemicalluck/engine/components/ui/dialog';
-import Roundel from '@chemicalluck/engine/components/ui/roundel';
-import { ScrollArea } from '@chemicalluck/engine/components/ui/scroll-area';
+} from '@chemicalluck/sim-engine/components/ui/dialog';
+import Roundel from '@chemicalluck/sim-engine/components/ui/roundel';
+import { ScrollArea } from '@chemicalluck/sim-engine/components/ui/scroll-area';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@chemicalluck/engine/components/ui/tabs';
+} from '@chemicalluck/sim-engine/components/ui/tabs';
 import {
   describeStranger,
   getRelationshipGroup,
-} from '@chemicalluck/engine/features/npcs/lib/npcs';
+} from '@chemicalluck/sim-engine/features/npcs/lib/npcs';
 import {
   selectNpcsKnown,
   selectNpcsNearby,
-} from '@chemicalluck/engine/features/npcs/selectors';
-import { regenerateNpcs } from '@chemicalluck/engine/features/npcs/slice';
-import type { NPC } from '@chemicalluck/engine/features/npcs/types';
-import { selectRelationships } from '@chemicalluck/engine/features/relationships/selectors';
-import { setView } from '@chemicalluck/engine/features/view/slice';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
+} from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { regenerateNpcs } from '@chemicalluck/sim-engine/features/npcs/slice';
+import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
+import { selectRelationships } from '@chemicalluck/sim-engine/features/relationships/selectors';
+import { setView } from '@chemicalluck/sim-engine/features/view/slice';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
 const GROUP_LABELS: Record<string, string> = {
   romantic: 'Romantic',

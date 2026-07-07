@@ -4,7 +4,7 @@ export interface WearableConditionEffect {
   readonly target: string;
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     wearable_condition: WearableConditionEffect;
   }

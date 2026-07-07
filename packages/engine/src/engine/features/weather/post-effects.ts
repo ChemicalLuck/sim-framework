@@ -1,9 +1,9 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { increaseNeedByAmount } from '@chemicalluck/engine/features/needs/slice';
-import type { PostEffectHandler } from '@chemicalluck/engine/state/thunks';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { increaseNeedByAmount } from '@chemicalluck/sim-engine/features/needs/slice';
+import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
 
 import { computeDayWeather } from './lib/weather';
 import type { WeatherConditionId } from './types';

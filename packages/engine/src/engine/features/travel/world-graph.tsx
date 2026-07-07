@@ -13,31 +13,31 @@ import '@xyflow/react/dist/style.css';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '@chemicalluck/engine/components/ui/badge';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Input } from '@chemicalluck/engine/components/ui/input';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
-import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
-import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
-import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
-import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import { ActionGroupsEditor } from '@chemicalluck/sim-engine/editor/components/action-groups-editor';
+import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
+import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
+import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import {
   formatMoney,
   getCurrencySymbol,
-} from '@chemicalluck/engine/features/money/lib/currency';
+} from '@chemicalluck/sim-engine/features/money/lib/currency';
 import type {
   Edge,
   LocationNode,
   LocationType,
   TravelType,
-} from '@chemicalluck/engine/features/travel/types';
+} from '@chemicalluck/sim-engine/features/travel/types';
 
 interface WorldData {
   locations: LocationNode[];

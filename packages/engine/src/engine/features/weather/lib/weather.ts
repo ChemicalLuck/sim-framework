@@ -1,4 +1,4 @@
-import { Mulberry32 } from '@chemicalluck/engine/features/rng/lib/rng';
+import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 
 import type { DailyWeather, SeasonId, WeatherConditionId } from '../types';
 import { WEATHER_CONDITIONS } from './conditions';

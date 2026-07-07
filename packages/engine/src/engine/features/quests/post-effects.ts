@@ -2,10 +2,10 @@ import { toast } from 'sonner';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@chemicalluck/engine/features/core/types';
-import { isConditionMet } from '@chemicalluck/engine/lib/conditions';
-import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
-import { processEffects } from '@chemicalluck/engine/state/thunks';
+} from '@chemicalluck/sim-engine/features/core/types';
+import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
+import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
+import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 
 import { updateQuestObjective } from './slice';
 

@@ -9,7 +9,7 @@ import { gamePlugin } from './src/engine/game-plugin';
 const dirname = import.meta.dirname;
 const fixtureGame = path.resolve(dirname, 'test/fixtures/game');
 
-// The engine consumes itself by package name (@chemicalluck/engine/...) internally.
+// The engine consumes itself by package name (@chemicalluck/sim-engine/...) internally.
 // For unit tests we resolve that to the local source rather than node_modules.
 //
 // A handful of editor modules (e.g. the preview sandbox store) import the
@@ -29,7 +29,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@chemicalluck/engine': path.resolve(dirname, 'src/engine'),
+      '@chemicalluck/sim-engine': path.resolve(dirname, 'src/engine'),
     },
   },
   test: {

@@ -1,22 +1,22 @@
 import { X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { Badge } from '@chemicalluck/engine/components/ui/badge';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
-import { Label } from '@chemicalluck/engine/components/ui/label';
+import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@chemicalluck/engine/components/ui/select';
+} from '@chemicalluck/sim-engine/components/ui/select';
 import {
   type EffectEditorModule,
   useEffectEditors,
-} from '@chemicalluck/engine/editor/lib/effect-editor';
-import { type AvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
+} from '@chemicalluck/sim-engine/editor/lib/effect-editor';
+import { type AvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 export function EffectChip({
   effect,

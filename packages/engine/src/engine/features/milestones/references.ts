@@ -2,7 +2,7 @@ import {
   type IdSource,
   type NodeRefExtractor,
   type NodeRefRewriter,
-} from '@chemicalluck/engine/lib/validation';
+} from '@chemicalluck/sim-engine/lib/validation';
 
 export const idSources: IdSource[] = [
   {

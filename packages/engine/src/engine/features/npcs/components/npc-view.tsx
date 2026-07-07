@@ -1,15 +1,15 @@
-import { ActionButton } from '@chemicalluck/engine/components/action-button';
-import { NpcMeta } from '@chemicalluck/engine/components/npc-meta';
-import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
-import { getAppearanceLists } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import { describeStranger } from '@chemicalluck/engine/features/npcs/lib/npcs';
-import { selectNpcById } from '@chemicalluck/engine/features/npcs/selectors';
+import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
+import { NpcMeta } from '@chemicalluck/sim-engine/components/npc-meta';
+import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
+import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import { describeStranger } from '@chemicalluck/sim-engine/features/npcs/lib/npcs';
+import { selectNpcById } from '@chemicalluck/sim-engine/features/npcs/selectors';
 import {
   selectNpcKnown,
   selectNpcRelationship,
-} from '@chemicalluck/engine/features/relationships/selectors';
-import * as effects from '@chemicalluck/engine/features/view/helpers';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
+} from '@chemicalluck/sim-engine/features/relationships/selectors';
+import * as effects from '@chemicalluck/sim-engine/features/view/helpers';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
 interface NpcViewProps {
   npcId: string;

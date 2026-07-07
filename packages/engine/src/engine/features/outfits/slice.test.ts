@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Equipment } from '@chemicalluck/engine/types/character.types';
+import type { Equipment } from '@chemicalluck/sim-engine/types/character.types';
 
 import reducer, { addOutfit, removeOutfitByName } from './slice';
 import type { Outfit } from './types';

@@ -1,9 +1,9 @@
-import { IdSelect } from '@chemicalluck/engine/editor/components/effect-form-primitives';
+import { IdSelect } from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
 import {
   type DataRequirement,
   type ViewSectionSpec,
-} from '@chemicalluck/engine/editor/lib/effect-editor';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
+} from '@chemicalluck/sim-engine/editor/lib/effect-editor';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 export const viewSections: ViewSectionSpec[] = [
   {

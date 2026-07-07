@@ -1,4 +1,4 @@
-# @chemicalluck/config
+# @chemicalluck/sim-config
 
 Shared TypeScript, ESLint, and Prettier presets for the **sim** framework and the games
 built on it. Scaffolded games already extend these; you rarely install it directly.
@@ -7,17 +7,17 @@ built on it. Scaffolded games already extend these; you rarely install it direct
 
 ```jsonc
 // tsconfig.json
-{ "extends": "@chemicalluck/config/tsconfig/game.json" }
+{ "extends": "@chemicalluck/sim-config/tsconfig/game.json" }
 ```
 
-Also available: `@chemicalluck/config/tsconfig/base.json` and
-`@chemicalluck/config/tsconfig/node.json`.
+Also available: `@chemicalluck/sim-config/tsconfig/base.json` and
+`@chemicalluck/sim-config/tsconfig/node.json`.
 
 ## ESLint
 
 ```js
 // eslint.config.js
-import { simEslintConfig } from '@chemicalluck/config/eslint';
+import { simEslintConfig } from '@chemicalluck/sim-config/eslint';
 
 export default simEslintConfig({ tsconfigRootDir: import.meta.dirname });
 ```
@@ -26,7 +26,7 @@ export default simEslintConfig({ tsconfigRootDir: import.meta.dirname });
 
 ```js
 // prettier.config.js
-export { default } from '@chemicalluck/config/prettier';
+export { default } from '@chemicalluck/sim-config/prettier';
 ```
 
 📖 [Documentation](https://github.com/ChemicalLuck/sim-framework/wiki)

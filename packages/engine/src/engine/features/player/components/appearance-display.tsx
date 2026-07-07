@@ -1,5 +1,5 @@
-import { selectAppearanceDescription } from '@chemicalluck/engine/features/player/selectors';
-import { useEngineSelector } from '@chemicalluck/engine/state/store';
+import { selectAppearanceDescription } from '@chemicalluck/sim-engine/features/player/selectors';
+import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
 export default function AppearanceDisplay() {
   const appearanceDescription = useEngineSelector(selectAppearanceDescription);

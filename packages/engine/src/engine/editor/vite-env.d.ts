@@ -6,8 +6,8 @@ declare module 'virtual:editor-extensions' {
     DataRequirement,
     EffectEditorModule,
     ViewSectionSpec,
-  } from '@chemicalluck/engine/editor/lib/effect-editor';
-  import type { EffectRenderer } from '@chemicalluck/engine/editor/lib/effect-renderers';
+  } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
+  import type { EffectRenderer } from '@chemicalluck/sim-engine/editor/lib/effect-renderers';
 
   export interface EditorPanel {
     label: string;

@@ -8,7 +8,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@chemicalluck/engine/components/ui/command';
+} from '@chemicalluck/sim-engine/components/ui/command';
 
 import { useEditorData } from '../lib/use-editor-data';
 

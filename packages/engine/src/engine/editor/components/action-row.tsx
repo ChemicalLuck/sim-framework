@@ -1,15 +1,15 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '@chemicalluck/engine/components/ui/badge';
-import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-} from '@chemicalluck/engine/components/ui/select';
-import type { Action } from '@chemicalluck/engine/types/action.types';
-import type { Effect } from '@chemicalluck/engine/types/effect.types';
+} from '@chemicalluck/sim-engine/components/ui/select';
+import type { Action } from '@chemicalluck/sim-engine/types/action.types';
+import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 import type { AvailableData } from '../lib/use-available-data';
 import { ConditionField } from './condition-field';

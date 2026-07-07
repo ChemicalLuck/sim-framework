@@ -1,4 +1,4 @@
-import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
+import type { BaseEffect } from '@chemicalluck/sim-engine/types/effect.types';
 
 export type Need = string;
 
@@ -9,7 +9,7 @@ export interface NeedsEffect extends BaseEffect<'needs'> {
   readonly target?: 'player' | 'npc';
 }
 
-declare module '@chemicalluck/engine/types/effect.types' {
+declare module '@chemicalluck/sim-engine/types/effect.types' {
   interface EffectMap {
     needs: NeedsEffect;
   }

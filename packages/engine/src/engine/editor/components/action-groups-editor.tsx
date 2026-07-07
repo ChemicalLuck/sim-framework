@@ -1,8 +1,8 @@
 import { X } from 'lucide-react';
-import { Button } from '@chemicalluck/engine/components/ui/button';
-import { Label } from '@chemicalluck/engine/components/ui/label';
-import type { ActionGroup } from '@chemicalluck/engine/types';
-import type { Action } from '@chemicalluck/engine/types/action.types';
+import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Label } from '@chemicalluck/sim-engine/components/ui/label';
+import type { ActionGroup } from '@chemicalluck/sim-engine/types';
+import type { Action } from '@chemicalluck/sim-engine/types/action.types';
 
 import type { AvailableData } from '../lib/use-available-data';
 import { ActionRow } from './action-row';

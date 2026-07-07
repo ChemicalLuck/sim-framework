@@ -1,5 +1,5 @@
-import { getAppearanceDisplay } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
-import type { NPC } from '@chemicalluck/engine/features/npcs/types';
+import { getAppearanceDisplay } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
+import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 
 interface NpcMetaProps {
   npc: NPC;

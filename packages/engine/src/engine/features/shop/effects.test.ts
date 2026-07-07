@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { EffectContext } from '@chemicalluck/engine/features/core/types';
-import type { RootState } from '@chemicalluck/engine/state/store';
-import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
+import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
+import type { RootState } from '@chemicalluck/sim-engine/state/store';
+import type { InventoryItem } from '@chemicalluck/sim-engine/types/item.types';
 
 import { handlePurchaseEffect } from './effects';
 import type { PurchaseEffect } from './types';

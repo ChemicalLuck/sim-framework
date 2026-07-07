@@ -7,18 +7,18 @@ import {
   SidebarHeader,
   SidebarRail,
   useSidebar,
-} from '@chemicalluck/engine/components/ui/sidebar';
-import { ModeToggle } from '@chemicalluck/engine/components/ui/theme-toggle';
-import MoneyDisplay from '@chemicalluck/engine/features/money/components/money-display';
-import NeedsDisplay from '@chemicalluck/engine/features/needs/components/needs-display';
-import PeopleDialog from '@chemicalluck/engine/features/npcs/components/people-dialog';
-import AppearanceDisplay from '@chemicalluck/engine/features/player/components/appearance-display';
-import QuestsDialog from '@chemicalluck/engine/features/quests/components/quest-dialog';
-import ResetButton from '@chemicalluck/engine/features/save/components/reset-button';
-import SaveLoadDialog from '@chemicalluck/engine/features/save/components/save-load-dialog';
-import TimeDisplay from '@chemicalluck/engine/features/time/components/time-display';
-import WeatherDisplay from '@chemicalluck/engine/features/weather/components/weather-display';
-import { appName, version } from '@chemicalluck/engine/lib/core';
+} from '@chemicalluck/sim-engine/components/ui/sidebar';
+import { ModeToggle } from '@chemicalluck/sim-engine/components/ui/theme-toggle';
+import MoneyDisplay from '@chemicalluck/sim-engine/features/money/components/money-display';
+import NeedsDisplay from '@chemicalluck/sim-engine/features/needs/components/needs-display';
+import PeopleDialog from '@chemicalluck/sim-engine/features/npcs/components/people-dialog';
+import AppearanceDisplay from '@chemicalluck/sim-engine/features/player/components/appearance-display';
+import QuestsDialog from '@chemicalluck/sim-engine/features/quests/components/quest-dialog';
+import ResetButton from '@chemicalluck/sim-engine/features/save/components/reset-button';
+import SaveLoadDialog from '@chemicalluck/sim-engine/features/save/components/save-load-dialog';
+import TimeDisplay from '@chemicalluck/sim-engine/features/time/components/time-display';
+import WeatherDisplay from '@chemicalluck/sim-engine/features/weather/components/weather-display';
+import { appName, version } from '@chemicalluck/sim-engine/lib/core';
 
 import BackButton from './back';
 import EditorButton from './editor-button';
