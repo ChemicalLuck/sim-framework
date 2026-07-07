@@ -1,7 +1,7 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
+} from '@chemicalluck/engine/features/core/types';
 
 import { setWeatherOverride } from './slice';
 import type { WeatherEffect } from './types';

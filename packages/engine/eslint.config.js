@@ -1,4 +1,4 @@
-import { simEslintConfig } from '@sim/config/eslint';
+import { simEslintConfig } from '@chemicalluck/config/eslint';
 
 export default simEslintConfig({
   tsconfigRootDir: import.meta.dirname,

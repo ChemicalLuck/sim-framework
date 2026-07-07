@@ -23,12 +23,15 @@ importers:
 
   examples/university:
     dependencies:
+      '@chemicalluck/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@chemicalluck/sim':
+        specifier: workspace:*
+        version: link:../../packages/cli
       '@reduxjs/toolkit':
         specifier: ^2.10.1
         version: 2.12.0(react-redux@9.3.0(@types/react@19.2.17)(react@19.2.7)(redux@5.0.1))(react@19.2.7)
-      '@sim/engine':
-        specifier: workspace:*
-        version: link:../../packages/engine
       lucide-react:
         specifier: ^0.552.0
         version: 0.552.0(react@19.2.7)
@@ -41,9 +44,6 @@ importers:
       react-hook-form:
         specifier: ^7.75.0
         version: 7.81.0(react@19.2.7)
-      sim:
-        specifier: workspace:*
-        version: link:../../packages/cli
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -54,7 +54,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
-      '@sim/config':
+      '@chemicalluck/config':
         specifier: workspace:*
         version: link:../../packages/config
       typescript:
@@ -63,7 +63,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@sim/engine':
+      '@chemicalluck/engine':
         specifier: workspace:*
         version: link:../engine
       '@tailwindcss/vite':
@@ -82,7 +82,7 @@ importers:
         specifier: ^2.3.0
         version: 2.3.3(rollup@4.62.2)(vite@7.3.6(@types/node@24.13.2)(jiti@2.7.0)(lightningcss@1.32.0))
     devDependencies:
-      '@sim/config':
+      '@chemicalluck/config':
         specifier: workspace:*
         version: link:../config
       '@types/node':
@@ -130,7 +130,7 @@ importers:
 
   packages/create-sim-game:
     devDependencies:
-      '@sim/config':
+      '@chemicalluck/config':
         specifier: workspace:*
         version: link:../config
       '@types/node':
@@ -257,7 +257,7 @@ importers:
         specifier: ^3.3.1
         version: 3.6.0
     devDependencies:
-      '@sim/config':
+      '@chemicalluck/config':
         specifier: workspace:*
         version: link:../config
       '@testing-library/jest-dom':
@@ -308,18 +308,18 @@ importers:
 
   templates/starter:
     dependencies:
-      '@sim/engine':
+      '@chemicalluck/engine':
         specifier: workspace:*
         version: link:../../packages/engine
+      '@chemicalluck/sim':
+        specifier: workspace:*
+        version: link:../../packages/cli
       react:
         specifier: ^19.1.1
         version: 19.2.7
       react-dom:
         specifier: ^19.1.1
         version: 19.2.7(react@19.2.7)
-      sim:
-        specifier: workspace:*
-        version: link:../../packages/cli
       tailwindcss:
         specifier: ^4.1.16
         version: 4.3.2
@@ -327,7 +327,7 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
-      '@sim/config':
+      '@chemicalluck/config':
         specifier: workspace:*
         version: link:../../packages/config
       typescript:

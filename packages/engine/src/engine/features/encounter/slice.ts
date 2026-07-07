@@ -1,6 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { Encounter } from '@sim/engine/features/encounter/types';
-import { clampAdd } from '@sim/engine/lib/maths';
+import type { Encounter } from '@chemicalluck/engine/features/encounter/types';
+import { clampAdd } from '@chemicalluck/engine/lib/maths';
 
 export interface EncounterSliceState {
   encounter: Encounter | null;
@@ -82,7 +82,7 @@ export const {
 
 export default encounterSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     encounter: ReturnType<typeof encounterSlice.reducer>;
   }

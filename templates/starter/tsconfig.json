@@ -1,5 +1,5 @@
 {
-  "extends": "@sim/config/tsconfig/game.json",
+  "extends": "@chemicalluck/config/tsconfig/game.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
   }

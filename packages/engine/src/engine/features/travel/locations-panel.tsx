@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Field, FieldGroup } from '@sim/engine/components/ui/field';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -8,33 +8,33 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import { Textarea } from '@sim/engine/components/ui/textarea';
-import { ActionGroupsEditor } from '@sim/engine/editor/components/action-groups-editor';
-import { ConditionField } from '@sim/engine/editor/components/condition-field';
+} from '@chemicalluck/engine/components/ui/select';
+import { Textarea } from '@chemicalluck/engine/components/ui/textarea';
+import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
+import { ConditionField } from '@chemicalluck/engine/editor/components/condition-field';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@sim/engine/editor/components/panel-layout';
-import { editorTemplateContext } from '@sim/engine/editor/components/template-context';
-import { TemplateEditor } from '@sim/engine/editor/components/template-editor';
-import { useAddForm } from '@sim/engine/editor/lib/use-add-form';
-import { useAvailableData } from '@sim/engine/editor/lib/use-available-data';
-import { usePanelEntries } from '@sim/engine/editor/lib/use-panel-entries';
-import type { ActionGroup } from '@sim/engine/types/action-group.types';
-import type { Condition } from '@sim/engine/types/condition.types';
+} from '@chemicalluck/engine/editor/components/panel-layout';
+import { editorTemplateContext } from '@chemicalluck/engine/editor/components/template-context';
+import { TemplateEditor } from '@chemicalluck/engine/editor/components/template-editor';
+import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
+import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
+import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
+import type { ActionGroup } from '@chemicalluck/engine/types/action-group.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 interface RawLocation {
   id: string;

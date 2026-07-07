@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { resolvePronouns } from '@sim/engine/features/npcs/lib/appearance-config';
-import type { NPC } from '@sim/engine/features/npcs/types';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { resolvePronouns } from '@chemicalluck/engine/features/npcs/lib/appearance-config';
+import type { NPC } from '@chemicalluck/engine/features/npcs/types';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import { type EntityInput, buildTemplateContext } from './lib/context';
 import type { TemplateContext } from './lib/template';

@@ -1,5 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { ObjectiveState, Quest } from '@sim/engine/features/quests/types';
+import type { ObjectiveState, Quest } from '@chemicalluck/engine/features/quests/types';
 
 const questsSlice = createSlice({
   name: 'quests',
@@ -34,7 +34,7 @@ export const { loadQuests, addQuest, updateQuestObjective } =
 
 export default questsSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     quests: ReturnType<typeof questsSlice.reducer>;
   }

@@ -1,5 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { makeConfig } from '@sim/engine/lib/core';
+import { makeConfig } from '@chemicalluck/engine/lib/core';
 
 const _gameStart = makeConfig(0);
 
@@ -28,7 +28,7 @@ export const { advanceTimeByMinutes } = timeSlice.actions;
 
 export default timeSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     time: ReturnType<typeof timeSlice.reducer>;
   }

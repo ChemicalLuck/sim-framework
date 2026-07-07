@@ -40,7 +40,7 @@ warns about data files that are referenced but missing. Run it in CI.
 
 ## How it finds the engine
 
-The CLI resolves `@sim/engine` from **your** project's `node_modules`, so a game always
+The CLI resolves `@chemicalluck/engine` from **your** project's `node_modules`, so a game always
 builds against the engine version it depends on. Nothing is hard-coded to a global install.
 
 ## `sim.config.js` (optional)

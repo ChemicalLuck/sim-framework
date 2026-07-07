@@ -1,6 +1,6 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { makeConfig } from '@sim/engine/lib/core';
-import type { InventoryItem } from '@sim/engine/types/item.types';
+import { makeConfig } from '@chemicalluck/engine/lib/core';
+import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
 
 export interface ContainerConfig {
   player: InventoryItem[];
@@ -71,7 +71,7 @@ export const { depositItem, withdrawItem, clearContainer } =
 
 export default containersSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     containers: ReturnType<typeof containersSlice.reducer>;
   }

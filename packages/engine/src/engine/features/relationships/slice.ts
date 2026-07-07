@@ -2,7 +2,7 @@ import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
 import type {
   NpcRelationship,
   RelationshipMetric,
-} from '@sim/engine/features/npcs/types';
+} from '@chemicalluck/engine/features/npcs/types';
 
 type RelationshipsState = Record<string, NpcRelationship>;
 
@@ -41,7 +41,7 @@ export const DEFAULT_NPC_RELATIONSHIP = DEFAULT_RELATIONSHIP;
 
 export default relationshipsSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     relationships: ReturnType<typeof relationshipsSlice.reducer>;
   }

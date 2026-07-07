@@ -1,10 +1,10 @@
 import { toast } from 'sonner';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   type GameSaveMetadata,
   getSaveSlots,
   loadGame,
-} from '@sim/engine/features/save/saves';
+} from '@chemicalluck/engine/features/save/saves';
 
 interface SaveSlotListProps {
   slots: GameSaveMetadata[];

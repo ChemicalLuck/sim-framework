@@ -1,6 +1,6 @@
 import { GraduationCap } from 'lucide-react';
-import WithCentered from '@sim/engine/components/with-centered';
-import { appName } from '@sim/engine/lib/core';
+import WithCentered from '@chemicalluck/engine/components/with-centered';
+import { appName } from '@chemicalluck/engine/lib/core';
 
 import LoadSaveDialog from './load-save-dialog';
 import { NewGameButton } from './new-game-button';

@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { selectDate } from '@sim/engine/features/time/selectors';
-import type { RootState } from '@sim/engine/state/store';
+import { selectDate } from '@chemicalluck/engine/features/time/selectors';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 import { WEATHER_CONDITIONS } from './lib/conditions';
 import { computeDayWeather, getSeason } from './lib/weather';

@@ -1,4 +1,4 @@
-import type { BaseEffect } from '@sim/engine/types';
+import type { BaseEffect } from '@chemicalluck/engine/types';
 
 export type SeasonId = 'spring' | 'summer' | 'autumn' | 'winter';
 
@@ -46,7 +46,7 @@ export interface WeatherEffect extends BaseEffect<'weather'> {
   readonly conditionId: WeatherConditionId | null;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     weather: WeatherEffect;
   }

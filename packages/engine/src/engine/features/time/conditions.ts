@@ -1,4 +1,4 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 export interface GameTimeExpr {
   kind: 'gametime';
@@ -8,7 +8,7 @@ export interface GameHourExpr {
   kind: 'gamehour';
 }
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ExprMap {
     gametime: GameTimeExpr;
     gamehour: GameHourExpr;

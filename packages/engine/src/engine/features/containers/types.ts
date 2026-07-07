@@ -1,4 +1,4 @@
-import type { InventoryItem } from '@sim/engine/types/item.types';
+import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
 
 export type ContainerEffect =
   | {
@@ -30,7 +30,7 @@ export type ContainerEffect =
     }
   | { kind: 'container'; operation: 'clear'; containerId: string };
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     container: ContainerEffect;
   }

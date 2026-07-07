@@ -1,4 +1,4 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 import { DEFAULT_NPC_RELATIONSHIP } from './slice';
 

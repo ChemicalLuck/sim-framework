@@ -23,7 +23,7 @@ src/
 ```
 
 All gameplay lives in `src/game/`. The engine, editor, and build tooling come
-from `@sim/engine` and the `sim` CLI — you never configure Vite yourself.
+from `@chemicalluck/engine` and the `sim` CLI — you never configure Vite yourself.
 
 Edit `src/game/data/*.json` to build your world, then run `npm run check` to
 catch broken references. See the framework docs for the data formats and the

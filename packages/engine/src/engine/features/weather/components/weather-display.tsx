@@ -1,4 +1,4 @@
-import { useEngineSelector } from '@sim/engine/state/store';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import { WEATHER_ICON_MAP } from '../lib/icons';
 import { selectSeason, selectWeather } from '../selectors';

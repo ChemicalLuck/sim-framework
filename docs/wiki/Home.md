@@ -6,21 +6,21 @@ runtime, a content editor, and the build tooling. A game compiles to a **single
 self-contained HTML file**.
 
 It is structured like a modern web framework: a game is its own repo that depends on
-`@sim/engine` and the `sim` CLI, the same way an app depends on a framework and its CLI.
+`@chemicalluck/engine` and the `sim` CLI, the same way an app depends on a framework and its CLI.
 
 ## The pieces
 
 | Package | Role |
 | --- | --- |
-| `@sim/engine` | The game-agnostic runtime, the content editor, and the Vite plugins. Shipped as source. |
-| `sim` (CLI) | `dev` / `build` / `editor` / `preview` / `check`. Owns the build config — your game has no `vite.config.ts`. |
-| `create-sim-game` | Scaffolds a new game repo from the starter template. |
-| `@sim/config` | Shared TypeScript / ESLint / Prettier presets. |
+| `@chemicalluck/engine` | The game-agnostic runtime, the content editor, and the Vite plugins. Shipped as source. |
+| `@chemicalluck/sim` (CLI, bin `sim`) | `dev` / `build` / `editor` / `preview` / `check`. Owns the build config — your game has no `vite.config.ts`. |
+| `@chemicalluck/create-sim-game` | Scaffolds a new game repo from the starter template. |
+| `@chemicalluck/config` | Shared TypeScript / ESLint / Prettier presets. |
 
 ## Start here
 
 ```bash
-npm create sim-game my-game
+npm create @chemicalluck/sim-game my-game
 cd my-game
 npm install
 npm run dev        # game at /, content editor at /editor

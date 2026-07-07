@@ -1,6 +1,6 @@
-import type { EffectContext } from '@sim/engine/features/core/types';
-import { GlobalLogger } from '@sim/engine/lib/logger';
-import type { Effect } from '@sim/engine/types';
+import type { EffectContext } from '@chemicalluck/engine/features/core/types';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import type { Effect } from '@chemicalluck/engine/types';
 
 import type { EngineThunk } from './store';
 

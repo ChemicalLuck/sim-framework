@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
+} from '@chemicalluck/engine/features/core/types';
 
 import './effect-types';
 import type { WearableConditionEffect } from './effect-types';

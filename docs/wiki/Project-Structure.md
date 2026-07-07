@@ -5,8 +5,8 @@ tooling come from dependencies.
 
 ```
 my-game/
-  package.json        # depends on @sim/engine + sim (+ @sim/config)
-  tsconfig.json       # extends @sim/config/tsconfig/game.json
+  package.json        # depends on @chemicalluck/engine + sim (+ @chemicalluck/config)
+  tsconfig.json       # extends @chemicalluck/config/tsconfig/game.json
   sim-env.d.ts        # references the engine's virtual-module types
   index.html          # loads /src/main.tsx
   sim.config.js       # optional build overrides (see [[CLI]])
@@ -25,7 +25,7 @@ The entry point renders the engine. The default sidebar and views are used unles
 override them:
 
 ```tsx
-import { GameEngine } from '@sim/engine';
+import { GameEngine } from '@chemicalluck/engine';
 import '~/game/index.css';
 
 createRoot(root).render(<GameEngine />);
@@ -48,8 +48,8 @@ interface GameConfig {
 ## Path aliases
 
 - `~` → `./src` (your game code). Use `~/game/...`.
-- `@sim/engine` → the engine. Import runtime pieces from `@sim/engine`, deep modules from
-  `@sim/engine/...` (e.g. `@sim/engine/components/ui/button`).
+- `@chemicalluck/engine` → the engine. Import runtime pieces from `@chemicalluck/engine`, deep modules from
+  `@chemicalluck/engine/...` (e.g. `@chemicalluck/engine/components/ui/button`).
 
 ## The `src/game/` rule
 

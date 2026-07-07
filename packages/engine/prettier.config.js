@@ -1,1 +1,1 @@
-export { default } from '@sim/config/prettier';
+export { default } from '@chemicalluck/config/prettier';

@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Badge } from '@sim/engine/components/ui/badge';
+import { Badge } from '@chemicalluck/engine/components/ui/badge';
 
 import { sourceToPath } from '../lib/validation';
 

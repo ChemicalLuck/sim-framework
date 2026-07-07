@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 export const selectTimestamp = (state: RootState) =>
   state.present.time.timestamp;

@@ -3,16 +3,16 @@ import type {
   JsonActionGroup,
   JsonScene,
   JsonScript,
-} from '@sim/engine/features/core/types';
+} from '@chemicalluck/engine/features/core/types';
 import type {
   JsonEncounter,
   JsonEncounterState,
-} from '@sim/engine/features/encounter/authoring.types';
-import type { JsonRandomEvent } from '@sim/engine/features/events/authoring.types';
-import type { ConversationTopic } from '@sim/engine/features/npcs/types';
-import type { Quest, QuestTemplate } from '@sim/engine/features/quests/types';
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { Effect } from '@sim/engine/types/effect.types';
+} from '@chemicalluck/engine/features/encounter/authoring.types';
+import type { JsonRandomEvent } from '@chemicalluck/engine/features/events/authoring.types';
+import type { ConversationTopic } from '@chemicalluck/engine/features/npcs/types';
+import type { Quest, QuestTemplate } from '@chemicalluck/engine/features/quests/types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { Effect } from '@chemicalluck/engine/types/effect.types';
 
 import { EffectChip } from '../effect-form';
 import { ConditionBadge } from './condition-badge';

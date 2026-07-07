@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { InventoryItem } from '@sim/engine/types/item.types';
+import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
 
 import reducer, {
   clearContainer,

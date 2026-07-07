@@ -1,5 +1,5 @@
-import type { RootState } from '@sim/engine/state/store';
-import type { InventoryItem } from '@sim/engine/types/item.types';
+import type { RootState } from '@chemicalluck/engine/state/store';
+import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
 
 export const selectContainer = (
   state: RootState,

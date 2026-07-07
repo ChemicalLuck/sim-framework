@@ -1,5 +1,5 @@
-import { defineEffectHydrator } from '@sim/engine/data/effect-hydrators';
-import type { JsonEffect } from '@sim/engine/features/core/types';
+import { defineEffectHydrator } from '@chemicalluck/engine/data/effect-hydrators';
+import type { JsonEffect } from '@chemicalluck/engine/features/core/types';
 
 import type { JsonViewShopEffect } from './authoring.types';
 

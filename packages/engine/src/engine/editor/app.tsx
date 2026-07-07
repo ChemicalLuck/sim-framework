@@ -22,7 +22,7 @@ import {
   SidebarMenuItem,
   SidebarProvider,
   SidebarRail,
-} from '@sim/engine/components/ui/sidebar';
+} from '@chemicalluck/engine/components/ui/sidebar';
 
 import { GlobalSearch } from './components/global-search';
 import {

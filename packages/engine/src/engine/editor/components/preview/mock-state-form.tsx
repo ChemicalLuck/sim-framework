@@ -1,14 +1,14 @@
-import { Field, FieldGroup } from '@sim/engine/components/ui/field';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import { WEATHER_CONDITIONS } from '@sim/engine/features/weather/lib/conditions';
+} from '@chemicalluck/engine/components/ui/select';
+import { WEATHER_CONDITIONS } from '@chemicalluck/engine/features/weather/lib/conditions';
 
 import { usePreviewState } from './mock-state';
 

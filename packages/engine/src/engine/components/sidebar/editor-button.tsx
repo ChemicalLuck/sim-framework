@@ -1,6 +1,6 @@
 import { PencilRuler } from 'lucide-react';
-import { Button } from '@sim/engine/components/ui/button';
-import { isDebug } from '@sim/engine/hooks/use-debug';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { isDebug } from '@chemicalluck/engine/hooks/use-debug';
 
 export default function EditorButton() {
   const debug = isDebug();

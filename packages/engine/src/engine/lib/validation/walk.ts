@@ -1,4 +1,4 @@
-import type { Condition } from '@sim/engine/types/condition.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 import type { ContentRef, RefNode, RefRecord } from './types';
 

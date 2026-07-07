@@ -4,7 +4,7 @@ import {
   namespaceOf,
   requiredFiles,
   rewriteReferences,
-} from '@sim/engine/lib/validation';
+} from '@chemicalluck/engine/lib/validation';
 
 import { usePanelFile } from './panel-file';
 import { useRegisterSave } from './save-context';

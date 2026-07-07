@@ -1,11 +1,11 @@
-import { hydrateActionGroup } from '@sim/engine/features/core/hydrate';
-import type { HydrationContext } from '@sim/engine/features/core/hydrate';
-import type { LocationNode, WorldGraph } from '@sim/engine/features/travel/types';
+import { hydrateActionGroup } from '@chemicalluck/engine/features/core/hydrate';
+import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
+import type { LocationNode, WorldGraph } from '@chemicalluck/engine/features/travel/types';
 
 import type { JsonLocation } from './authoring.types';
 import type { Edge } from './types';
 
-declare module '@sim/engine/data' {
+declare module '@chemicalluck/engine/data' {
   interface ContentExtensions {
     world: WorldGraph;
   }

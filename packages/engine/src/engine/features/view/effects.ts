@@ -1,11 +1,11 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import { type RNG, worldRng } from '@sim/engine/features/rng/lib/rng';
-import { GlobalLogger } from '@sim/engine/lib/logger';
-import type { Character } from '@sim/engine/types/character.types';
-import type { NpcFilter, NpcSelection } from '@sim/engine/types/npc-filter.types';
+} from '@chemicalluck/engine/features/core/types';
+import { type RNG, worldRng } from '@chemicalluck/engine/features/rng/lib/rng';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import type { Character } from '@chemicalluck/engine/types/character.types';
+import type { NpcFilter, NpcSelection } from '@chemicalluck/engine/types/npc-filter.types';
 
 import { type ViewState, setDescription, setView } from './slice';
 import type { DescEffect, ViewEffect } from './types';

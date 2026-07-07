@@ -9,8 +9,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@sim/engine/components/ui/dialog';
-import { cn } from '@sim/engine/lib/css';
+} from '@chemicalluck/engine/components/ui/dialog';
+import { cn } from '@chemicalluck/engine/lib/css';
 
 function Command({
   className,

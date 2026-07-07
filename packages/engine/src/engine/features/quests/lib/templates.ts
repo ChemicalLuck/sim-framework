@@ -1,10 +1,10 @@
-import { buildTemplateContext } from '@sim/engine/features/linguistics/lib/context';
+import { buildTemplateContext } from '@chemicalluck/engine/features/linguistics/lib/context';
 import {
   type TemplateContext,
   renderText,
-} from '@sim/engine/features/linguistics/lib/template';
-import type { NPC } from '@sim/engine/features/npcs/types';
-import type { Quest, QuestTemplate } from '@sim/engine/features/quests/types';
+} from '@chemicalluck/engine/features/linguistics/lib/template';
+import type { NPC } from '@chemicalluck/engine/features/npcs/types';
+import type { Quest, QuestTemplate } from '@chemicalluck/engine/features/quests/types';
 
 let _templates: QuestTemplate[] = [];
 

@@ -4,7 +4,7 @@ const config = {
   trailingComma: 'all',
   singleQuote: true,
   semi: true,
-  importOrder: ['^@sim/(.*)$', '^~/(.*)$', '^[./]'],
+  importOrder: ['^@chemicalluck/(.*)$', '^~/(.*)$', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
 };

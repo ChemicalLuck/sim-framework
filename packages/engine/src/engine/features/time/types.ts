@@ -1,4 +1,4 @@
-import type { BaseEffect } from '@sim/engine/types/effect.types';
+import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
 
 export interface TimeEffect extends BaseEffect<'time'> {
   hours?: number;
@@ -10,7 +10,7 @@ export interface SleepEffect extends BaseEffect<'sleep'> {
   readonly wakeTime?: number;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     time: TimeEffect;
     sleep: SleepEffect;

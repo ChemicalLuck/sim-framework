@@ -1,6 +1,6 @@
-import type { JsonEffectMap } from '@sim/engine/data/authoring.types';
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { Effect } from '@sim/engine/types/effect.types';
+import type { JsonEffectMap } from '@chemicalluck/engine/data/authoring.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { Effect } from '@chemicalluck/engine/types/effect.types';
 
 /**
  * A reference- or condition-bearing node found inside authored content. Each

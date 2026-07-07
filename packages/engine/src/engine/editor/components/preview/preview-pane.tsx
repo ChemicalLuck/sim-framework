@@ -1,6 +1,6 @@
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 
 import { MockStateForm } from './mock-state-form';
 import { NarrativePreview, type PreviewEntity } from './narrative-preview';

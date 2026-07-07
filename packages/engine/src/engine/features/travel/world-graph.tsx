@@ -13,31 +13,31 @@ import '@xyflow/react/dist/style.css';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '@sim/engine/components/ui/badge';
-import { Button } from '@sim/engine/components/ui/button';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+import { Badge } from '@chemicalluck/engine/components/ui/badge';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import { ActionGroupsEditor } from '@sim/engine/editor/components/action-groups-editor';
-import { useRegisterSave } from '@sim/engine/editor/lib/save-context';
-import { useAvailableData } from '@sim/engine/editor/lib/use-available-data';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
+} from '@chemicalluck/engine/components/ui/select';
+import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
+import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
+import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
 import {
   formatMoney,
   getCurrencySymbol,
-} from '@sim/engine/features/money/lib/currency';
+} from '@chemicalluck/engine/features/money/lib/currency';
 import type {
   Edge,
   LocationNode,
   LocationType,
   TravelType,
-} from '@sim/engine/features/travel/types';
+} from '@chemicalluck/engine/features/travel/types';
 
 interface WorldData {
   locations: LocationNode[];

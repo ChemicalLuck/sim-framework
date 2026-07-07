@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@sim/engine/components/ui/dialog';
-import { SaveSlotList } from '@sim/engine/features/save/components/save-slot-list';
-import { getSaveSlots } from '@sim/engine/features/save/saves';
+} from '@chemicalluck/engine/components/ui/dialog';
+import { SaveSlotList } from '@chemicalluck/engine/features/save/components/save-slot-list';
+import { getSaveSlots } from '@chemicalluck/engine/features/save/saves';
 
 export default function LoadSaveDialog() {
   const [slots, setSlots] = useState(() => getSaveSlots());

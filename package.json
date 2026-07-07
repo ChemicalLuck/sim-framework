@@ -9,7 +9,7 @@
     "test": "pnpm -r run test",
     "lint": "pnpm -r run lint",
     "format": "prettier --write \"packages/*/src/**/*.{ts,tsx}\"",
-    "build:packages": "pnpm --filter \"@sim/engine\" --filter sim --filter create-sim-game run build",
+    "build:packages": "pnpm --filter \"@chemicalluck/engine\" --filter \"@chemicalluck/sim\" --filter \"@chemicalluck/create-sim-game\" run build",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build:packages && changeset publish"

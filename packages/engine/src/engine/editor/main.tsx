@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import editorExtensions from 'virtual:editor-extensions';
 import 'virtual:editor-game-styles';
-import { EffectEditorsProvider } from '@sim/engine/editor/lib/effect-editor-provider';
+import { EffectEditorsProvider } from '@chemicalluck/engine/editor/lib/effect-editor-provider';
 
 import App from './app';
 import './index.css';

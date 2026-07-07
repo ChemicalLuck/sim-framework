@@ -2,7 +2,7 @@
  * Map of every feature-owned Json effect type, keyed by a registry-internal
  * discriminator. Features augment this interface via module declaration:
  *
- *   declare module '@sim/engine/data/authoring.types' {
+ *   declare module '@chemicalluck/engine/data/authoring.types' {
  *     interface JsonEffectMap { container_insert: JsonContainerInsertEffect; }
  *   }
  *

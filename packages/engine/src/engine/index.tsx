@@ -4,18 +4,18 @@ import type { Transform } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import * as gameExtensions from 'virtual:game-extensions';
 import 'virtual:game-setup';
-import { GameSidebar as DefaultSidebar } from '@sim/engine/components/sidebar';
-import { SidebarComponentContext } from '@sim/engine/components/sidebar/context';
-import { SidebarProvider } from '@sim/engine/components/ui/sidebar';
-import { Toaster } from '@sim/engine/components/ui/sonner';
-import { ThemeProvider } from '@sim/engine/components/ui/theme-provider';
+import { GameSidebar as DefaultSidebar } from '@chemicalluck/engine/components/sidebar';
+import { SidebarComponentContext } from '@chemicalluck/engine/components/sidebar/context';
+import { SidebarProvider } from '@chemicalluck/engine/components/ui/sidebar';
+import { Toaster } from '@chemicalluck/engine/components/ui/sonner';
+import { ThemeProvider } from '@chemicalluck/engine/components/ui/theme-provider';
 import {
   ViewsContext,
   type ViewsRegistry,
-} from '@sim/engine/features/view/context';
-import ViewManager from '@sim/engine/features/view/manager';
-import { type EngineStore, buildStore } from '@sim/engine/state/store';
-import { initProcessEffects } from '@sim/engine/state/thunks';
+} from '@chemicalluck/engine/features/view/context';
+import ViewManager from '@chemicalluck/engine/features/view/manager';
+import { type EngineStore, buildStore } from '@chemicalluck/engine/state/store';
+import { initProcessEffects } from '@chemicalluck/engine/state/thunks';
 
 export interface GameConfig {
   /** Game-specific sidebar component (replaces the engine default) */

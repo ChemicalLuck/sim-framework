@@ -1,4 +1,4 @@
-import { GlobalLogger } from '@sim/engine/lib/logger';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
 
 export function measureTime<T>(fn: () => T): { result: T; ms: number } {
   const start = performance.now();

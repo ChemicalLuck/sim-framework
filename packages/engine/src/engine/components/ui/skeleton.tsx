@@ -1,4 +1,4 @@
-import { cn } from '@sim/engine/lib/css';
+import { cn } from '@chemicalluck/engine/lib/css';
 
 function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
   return (

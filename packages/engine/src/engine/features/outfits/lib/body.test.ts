@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { BodyAttributes } from '@sim/engine/types/character.types';
+import type { BodyAttributes } from '@chemicalluck/engine/types/character.types';
 
 import { estimateMetric, resolveMetric } from './body';
 import type { EstimatedMetric } from './wearable-config';

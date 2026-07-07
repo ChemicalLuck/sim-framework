@@ -17,6 +17,6 @@ export default defineConfig({
     '@tailwindcss/vite',
     'vite-plugin-singlefile',
     'lightningcss',
-    '@sim/engine',
+    '@chemicalluck/engine',
   ],
 });

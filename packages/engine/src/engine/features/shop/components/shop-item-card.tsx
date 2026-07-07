@@ -1,13 +1,13 @@
-import { ActionButton } from '@sim/engine/components/action-button';
+import { ActionButton } from '@chemicalluck/engine/components/action-button';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@sim/engine/components/ui/card';
-import { formatMoney } from '@sim/engine/features/money/lib/currency';
-import type { InventoryItem } from '@sim/engine/types/item.types';
+} from '@chemicalluck/engine/components/ui/card';
+import { formatMoney } from '@chemicalluck/engine/features/money/lib/currency';
+import type { InventoryItem } from '@chemicalluck/engine/types/item.types';
 
 interface ShopCardProps {
   product: InventoryItem;

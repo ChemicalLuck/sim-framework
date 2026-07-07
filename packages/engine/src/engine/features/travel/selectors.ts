@@ -1,8 +1,8 @@
-import { getLocationById, getWorld } from '@sim/engine/features/travel/lib/world';
-import type { Edge, LocationNode } from '@sim/engine/features/travel/types';
-import { cond, isConditionMet } from '@sim/engine/lib/conditions';
-import type { RootState } from '@sim/engine/state/store';
-import type { Action, ActionGroup, Effect } from '@sim/engine/types';
+import { getLocationById, getWorld } from '@chemicalluck/engine/features/travel/lib/world';
+import type { Edge, LocationNode } from '@chemicalluck/engine/features/travel/types';
+import { cond, isConditionMet } from '@chemicalluck/engine/lib/conditions';
+import type { RootState } from '@chemicalluck/engine/state/store';
+import type { Action, ActionGroup, Effect } from '@chemicalluck/engine/types';
 
 export { getLocationById };
 

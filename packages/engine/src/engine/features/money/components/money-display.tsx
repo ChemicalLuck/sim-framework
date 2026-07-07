@@ -1,7 +1,7 @@
 import { Wallet } from 'lucide-react';
-import { formatMoney } from '@sim/engine/features/money/lib/currency';
-import { selectMoney } from '@sim/engine/features/money/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { formatMoney } from '@chemicalluck/engine/features/money/lib/currency';
+import { selectMoney } from '@chemicalluck/engine/features/money/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 export default function MoneyDisplay() {
   const money = useEngineSelector(selectMoney);

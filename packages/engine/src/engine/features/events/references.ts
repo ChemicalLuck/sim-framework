@@ -1,4 +1,4 @@
-import type { IdSource } from '@sim/engine/lib/validation';
+import type { IdSource } from '@chemicalluck/engine/lib/validation';
 
 // Event references themselves are emitted from action `eventIds` by the shared
 // content walker; this feature just provides the registry of valid event ids.

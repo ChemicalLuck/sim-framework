@@ -1,4 +1,4 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 export interface ContainerHasItemsCondition {
   kind: 'container_has_items';
@@ -14,7 +14,7 @@ export interface ItemExpr {
   kind: 'item';
 }
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ConditionMap {
     container_has_items: ContainerHasItemsCondition;
     container_has_dirty_items: ContainerHasDirtyItemsCondition;

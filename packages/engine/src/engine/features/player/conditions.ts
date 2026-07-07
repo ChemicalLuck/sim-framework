@@ -1,4 +1,4 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 export interface SkillExpr {
   kind: 'skill';
@@ -9,7 +9,7 @@ export interface LocationExpr {
   kind: 'location';
 }
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ExprMap {
     skill: SkillExpr;
     location: LocationExpr;

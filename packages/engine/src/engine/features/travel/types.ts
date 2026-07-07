@@ -1,6 +1,6 @@
-import type { ActionGroup } from '@sim/engine/types/action-group.types';
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { BaseEffect } from '@sim/engine/types/effect.types';
+import type { ActionGroup } from '@chemicalluck/engine/types/action-group.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
 
 export type TravelType = 'walk' | 'bus' | 'train' | 'drive';
 
@@ -56,7 +56,7 @@ export interface TravelEffect extends BaseEffect<'travel'> {
   readonly newLocationId: string;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     travel: TravelEffect;
   }

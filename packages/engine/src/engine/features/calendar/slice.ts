@@ -38,7 +38,7 @@ export const {
 
 export default calendarSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     calendar: ReturnType<typeof calendarSlice.reducer>;
   }

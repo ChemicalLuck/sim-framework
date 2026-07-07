@@ -7,18 +7,18 @@ import {
   SidebarHeader,
   SidebarRail,
   useSidebar,
-} from '@sim/engine/components/ui/sidebar';
-import { ModeToggle } from '@sim/engine/components/ui/theme-toggle';
-import MoneyDisplay from '@sim/engine/features/money/components/money-display';
-import NeedsDisplay from '@sim/engine/features/needs/components/needs-display';
-import PeopleDialog from '@sim/engine/features/npcs/components/people-dialog';
-import AppearanceDisplay from '@sim/engine/features/player/components/appearance-display';
-import QuestsDialog from '@sim/engine/features/quests/components/quest-dialog';
-import ResetButton from '@sim/engine/features/save/components/reset-button';
-import SaveLoadDialog from '@sim/engine/features/save/components/save-load-dialog';
-import TimeDisplay from '@sim/engine/features/time/components/time-display';
-import WeatherDisplay from '@sim/engine/features/weather/components/weather-display';
-import { appName, version } from '@sim/engine/lib/core';
+} from '@chemicalluck/engine/components/ui/sidebar';
+import { ModeToggle } from '@chemicalluck/engine/components/ui/theme-toggle';
+import MoneyDisplay from '@chemicalluck/engine/features/money/components/money-display';
+import NeedsDisplay from '@chemicalluck/engine/features/needs/components/needs-display';
+import PeopleDialog from '@chemicalluck/engine/features/npcs/components/people-dialog';
+import AppearanceDisplay from '@chemicalluck/engine/features/player/components/appearance-display';
+import QuestsDialog from '@chemicalluck/engine/features/quests/components/quest-dialog';
+import ResetButton from '@chemicalluck/engine/features/save/components/reset-button';
+import SaveLoadDialog from '@chemicalluck/engine/features/save/components/save-load-dialog';
+import TimeDisplay from '@chemicalluck/engine/features/time/components/time-display';
+import WeatherDisplay from '@chemicalluck/engine/features/weather/components/weather-display';
+import { appName, version } from '@chemicalluck/engine/lib/core';
 
 import BackButton from './back';
 import EditorButton from './editor-button';

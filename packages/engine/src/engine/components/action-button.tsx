@@ -1,15 +1,15 @@
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
-import { getEvents } from '@sim/engine/features/events/lib';
-import { worldRng } from '@sim/engine/features/rng/lib/rng';
-import { applyNpcSelection } from '@sim/engine/features/view/effects';
-import { setView } from '@sim/engine/features/view/slice';
-import { useKeybind } from '@sim/engine/hooks/use-keybind';
-import { isConditionMet } from '@sim/engine/lib/conditions';
-import { cn } from '@sim/engine/lib/css';
-import { useEngineDispatch, useEngineStore } from '@sim/engine/state/store';
-import { processEffects } from '@sim/engine/state/thunks';
-import type { Effect } from '@sim/engine/types';
+import { getEvents } from '@chemicalluck/engine/features/events/lib';
+import { worldRng } from '@chemicalluck/engine/features/rng/lib/rng';
+import { applyNpcSelection } from '@chemicalluck/engine/features/view/effects';
+import { setView } from '@chemicalluck/engine/features/view/slice';
+import { useKeybind } from '@chemicalluck/engine/hooks/use-keybind';
+import { isConditionMet } from '@chemicalluck/engine/lib/conditions';
+import { cn } from '@chemicalluck/engine/lib/css';
+import { useEngineDispatch, useEngineStore } from '@chemicalluck/engine/state/store';
+import { processEffects } from '@chemicalluck/engine/state/thunks';
+import type { Effect } from '@chemicalluck/engine/types';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 

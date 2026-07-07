@@ -7,7 +7,7 @@ import {
   type ReferenceRewriter,
   collectActionGroupRefs,
   rewriteActionGroupRefs,
-} from '@sim/engine/lib/validation';
+} from '@chemicalluck/engine/lib/validation';
 
 import type { Edge, LocationNode } from './types';
 

@@ -3,9 +3,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@sim/engine/components/ui/accordion';
-import { Card } from '@sim/engine/components/ui/card';
-import type { Quest } from '@sim/engine/features/quests/types';
+} from '@chemicalluck/engine/components/ui/accordion';
+import { Card } from '@chemicalluck/engine/components/ui/card';
+import type { Quest } from '@chemicalluck/engine/features/quests/types';
 
 interface QuestCardProps {
   quest: Quest;

@@ -1,6 +1,6 @@
 # Architecture
 
-The defining constraint: **`@sim/engine` is game-agnostic and never imports game code.**
+The defining constraint: **`@chemicalluck/engine` is game-agnostic and never imports game code.**
 A game plugs in entirely at build time, through generated Vite virtual modules. This is
 what lets one engine power many games and keeps games upgradable.
 
@@ -43,7 +43,7 @@ automatically — no central registry to edit.
 
 ## Feature layout (engine internals)
 
-Each engine feature under `@sim/engine/features/<name>/` follows the same layout as an
+Each engine feature under `@chemicalluck/engine/features/<name>/` follows the same layout as an
 [[Extensions|extension]]: `slice.ts`, `selectors.ts`, `effects.ts`, `types.ts`,
 `components/`, `lib/`, and a `feature.json` manifest declaring its content wiring. Features
 and extensions are discovered by the same machinery — an extension is just a game-side
@@ -61,7 +61,7 @@ Three engine subsystems are **open** and grow by contribution rather than a fixe
 
 ## Distribution
 
-`@sim/engine` ships as **TypeScript source** — your game's Vite process (via the CLI)
+`@chemicalluck/engine` ships as **TypeScript source** — your game's Vite process (via the CLI)
 transpiles it. The engine's Node-side tooling (the two plugins) is compiled to JS so the
-CLI can import it. The CLI aliases `@sim/engine` to the engine source directory so deep
+CLI can import it. The CLI aliases `@chemicalluck/engine` to the engine source directory so deep
 imports and directory indexes resolve and the source is transformed normally.

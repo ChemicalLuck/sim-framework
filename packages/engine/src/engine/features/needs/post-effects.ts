@@ -1,9 +1,9 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import type { SleepEffect } from '@sim/engine/features/time/types';
-import type { PostEffectHandler } from '@sim/engine/state/thunks';
+} from '@chemicalluck/engine/features/core/types';
+import type { SleepEffect } from '@chemicalluck/engine/features/time/types';
+import type { PostEffectHandler } from '@chemicalluck/engine/state/thunks';
 
 import { decayNeedsByMinutes } from './slice';
 

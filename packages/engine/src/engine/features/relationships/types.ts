@@ -1,5 +1,5 @@
-import type { RelationshipMetric } from '@sim/engine/features/npcs/types';
-import type { BaseEffect } from '@sim/engine/types/effect.types';
+import type { RelationshipMetric } from '@chemicalluck/engine/features/npcs/types';
+import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
 
 export interface RelationshipEffect extends BaseEffect<'relationship'> {
   readonly npcId: string;
@@ -7,7 +7,7 @@ export interface RelationshipEffect extends BaseEffect<'relationship'> {
   readonly delta: number;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     relationship: RelationshipEffect;
   }

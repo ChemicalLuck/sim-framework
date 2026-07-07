@@ -1,11 +1,11 @@
 import { toast } from 'sonner';
-import { depositItem, withdrawItem } from '@sim/engine/features/containers/slice';
+import { depositItem, withdrawItem } from '@chemicalluck/engine/features/containers/slice';
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import { GlobalLogger } from '@sim/engine/lib/logger';
-import { clampAdd } from '@sim/engine/lib/maths';
+} from '@chemicalluck/engine/features/core/types';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import { clampAdd } from '@chemicalluck/engine/lib/maths';
 
 import {
   adjustBodyAttribute,

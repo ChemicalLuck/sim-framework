@@ -24,7 +24,7 @@ import type { StateWithHistory } from 'redux-undo';
 import undoable from 'redux-undo';
 
 // Features augment this interface to register their slice state type.
-// Augmentation pattern: declare module '@sim/engine/state/store' { interface PresentState { myKey: MyState; } }
+// Augmentation pattern: declare module '@chemicalluck/engine/state/store' { interface PresentState { myKey: MyState; } }
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface PresentState {}
 

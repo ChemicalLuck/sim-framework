@@ -1,9 +1,9 @@
 import type { UnknownAction } from '@reduxjs/toolkit';
-import type { JsonEffectMap } from '@sim/engine/data/authoring.types';
-import type { JsonNpcSelection } from '@sim/engine/features/npcs/types';
-import type { EngineDispatch, RootState } from '@sim/engine/state/store';
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { Effect } from '@sim/engine/types/effect.types';
+import type { JsonEffectMap } from '@chemicalluck/engine/data/authoring.types';
+import type { JsonNpcSelection } from '@chemicalluck/engine/features/npcs/types';
+import type { EngineDispatch, RootState } from '@chemicalluck/engine/state/store';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { Effect } from '@chemicalluck/engine/types/effect.types';
 
 export type JsonEffect = JsonEffectMap[keyof JsonEffectMap] | Effect;
 

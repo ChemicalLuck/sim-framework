@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { EffectContext } from '@sim/engine/features/core/types';
-import { configureWearables } from '@sim/engine/features/outfits/lib/wearable-config';
-import { configureWorld } from '@sim/engine/features/travel/lib/world';
-import type { LocationNode } from '@sim/engine/features/travel/types';
-import type { RootState } from '@sim/engine/state/store';
-import type { Wearable } from '@sim/engine/types/item.types';
+import type { EffectContext } from '@chemicalluck/engine/features/core/types';
+import { configureWearables } from '@chemicalluck/engine/features/outfits/lib/wearable-config';
+import { configureWorld } from '@chemicalluck/engine/features/travel/lib/world';
+import type { LocationNode } from '@chemicalluck/engine/features/travel/types';
+import type { RootState } from '@chemicalluck/engine/state/store';
+import type { Wearable } from '@chemicalluck/engine/types/item.types';
 
 import postEffects from './post-effects';
 import type { ClothingState } from './types';

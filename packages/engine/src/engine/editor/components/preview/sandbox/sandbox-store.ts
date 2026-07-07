@@ -10,10 +10,10 @@ import {
   postEffectHandlers,
   slices,
 } from 'virtual:game-extensions';
-import type { NamedNpcDefinition } from '@sim/engine/features/npcs/types';
-import { setGameSeed } from '@sim/engine/features/rng/slice';
-import type { EngineStore } from '@sim/engine/state/store';
-import { initProcessEffects } from '@sim/engine/state/thunks';
+import type { NamedNpcDefinition } from '@chemicalluck/engine/features/npcs/types';
+import { setGameSeed } from '@chemicalluck/engine/features/rng/slice';
+import type { EngineStore } from '@chemicalluck/engine/state/store';
+import { initProcessEffects } from '@chemicalluck/engine/state/thunks';
 
 import type { PreviewState } from '../mock-state';
 

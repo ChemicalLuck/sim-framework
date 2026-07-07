@@ -1,5 +1,5 @@
-import { selectItemActions } from '@sim/engine/features/player/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { selectItemActions } from '@chemicalluck/engine/features/player/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import { ActionButtonList } from './action-button-list';
 

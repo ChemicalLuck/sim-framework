@@ -20,7 +20,7 @@ export interface JsonViewShopEffect {
   shopId: string;
 }
 
-declare module '@sim/engine/data/authoring.types' {
+declare module '@chemicalluck/engine/data/authoring.types' {
   interface JsonEffectMap {
     view_shop: JsonViewShopEffect;
   }

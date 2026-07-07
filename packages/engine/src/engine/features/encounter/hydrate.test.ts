@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { buildRegistry } from '@sim/engine/data/registry';
-import type { HydrationContext } from '@sim/engine/features/core/hydrate';
-import type { MilestoneCondition } from '@sim/engine/features/milestones/types';
-import type { Scene, Script } from '@sim/engine/types';
+import { buildRegistry } from '@chemicalluck/engine/data/registry';
+import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
+import type { MilestoneCondition } from '@chemicalluck/engine/features/milestones/types';
+import type { Scene, Script } from '@chemicalluck/engine/types';
 import type {
   Item,
   Wearable,
   WearableTemplate,
-} from '@sim/engine/types/item.types';
+} from '@chemicalluck/engine/types/item.types';
 
 import type { Shop } from '../shop/types';
 import type {

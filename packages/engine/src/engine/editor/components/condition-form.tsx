@@ -1,16 +1,16 @@
 import { X } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { Badge } from '@sim/engine/components/ui/badge';
-import { Button } from '@sim/engine/components/ui/button';
+import { Badge } from '@chemicalluck/engine/components/ui/badge';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
-import { parseConditionSafe } from '@sim/engine/lib/conditions/parser';
-import type { Condition } from '@sim/engine/types/condition.types';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { parseConditionSafe } from '@chemicalluck/engine/lib/conditions/parser';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 import { conditionToString } from '../lib/condition-utils';
 

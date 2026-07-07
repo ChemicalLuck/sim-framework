@@ -1,11 +1,11 @@
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
-import { mockEditorDataHandle, renderEditorPanel } from '@sim/engine/test-utils/render';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import { mockEditorDataHandle, renderEditorPanel } from '@chemicalluck/engine/test-utils/render';
 
 import editor from './editor';
 
-vi.mock('@sim/engine/editor/lib/use-editor-data', () => ({
+vi.mock('@chemicalluck/engine/editor/lib/use-editor-data', () => ({
   useEditorData: vi.fn(),
   preloadEditorData: vi.fn(),
 }));

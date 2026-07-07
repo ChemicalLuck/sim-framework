@@ -1,5 +1,5 @@
 import { RotateCcw } from 'lucide-react';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 
 export default function ResetButton() {
   return (

@@ -1,5 +1,5 @@
-import { subRng } from '@sim/engine/features/rng/lib/rng';
-import { addIndefiniteArticle } from '@sim/engine/lib/linguistics';
+import { subRng } from '@chemicalluck/engine/features/rng/lib/rng';
+import { addIndefiniteArticle } from '@chemicalluck/engine/lib/linguistics';
 
 import type { LinguisticsMacroParam, LinguisticsTerm } from '../types';
 

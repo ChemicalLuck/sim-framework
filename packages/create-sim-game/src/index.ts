@@ -4,9 +4,9 @@ import { fileURLToPath } from 'node:url';
 
 /** Version ranges written into the scaffolded game's package.json. */
 const FRAMEWORK_VERSIONS: Record<string, string> = {
-  '@sim/engine': '^0.1.0',
-  sim: '^0.1.0',
-  '@sim/config': '^0.1.0',
+  '@chemicalluck/engine': '^0.1.0',
+  '@chemicalluck/sim': '^0.1.0',
+  '@chemicalluck/config': '^0.1.0',
 };
 
 const here = path.dirname(fileURLToPath(import.meta.url));

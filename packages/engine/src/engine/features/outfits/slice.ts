@@ -27,7 +27,7 @@ export const { addOutfit, removeOutfitByName } = outfitsSlice.actions;
 
 export default outfitsSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     outfits: ReturnType<typeof outfitsSlice.reducer>;
   }

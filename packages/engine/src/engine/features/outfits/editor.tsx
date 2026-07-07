@@ -1,17 +1,17 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Input } from '@sim/engine/components/ui/input';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Input } from '@chemicalluck/engine/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import { useRegisterSave } from '@sim/engine/editor/lib/save-context';
-import { useReportDirty } from '@sim/engine/editor/lib/unsaved-changes';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
+} from '@chemicalluck/engine/components/ui/select';
+import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
+import { useReportDirty } from '@chemicalluck/engine/editor/lib/unsaved-changes';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
 
 interface WearablesCfg {
   slots: string[];

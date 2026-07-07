@@ -1,6 +1,6 @@
-import { ActionButton } from '@sim/engine/components/action-button';
-import WithSidebar from '@sim/engine/components/with-sidebar';
-import * as defaultEffects from '@sim/engine/features/view/helpers';
+import { ActionButton } from '@chemicalluck/engine/components/action-button';
+import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
+import * as defaultEffects from '@chemicalluck/engine/features/view/helpers';
 
 import Outfits from './outfits';
 import Wardrobe from './wardrobe';

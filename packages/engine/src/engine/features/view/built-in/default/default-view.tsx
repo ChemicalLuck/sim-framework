@@ -1,12 +1,12 @@
-import { ActionGroup } from '@sim/engine/components/action-group';
-import { Minimap } from '@sim/engine/components/minimap';
-import WithSidebar from '@sim/engine/components/with-sidebar';
-import { renderText } from '@sim/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@sim/engine/features/linguistics/use-template-context';
-import { selectNpcsNearby } from '@sim/engine/features/npcs/selectors';
-import { selectCurrentLocation } from '@sim/engine/features/player/selectors';
-import { selectDescription } from '@sim/engine/features/view/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { ActionGroup } from '@chemicalluck/engine/components/action-group';
+import { Minimap } from '@chemicalluck/engine/components/minimap';
+import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
+import { renderText } from '@chemicalluck/engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
+import { selectNpcsNearby } from '@chemicalluck/engine/features/npcs/selectors';
+import { selectCurrentLocation } from '@chemicalluck/engine/features/player/selectors';
+import { selectDescription } from '@chemicalluck/engine/features/view/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import DefaultActions from './default-actions';
 

@@ -2,9 +2,9 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import {
   type AppearanceJsonData,
   configureAppearance,
-} from '@sim/engine/features/npcs/lib/appearance-config';
-import { configureWearables } from '@sim/engine/features/outfits/lib/wearable-config';
-import type { Wearable } from '@sim/engine/types';
+} from '@chemicalluck/engine/features/npcs/lib/appearance-config';
+import { configureWearables } from '@chemicalluck/engine/features/outfits/lib/wearable-config';
+import type { Wearable } from '@chemicalluck/engine/types';
 
 import reducer, {
   addTrait,

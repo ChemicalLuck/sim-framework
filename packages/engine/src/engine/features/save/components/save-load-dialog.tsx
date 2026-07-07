@@ -1,20 +1,20 @@
 import { Save } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@sim/engine/components/ui/dialog';
-import { Input } from '@sim/engine/components/ui/input';
-import { selectPlayerName } from '@sim/engine/features/player/selectors';
-import { SaveSlotList } from '@sim/engine/features/save/components/save-slot-list';
-import { getSaveSlots, saveGame } from '@sim/engine/features/save/saves';
-import { selectTimestamp } from '@sim/engine/features/time/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/components/ui/dialog';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { selectPlayerName } from '@chemicalluck/engine/features/player/selectors';
+import { SaveSlotList } from '@chemicalluck/engine/features/save/components/save-slot-list';
+import { getSaveSlots, saveGame } from '@chemicalluck/engine/features/save/saves';
+import { selectTimestamp } from '@chemicalluck/engine/features/time/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 export default function SaveLoadDialog() {
   const [saveName, setSaveName] = useState('');

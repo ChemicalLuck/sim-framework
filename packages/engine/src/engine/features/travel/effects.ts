@@ -1,9 +1,9 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import { setLocation } from '@sim/engine/features/player/slice';
-import { GlobalLogger } from '@sim/engine/lib/logger';
+} from '@chemicalluck/engine/features/core/types';
+import { setLocation } from '@chemicalluck/engine/features/player/slice';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
 
 import type { TravelEffect } from './types';
 

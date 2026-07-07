@@ -1,5 +1,5 @@
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { Script } from '@sim/engine/types/script.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { Script } from '@chemicalluck/engine/types/script.types';
 
 export interface RandomEvent {
   id: string;

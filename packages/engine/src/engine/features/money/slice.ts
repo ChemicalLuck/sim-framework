@@ -1,5 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { makeConfig } from '@sim/engine/lib/core';
+import { makeConfig } from '@chemicalluck/engine/lib/core';
 
 const _money = makeConfig(0);
 
@@ -18,7 +18,7 @@ export const { increaseMoneyByAmount } = moneySlice.actions;
 
 export default moneySlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     money: ReturnType<typeof moneySlice.reducer>;
   }

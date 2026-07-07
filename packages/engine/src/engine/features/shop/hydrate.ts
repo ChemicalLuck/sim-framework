@@ -1,10 +1,10 @@
-import { Registry } from '@sim/engine/data/registry';
-import type { HydrationContext } from '@sim/engine/features/core/hydrate';
+import { Registry } from '@chemicalluck/engine/data/registry';
+import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
 
 import type { JsonShop, JsonShopEntry } from './authoring.types';
 import type { Shop, ShopEntry } from './types';
 
-declare module '@sim/engine/features/core/hydrate' {
+declare module '@chemicalluck/engine/features/core/hydrate' {
   interface HydrationContext {
     shops?: Registry<Shop>;
   }

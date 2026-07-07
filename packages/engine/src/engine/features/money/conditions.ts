@@ -1,10 +1,10 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 export interface MoneyExpr {
   kind: 'money';
 }
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ExprMap {
     money: MoneyExpr;
   }

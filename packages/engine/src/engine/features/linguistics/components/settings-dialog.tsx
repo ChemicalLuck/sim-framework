@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -7,11 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@sim/engine/components/ui/dialog';
-import { Input } from '@sim/engine/components/ui/input';
-import { getTerms } from '@sim/engine/features/linguistics/lib/config';
-import { setWordChoice } from '@sim/engine/features/linguistics/slice';
-import { useEngineDispatch, useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/components/ui/dialog';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { getTerms } from '@chemicalluck/engine/features/linguistics/lib/config';
+import { setWordChoice } from '@chemicalluck/engine/features/linguistics/slice';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
 
 export default function SettingsDialog() {
   const terms = [...getTerms().values()];

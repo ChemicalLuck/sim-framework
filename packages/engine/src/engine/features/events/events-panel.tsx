@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Checkbox } from '@sim/engine/components/ui/checkbox';
-import { Field, FieldGroup } from '@sim/engine/components/ui/field';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Checkbox } from '@chemicalluck/engine/components/ui/checkbox';
+import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -9,36 +9,36 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
+} from '@chemicalluck/engine/components/ui/select';
 import {
   ConditionChip,
   ConditionEditor,
-} from '@sim/engine/editor/components/condition-form';
+} from '@chemicalluck/engine/editor/components/condition-form';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@sim/engine/editor/components/panel-layout';
-import { PreviewPane } from '@sim/engine/editor/components/preview/preview-pane';
-import { ReferencedBy } from '@sim/engine/editor/components/referenced-by';
-import { useAddForm } from '@sim/engine/editor/lib/use-add-form';
-import { useAvailableData } from '@sim/engine/editor/lib/use-available-data';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
-import { usePanelEntries } from '@sim/engine/editor/lib/use-panel-entries';
-import type { JsonScript } from '@sim/engine/features/core/types';
-import type { JsonRandomEvent } from '@sim/engine/features/events/authoring.types';
-import type { Condition } from '@sim/engine/types/condition.types';
+} from '@chemicalluck/engine/editor/components/panel-layout';
+import { PreviewPane } from '@chemicalluck/engine/editor/components/preview/preview-pane';
+import { ReferencedBy } from '@chemicalluck/engine/editor/components/referenced-by';
+import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
+import { useAvailableData } from '@chemicalluck/engine/editor/lib/use-available-data';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
+import type { JsonScript } from '@chemicalluck/engine/features/core/types';
+import type { JsonRandomEvent } from '@chemicalluck/engine/features/events/authoring.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 interface RawEvent {
   id: string;

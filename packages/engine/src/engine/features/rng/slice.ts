@@ -4,7 +4,7 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
-import { initWorldRng } from '@sim/engine/features/rng/lib/rng';
+import { initWorldRng } from '@chemicalluck/engine/features/rng/lib/rng';
 
 interface RngState {
   seed: number;
@@ -46,7 +46,7 @@ export const { initGameSeed, setGameSeed } = rngSlice.actions;
 
 export default rngSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     rng: ReturnType<typeof rngSlice.reducer>;
   }

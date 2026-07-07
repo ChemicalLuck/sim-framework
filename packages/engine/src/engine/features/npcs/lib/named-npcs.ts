@@ -2,7 +2,7 @@ import type {
   ConversationTopic,
   NPC,
   NamedNpcDefinition,
-} from '@sim/engine/features/npcs/types';
+} from '@chemicalluck/engine/features/npcs/types';
 
 let _defs: NamedNpcDefinition[] = [];
 

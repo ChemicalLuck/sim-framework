@@ -1,9 +1,9 @@
-import type { BaseEffect } from '@sim/engine/types/effect.types';
+import type { BaseEffect } from '@chemicalluck/engine/types/effect.types';
 
 /**
  * Map of calendar event categories. Extensions augment via:
  *
- *   declare module '@sim/engine/features/calendar/types' {
+ *   declare module '@chemicalluck/engine/features/calendar/types' {
  *     interface EventCategoryMap { myCategory: true; }
  *   }
  */
@@ -37,7 +37,7 @@ export type CalendarEffect =
   | (BaseEffect<'calendar'> & { operation: 'remove'; id: string })
   | (BaseEffect<'calendar'> & { operation: 'clear' });
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     calendar: CalendarEffect;
   }

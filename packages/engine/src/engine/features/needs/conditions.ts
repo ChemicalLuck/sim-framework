@@ -1,4 +1,4 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 import type { Need } from './types';
 
@@ -7,7 +7,7 @@ export interface NeedExpr {
   need: Need;
 }
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ExprMap {
     need: NeedExpr;
   }

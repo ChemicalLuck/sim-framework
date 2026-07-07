@@ -1,5 +1,5 @@
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { BaseEffect, Effect } from '@sim/engine/types/effect.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { BaseEffect, Effect } from '@chemicalluck/engine/types/effect.types';
 
 export interface EncounterAction {
   id: string;
@@ -47,7 +47,7 @@ export interface EncounterEffect extends BaseEffect<'encounter'> {
   readonly npcId: string;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     encounter: EncounterEffect;
   }

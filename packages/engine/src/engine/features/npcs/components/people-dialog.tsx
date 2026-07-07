@@ -1,35 +1,35 @@
 import { RefreshCw, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Card } from '@sim/engine/components/ui/card';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Card } from '@chemicalluck/engine/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@sim/engine/components/ui/dialog';
-import Roundel from '@sim/engine/components/ui/roundel';
-import { ScrollArea } from '@sim/engine/components/ui/scroll-area';
+} from '@chemicalluck/engine/components/ui/dialog';
+import Roundel from '@chemicalluck/engine/components/ui/roundel';
+import { ScrollArea } from '@chemicalluck/engine/components/ui/scroll-area';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@sim/engine/components/ui/tabs';
+} from '@chemicalluck/engine/components/ui/tabs';
 import {
   describeStranger,
   getRelationshipGroup,
-} from '@sim/engine/features/npcs/lib/npcs';
+} from '@chemicalluck/engine/features/npcs/lib/npcs';
 import {
   selectNpcsKnown,
   selectNpcsNearby,
-} from '@sim/engine/features/npcs/selectors';
-import { regenerateNpcs } from '@sim/engine/features/npcs/slice';
-import type { NPC } from '@sim/engine/features/npcs/types';
-import { selectRelationships } from '@sim/engine/features/relationships/selectors';
-import { setView } from '@sim/engine/features/view/slice';
-import { useEngineDispatch, useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/features/npcs/selectors';
+import { regenerateNpcs } from '@chemicalluck/engine/features/npcs/slice';
+import type { NPC } from '@chemicalluck/engine/features/npcs/types';
+import { selectRelationships } from '@chemicalluck/engine/features/relationships/selectors';
+import { setView } from '@chemicalluck/engine/features/view/slice';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
 
 const GROUP_LABELS: Record<string, string> = {
   romantic: 'Romantic',

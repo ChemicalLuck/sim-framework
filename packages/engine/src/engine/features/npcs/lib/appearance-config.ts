@@ -1,21 +1,21 @@
-import { getMacros, getTerms } from '@sim/engine/features/linguistics/lib/config';
-import { buildEntityVars } from '@sim/engine/features/linguistics/lib/context';
+import { getMacros, getTerms } from '@chemicalluck/engine/features/linguistics/lib/config';
+import { buildEntityVars } from '@chemicalluck/engine/features/linguistics/lib/context';
 import {
   type TemplateContext,
   renderSentences,
-} from '@sim/engine/features/linguistics/lib/template';
-import type { Pronouns } from '@sim/engine/features/npcs/types';
+} from '@chemicalluck/engine/features/linguistics/lib/template';
+import type { Pronouns } from '@chemicalluck/engine/features/npcs/types';
 import {
   type RNG,
   buildWeightedCDF,
   sample,
-} from '@sim/engine/features/rng/lib/rng';
+} from '@chemicalluck/engine/features/rng/lib/rng';
 import {
   normalDistribution,
   normalizeWeights,
-} from '@sim/engine/features/rng/lib/weights';
-import type { Weights } from '@sim/engine/features/rng/weights.types';
-import type { BodyAttributes, CharacterProfile } from '@sim/engine/types';
+} from '@chemicalluck/engine/features/rng/lib/weights';
+import type { Weights } from '@chemicalluck/engine/features/rng/weights.types';
+import type { BodyAttributes, CharacterProfile } from '@chemicalluck/engine/types';
 
 // ── JSON schema ───────────────────────────────────────────────────────────────
 

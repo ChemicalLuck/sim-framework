@@ -1,33 +1,33 @@
-import { ActionButton } from '@sim/engine/components/action-button';
-import { ActionButtonList } from '@sim/engine/components/action-button-list';
-import { NpcMeta } from '@sim/engine/components/npc-meta';
-import WithSidebar from '@sim/engine/components/with-sidebar';
+import { ActionButton } from '@chemicalluck/engine/components/action-button';
+import { ActionButtonList } from '@chemicalluck/engine/components/action-button-list';
+import { NpcMeta } from '@chemicalluck/engine/components/npc-meta';
+import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
 import {
   type TemplateContext,
   renderText,
-} from '@sim/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@sim/engine/features/linguistics/use-template-context';
+} from '@chemicalluck/engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
 import {
   getConversationTopics,
   isTopicVisible,
   resolveConversationEffects,
-} from '@sim/engine/features/npcs/lib/conversation-topics';
-import { getNamedNpcTopics } from '@sim/engine/features/npcs/lib/named-npcs';
-import { describeStranger } from '@sim/engine/features/npcs/lib/npcs';
-import { selectNpcById } from '@sim/engine/features/npcs/selectors';
+} from '@chemicalluck/engine/features/npcs/lib/conversation-topics';
+import { getNamedNpcTopics } from '@chemicalluck/engine/features/npcs/lib/named-npcs';
+import { describeStranger } from '@chemicalluck/engine/features/npcs/lib/npcs';
+import { selectNpcById } from '@chemicalluck/engine/features/npcs/selectors';
 import type {
   ConversationTopic,
   NPC,
   NpcRelationship,
-} from '@sim/engine/features/npcs/types';
+} from '@chemicalluck/engine/features/npcs/types';
 import {
   selectNpcKnown,
   selectNpcRelationship,
-} from '@sim/engine/features/relationships/selectors';
-import * as effects from '@sim/engine/features/view/helpers';
-import { selectDescription } from '@sim/engine/features/view/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
-import type { Action } from '@sim/engine/types';
+} from '@chemicalluck/engine/features/relationships/selectors';
+import * as effects from '@chemicalluck/engine/features/view/helpers';
+import { selectDescription } from '@chemicalluck/engine/features/view/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
+import type { Action } from '@chemicalluck/engine/types';
 
 const topicToAction = (
   topic: ConversationTopic,

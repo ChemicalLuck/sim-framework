@@ -1,6 +1,6 @@
-import type { HydrationContext } from '@sim/engine/features/core/hydrate';
-import type { JsonEffect } from '@sim/engine/features/core/types';
-import type { Effect } from '@sim/engine/types/effect.types';
+import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
+import type { JsonEffect } from '@chemicalluck/engine/features/core/types';
+import type { Effect } from '@chemicalluck/engine/types/effect.types';
 
 export interface EffectHydrator {
   test: (e: JsonEffect) => boolean;

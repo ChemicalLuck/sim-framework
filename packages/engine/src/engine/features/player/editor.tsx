@@ -1,11 +1,11 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Input } from '@sim/engine/components/ui/input';
-import { useRegisterSave } from '@sim/engine/editor/lib/save-context';
-import { useReportDirty } from '@sim/engine/editor/lib/unsaved-changes';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
-import type { LocationNode } from '@sim/engine/features/travel/types';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { useRegisterSave } from '@chemicalluck/engine/editor/lib/save-context';
+import { useReportDirty } from '@chemicalluck/engine/editor/lib/unsaved-changes';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import type { LocationNode } from '@chemicalluck/engine/features/travel/types';
 
 import { SkillsPanel } from './skills-panel';
 

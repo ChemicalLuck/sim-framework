@@ -2,7 +2,7 @@ import type {
   Wearable,
   WearableAppearance,
   WearableTemplate,
-} from '@sim/engine/types';
+} from '@chemicalluck/engine/types';
 
 function descriptionFromWearableAppearance(
   appearance: WearableAppearance,

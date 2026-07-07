@@ -1,26 +1,26 @@
-import { ActionButton } from '@sim/engine/components/action-button';
-import { Badge } from '@sim/engine/components/ui/badge';
-import { Card } from '@sim/engine/components/ui/card';
+import { ActionButton } from '@chemicalluck/engine/components/action-button';
+import { Badge } from '@chemicalluck/engine/components/ui/badge';
+import { Card } from '@chemicalluck/engine/components/ui/card';
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@sim/engine/components/ui/tabs';
-import { selectClothingState } from '@sim/engine/features/clothing/selectors';
-import { evaluateFit } from '@sim/engine/features/outfits/lib/fit';
+} from '@chemicalluck/engine/components/ui/tabs';
+import { selectClothingState } from '@chemicalluck/engine/features/clothing/selectors';
+import { evaluateFit } from '@chemicalluck/engine/features/outfits/lib/fit';
 import {
   getCategories,
   getEstimatedMetrics,
   getSizeSystems,
   getSlotCategoryMap,
-} from '@sim/engine/features/outfits/lib/wearable-config';
+} from '@chemicalluck/engine/features/outfits/lib/wearable-config';
 import {
   selectEquipment,
   selectWearables,
-} from '@sim/engine/features/player/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
-import type { BodyAttributes } from '@sim/engine/types';
+} from '@chemicalluck/engine/features/player/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
+import type { BodyAttributes } from '@chemicalluck/engine/types';
 
 import RemoveEquipment from './remove-equipment';
 

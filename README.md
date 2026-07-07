@@ -11,10 +11,10 @@ and depend on them.
 
 | Package | Description |
 | --- | --- |
-| [`@sim/engine`](./packages/engine) | Game-agnostic runtime, content editor, and Vite plugins (shipped as source). |
-| [`sim`](./packages/cli) | CLI: `dev` / `build` / `editor` / `preview` / `check`. |
-| [`create-sim-game`](./packages/create-sim-game) | Scaffolder — `npm create sim-game my-game`. |
-| [`@sim/config`](./packages/config) | Shared TypeScript / ESLint / Prettier presets. |
+| [`@chemicalluck/engine`](./packages/engine) | Game-agnostic runtime, content editor, and Vite plugins (shipped as source). |
+| [`@chemicalluck/sim`](./packages/cli) | CLI (bin `sim`): `dev` / `build` / `editor` / `preview` / `check`. |
+| [`@chemicalluck/create-sim-game`](./packages/create-sim-game) | Scaffolder — `npm create @chemicalluck/sim-game my-game`. |
+| [`@chemicalluck/config`](./packages/config) | Shared TypeScript / ESLint / Prettier presets. |
 
 `examples/` and `templates/` are private workspace packages (not published).
 
@@ -44,8 +44,8 @@ GitHub Action.
 ### One-time setup
 
 - Add an **`NPM_TOKEN`** repository secret (a granular npm automation token with publish
-  rights to the `@sim` scope and the `sim` / `create-sim-game` names).
-- Ensure the `@sim` org exists on npm and your account can publish to it.
+  rights to the `@chemicalluck` scope).
+- Ensure your npm account owns the `@chemicalluck` scope and can publish to it.
 - The workflow publishes with npm **provenance** (`id-token: write`); this requires the
   repo to be public. If it is private, remove `NPM_CONFIG_PROVENANCE` from
   `.github/workflows/release.yml`.

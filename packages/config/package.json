@@ -1,5 +1,5 @@
 {
-  "name": "@sim/config",
+  "name": "@chemicalluck/config",
   "version": "0.1.0",
   "type": "module",
   "description": "Shared TypeScript, ESLint, and Prettier presets for sim games and the framework.",

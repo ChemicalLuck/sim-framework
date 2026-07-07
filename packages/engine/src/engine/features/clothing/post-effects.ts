@@ -1,18 +1,18 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import { increaseNeedByAmount } from '@sim/engine/features/needs/slice';
-import { evaluateFit } from '@sim/engine/features/outfits/lib/fit';
+} from '@chemicalluck/engine/features/core/types';
+import { increaseNeedByAmount } from '@chemicalluck/engine/features/needs/slice';
+import { evaluateFit } from '@chemicalluck/engine/features/outfits/lib/fit';
 import {
   getEstimatedMetrics,
   getSizeSystems,
-} from '@sim/engine/features/outfits/lib/wearable-config';
-import { getLocationById } from '@sim/engine/features/travel/lib/world';
-import { computeDayWeather } from '@sim/engine/features/weather/lib/weather';
-import type { WeatherConditionId } from '@sim/engine/features/weather/types';
-import type { PostEffectHandler } from '@sim/engine/state/thunks';
-import type { BodyAttributes } from '@sim/engine/types/character.types';
+} from '@chemicalluck/engine/features/outfits/lib/wearable-config';
+import { getLocationById } from '@chemicalluck/engine/features/travel/lib/world';
+import { computeDayWeather } from '@chemicalluck/engine/features/weather/lib/weather';
+import type { WeatherConditionId } from '@chemicalluck/engine/features/weather/types';
+import type { PostEffectHandler } from '@chemicalluck/engine/state/thunks';
+import type { BodyAttributes } from '@chemicalluck/engine/types/character.types';
 
 import { addWearMinutes, ensureItems, setWet } from './slice';
 import { UMBRELLA_SLOT, WET_WEATHER_CONDITIONS } from './types';

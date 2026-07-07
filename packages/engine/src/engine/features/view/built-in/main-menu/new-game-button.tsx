@@ -1,8 +1,8 @@
-import { Button } from '@sim/engine/components/ui/button';
-import { regenerateNpcs } from '@sim/engine/features/npcs/slice';
-import { setGameSeed } from '@sim/engine/features/rng/slice';
-import { setView } from '@sim/engine/features/view/slice';
-import { useEngineDispatch } from '@sim/engine/state/store';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { regenerateNpcs } from '@chemicalluck/engine/features/npcs/slice';
+import { setGameSeed } from '@chemicalluck/engine/features/rng/slice';
+import { setView } from '@chemicalluck/engine/features/view/slice';
+import { useEngineDispatch } from '@chemicalluck/engine/state/store';
 
 export function NewGameButton() {
   const dispatch = useEngineDispatch();

@@ -1,8 +1,8 @@
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 import type { MilestoneCondition } from './types';
 
-declare module '@sim/engine/types/condition.types' {
+declare module '@chemicalluck/engine/types/condition.types' {
   interface ConditionMap {
     milestone: MilestoneCondition;
   }

@@ -1,5 +1,5 @@
 {
-  "name": "create-sim-game",
+  "name": "@chemicalluck/create-sim-game",
   "version": "0.1.0",
   "type": "module",
   "description": "Scaffold a new sim game — `npm create sim-game my-game`.",
@@ -11,6 +11,9 @@
   },
   "homepage": "https://github.com/ChemicalLuck/sim-framework/wiki",
   "bugs": "https://github.com/ChemicalLuck/sim-framework/issues",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "create-sim-game": "./dist/index.js"
   },
@@ -24,7 +27,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@sim/config": "workspace:*",
+    "@chemicalluck/config": "workspace:*",
     "@types/node": "^24.10.0",
     "tsup": "^8.3.5",
     "typescript": "~5.9.3"

@@ -1,8 +1,8 @@
-import { getMinimapConfig } from '@sim/engine/features/minimap/lib/minimap';
-import { selectCurrentLocation } from '@sim/engine/features/player/selectors';
-import { getWorld } from '@sim/engine/features/travel/lib/world';
-import type { LocationNode } from '@sim/engine/features/travel/types';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { getMinimapConfig } from '@chemicalluck/engine/features/minimap/lib/minimap';
+import { selectCurrentLocation } from '@chemicalluck/engine/features/player/selectors';
+import { getWorld } from '@chemicalluck/engine/features/travel/lib/world';
+import type { LocationNode } from '@chemicalluck/engine/features/travel/types';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

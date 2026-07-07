@@ -1,21 +1,21 @@
-import { Field } from '@sim/engine/components/ui/field';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+import { Field } from '@chemicalluck/engine/components/ui/field';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
+} from '@chemicalluck/engine/components/ui/select';
 import {
   NumField,
   TwoCol,
-} from '@sim/engine/editor/components/effect-form-primitives';
+} from '@chemicalluck/engine/editor/components/effect-form-primitives';
 import {
   type DataRequirement,
   defineEffectEditor,
-} from '@sim/engine/editor/lib/effect-editor';
+} from '@chemicalluck/engine/editor/lib/effect-editor';
 
 interface NeedsFormState {
   need: string;
@@ -107,7 +107,7 @@ export const editorDataRequirements: DataRequirement[] = [
   },
 ];
 
-declare module '@sim/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     needs: typeof needs;
   }

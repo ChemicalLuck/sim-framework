@@ -1,10 +1,10 @@
-import { hydrateEffect } from '@sim/engine/features/core/hydrate';
-import type { HydrationContext } from '@sim/engine/features/core/hydrate';
+import { hydrateEffect } from '@chemicalluck/engine/features/core/hydrate';
+import type { HydrationContext } from '@chemicalluck/engine/features/core/hydrate';
 import type {
   Encounter,
   EncounterAction,
   EncounterState,
-} from '@sim/engine/features/encounter/types';
+} from '@chemicalluck/engine/features/encounter/types';
 
 import type {
   JsonEncounter,
@@ -12,7 +12,7 @@ import type {
   JsonEncounterState,
 } from './authoring.types';
 
-declare module '@sim/engine/data' {
+declare module '@chemicalluck/engine/data' {
   interface ContentExtensions {
     encounters: Encounter[];
   }

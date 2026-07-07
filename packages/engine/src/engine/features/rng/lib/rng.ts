@@ -1,4 +1,4 @@
-import type { Weights } from '@sim/engine/features/rng/weights.types';
+import type { Weights } from '@chemicalluck/engine/features/rng/weights.types';
 
 export interface RNG {
   next(): number; // returns [0, 1)

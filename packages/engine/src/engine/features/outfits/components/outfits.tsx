@@ -1,7 +1,7 @@
-import { ActionButton } from '@sim/engine/components/action-button';
-import { Card } from '@sim/engine/components/ui/card';
-import { selectOutfits } from '@sim/engine/features/outfits/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { ActionButton } from '@chemicalluck/engine/components/action-button';
+import { Card } from '@chemicalluck/engine/components/ui/card';
+import { selectOutfits } from '@chemicalluck/engine/features/outfits/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import OutfitSave from './outfit-save';
 

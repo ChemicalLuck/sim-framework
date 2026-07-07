@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import type { Condition } from '@sim/engine/types/condition.types';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 import { ConditionChip, ConditionEditor } from './condition-form';
 

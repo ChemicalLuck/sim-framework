@@ -1,4 +1,4 @@
-import type { BodyAttributes } from '@sim/engine/types/character.types';
+import type { BodyAttributes } from '@chemicalluck/engine/types/character.types';
 
 import type { EstimatedMetric, LinearModel } from './wearable-config';
 

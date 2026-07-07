@@ -1,7 +1,7 @@
-import { Field } from '@sim/engine/components/ui/field';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
-import { defineEffectEditor } from '@sim/engine/editor/lib/effect-editor';
+import { Field } from '@chemicalluck/engine/components/ui/field';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
+import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
 
 // `equip` is registered hidden — surfaced on the chip but never offered in
 // the kind picker because equip effects are emitted by runtime handlers,
@@ -55,7 +55,7 @@ const wearable_condition = defineEffectEditor<WearableConditionFormState>({
   ),
 });
 
-declare module '@sim/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     equip: typeof equip;
     wearable_condition: typeof wearable_condition;

@@ -1,6 +1,6 @@
 import * as ProgressPrimitive from '@radix-ui/react-progress';
 import * as React from 'react';
-import { cn } from '@sim/engine/lib/css';
+import { cn } from '@chemicalluck/engine/lib/css';
 
 function Progress({
   className,

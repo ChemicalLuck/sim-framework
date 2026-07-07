@@ -1,14 +1,14 @@
 import { effectHydrators } from 'virtual:game-extensions';
-import type { Registry } from '@sim/engine/data/registry';
-import type { Scene, Script } from '@sim/engine/types';
-import type { ActionGroup } from '@sim/engine/types/action-group.types';
-import type { Action } from '@sim/engine/types/action.types';
-import type { Effect } from '@sim/engine/types/effect.types';
+import type { Registry } from '@chemicalluck/engine/data/registry';
+import type { Scene, Script } from '@chemicalluck/engine/types';
+import type { ActionGroup } from '@chemicalluck/engine/types/action-group.types';
+import type { Action } from '@chemicalluck/engine/types/action.types';
+import type { Effect } from '@chemicalluck/engine/types/effect.types';
 import type {
   Item,
   Wearable,
   WearableTemplate,
-} from '@sim/engine/types/item.types';
+} from '@chemicalluck/engine/types/item.types';
 
 import type {
   JsonAction,

@@ -1,11 +1,11 @@
-import { ActionButtonList } from '@sim/engine/components/action-button-list';
-import { ItemActionsButtonsList } from '@sim/engine/components/item-actions-button-list';
-import WithSidebar from '@sim/engine/components/with-sidebar';
-import { renderText } from '@sim/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@sim/engine/features/linguistics/use-template-context';
-import { selectNpcsByIds } from '@sim/engine/features/npcs/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
-import type { Scene } from '@sim/engine/types';
+import { ActionButtonList } from '@chemicalluck/engine/components/action-button-list';
+import { ItemActionsButtonsList } from '@chemicalluck/engine/components/item-actions-button-list';
+import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
+import { renderText } from '@chemicalluck/engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
+import { selectNpcsByIds } from '@chemicalluck/engine/features/npcs/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
+import type { Scene } from '@chemicalluck/engine/types';
 
 interface SceneViewProps {
   scene: Scene;

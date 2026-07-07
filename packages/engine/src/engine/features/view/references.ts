@@ -1,7 +1,7 @@
 import type {
   NodeRefExtractor,
   NodeRefRewriter,
-} from '@sim/engine/lib/validation';
+} from '@chemicalluck/engine/lib/validation';
 
 const viewRef: NodeRefExtractor = (node) => {
   if (!('kind' in node) || node.kind !== 'view') return [];

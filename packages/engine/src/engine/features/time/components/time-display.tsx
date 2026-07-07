@@ -1,5 +1,5 @@
-import { selectTimestamp } from '@sim/engine/features/time/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { selectTimestamp } from '@chemicalluck/engine/features/time/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 export default function TimeDisplay() {
   const time = useEngineSelector(selectTimestamp);

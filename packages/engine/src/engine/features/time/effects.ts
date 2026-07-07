@@ -1,8 +1,8 @@
 import {
   type EffectContext,
   dispatchWithGroup,
-} from '@sim/engine/features/core/types';
-import { GlobalLogger } from '@sim/engine/lib/logger';
+} from '@chemicalluck/engine/features/core/types';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
 
 import { advanceTimeByMinutes } from './slice';
 import type { SleepEffect, TimeEffect } from './types';

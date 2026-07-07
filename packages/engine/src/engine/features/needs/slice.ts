@@ -1,7 +1,7 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { Need } from '@sim/engine/features/needs/types';
-import { makeConfig } from '@sim/engine/lib/core';
-import { clampAdd } from '@sim/engine/lib/maths';
+import type { Need } from '@chemicalluck/engine/features/needs/types';
+import { makeConfig } from '@chemicalluck/engine/lib/core';
+import { clampAdd } from '@chemicalluck/engine/lib/maths';
 
 export interface NeedsConfig {
   needs: Record<string, number>;
@@ -73,7 +73,7 @@ export const { decayNeedsByMinutes, increaseNeedByAmount } = needsSlice.actions;
 
 export default needsSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     needs: ReturnType<typeof needsSlice.reducer>;
   }

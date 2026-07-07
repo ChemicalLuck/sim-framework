@@ -5,7 +5,7 @@ export interface BaseEffect<K extends string> {
 /**
  * Map of every effect kind to its concrete type. Features/extensions augment via:
  *
- *   declare module '@sim/engine/types/effect.types' {
+ *   declare module '@chemicalluck/engine/types/effect.types' {
  *     interface EffectMap { myKind: MyEffect; }
  *   }
  *

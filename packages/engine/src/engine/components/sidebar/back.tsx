@@ -1,8 +1,8 @@
 import { Redo2, Undo2 } from 'lucide-react';
 import { useCallback } from 'react';
 import { ActionCreators } from 'redux-undo';
-import { Button } from '@sim/engine/components/ui/button';
-import { useEngineDispatch, useEngineSelector } from '@sim/engine/state/store';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
 
 export default function BackButton() {
   const dispatch = useEngineDispatch();

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { CharacterProfile } from '@sim/engine/types';
+import type { CharacterProfile } from '@chemicalluck/engine/types';
 
 import { buildEntityVars, buildTemplateContext } from './context';
 

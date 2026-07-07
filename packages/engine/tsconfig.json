@@ -1,12 +1,12 @@
 {
-  "extends": "@sim/config/tsconfig/base.json",
+  "extends": "@chemicalluck/config/tsconfig/base.json",
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
     "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "node"],
     "baseUrl": ".",
     "paths": {
-      "@sim/engine": ["./src/engine/index.tsx"],
-      "@sim/engine/*": ["./src/engine/*"]
+      "@chemicalluck/engine": ["./src/engine/index.tsx"],
+      "@chemicalluck/engine/*": ["./src/engine/*"]
     }
   },
   "include": ["src"]

@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '@sim/engine/components/ui/button';
-import { Field, FieldGroup } from '@sim/engine/components/ui/field';
+import { Button } from '@chemicalluck/engine/components/ui/button';
+import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -9,30 +9,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
+} from '@chemicalluck/engine/components/ui/select';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@sim/engine/editor/components/panel-layout';
-import { useAddForm } from '@sim/engine/editor/lib/use-add-form';
-import { usePanelEntries } from '@sim/engine/editor/lib/use-panel-entries';
+} from '@chemicalluck/engine/editor/components/panel-layout';
+import { useAddForm } from '@chemicalluck/engine/editor/lib/use-add-form';
+import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
 import {
   getSizeSystems,
   getSlots,
   getStyles,
-} from '@sim/engine/features/outfits/lib/wearable-config';
+} from '@chemicalluck/engine/features/outfits/lib/wearable-config';
 
 interface RawTemplate {
   id: string;

@@ -1,18 +1,18 @@
 import { ScrollText } from 'lucide-react';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@sim/engine/components/ui/dialog';
-import Roundel from '@sim/engine/components/ui/roundel';
+} from '@chemicalluck/engine/components/ui/dialog';
+import Roundel from '@chemicalluck/engine/components/ui/roundel';
 import {
   selectActiveQuests,
   selectCompletedQuests,
-} from '@sim/engine/features/quests/selectors';
-import { useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/features/quests/selectors';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import QuestCard from './quest-card';
 

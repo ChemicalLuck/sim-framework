@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '@sim/engine/components/ui/button';
+import { Button } from '@chemicalluck/engine/components/ui/button';
 import {
   Form,
   FormControl,
@@ -8,49 +8,49 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import WithCentered from '@sim/engine/components/with-centered';
+} from '@chemicalluck/engine/components/ui/select';
+import WithCentered from '@chemicalluck/engine/components/with-centered';
 import {
   getAppearanceLists,
   getBodyAttributes,
   isBodyAttributeVisible,
-} from '@sim/engine/features/npcs/lib/appearance-config';
+} from '@chemicalluck/engine/features/npcs/lib/appearance-config';
 import {
   estimatePlayerSizes,
   idealSizeIndex,
-} from '@sim/engine/features/outfits/lib/fit';
+} from '@chemicalluck/engine/features/outfits/lib/fit';
 import {
   type SizeSystem,
   type SizeTier,
   getEstimatedMetrics,
   getSizeSystems,
-} from '@sim/engine/features/outfits/lib/wearable-config';
-import { getPostCharacterCreationView } from '@sim/engine/features/player/lib/character-customisation';
+} from '@chemicalluck/engine/features/outfits/lib/wearable-config';
+import { getPostCharacterCreationView } from '@chemicalluck/engine/features/player/lib/character-customisation';
 import {
   getCharacterCreationSkillPoints,
   getSkills,
-} from '@sim/engine/features/player/lib/skills';
+} from '@chemicalluck/engine/features/player/lib/skills';
 import {
   setBody,
   setProfile,
   updateSkill,
-} from '@sim/engine/features/player/slice';
-import { type ViewState, setView } from '@sim/engine/features/view/slice';
-import { appName } from '@sim/engine/lib/core';
-import { useEngineDispatch, useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/features/player/slice';
+import { type ViewState, setView } from '@chemicalluck/engine/features/view/slice';
+import { appName } from '@chemicalluck/engine/lib/core';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
 import type {
   BodyAttributes,
   CharacterProfile,
   CharacterProfileTemplate,
-} from '@sim/engine/types';
+} from '@chemicalluck/engine/types';
 
 function isFeatureVisible(
   feat: { showWhen?: { featureId: string; values: string[] } },

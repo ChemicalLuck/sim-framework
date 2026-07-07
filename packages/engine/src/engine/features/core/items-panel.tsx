@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Badge } from '@sim/engine/components/ui/badge';
-import { Field, FieldGroup } from '@sim/engine/components/ui/field';
+import { Badge } from '@chemicalluck/engine/components/ui/badge';
+import { Field, FieldGroup } from '@chemicalluck/engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -9,40 +9,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@sim/engine/components/ui/form';
-import { Input } from '@sim/engine/components/ui/input';
+} from '@chemicalluck/engine/components/ui/form';
+import { Input } from '@chemicalluck/engine/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@sim/engine/components/ui/select';
-import { Textarea } from '@sim/engine/components/ui/textarea';
-import { ActionGroupsEditor } from '@sim/engine/editor/components/action-groups-editor';
+} from '@chemicalluck/engine/components/ui/select';
+import { Textarea } from '@chemicalluck/engine/components/ui/textarea';
+import { ActionGroupsEditor } from '@chemicalluck/engine/editor/components/action-groups-editor';
 import {
   AddDialog,
   ConfirmDialog,
   DataList,
   PanelLayout,
   SidebarToolbar,
-} from '@sim/engine/editor/components/panel-layout';
-import { ReferencedBy } from '@sim/engine/editor/components/referenced-by';
+} from '@chemicalluck/engine/editor/components/panel-layout';
+import { ReferencedBy } from '@chemicalluck/engine/editor/components/referenced-by';
 import {
   type AvailableData,
   useAvailableData,
-} from '@sim/engine/editor/lib/use-available-data';
-import { useEditorData } from '@sim/engine/editor/lib/use-editor-data';
-import { usePanelEntries } from '@sim/engine/editor/lib/use-panel-entries';
-import { getCurrencySymbol } from '@sim/engine/features/money/lib/currency';
-import type { WearableConfig } from '@sim/engine/features/outfits/lib/wearable-config';
+} from '@chemicalluck/engine/editor/lib/use-available-data';
+import { useEditorData } from '@chemicalluck/engine/editor/lib/use-editor-data';
+import { usePanelEntries } from '@chemicalluck/engine/editor/lib/use-panel-entries';
+import { getCurrencySymbol } from '@chemicalluck/engine/features/money/lib/currency';
+import type { WearableConfig } from '@chemicalluck/engine/features/outfits/lib/wearable-config';
 import type {
   Coverage,
   InventoryItem,
   ItemFields,
   Slot,
   Style,
-} from '@sim/engine/types/item.types';
+} from '@chemicalluck/engine/types/item.types';
 
 type KindFilter = 'all' | 'item' | 'wearable';
 

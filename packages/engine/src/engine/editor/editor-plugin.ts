@@ -172,7 +172,7 @@ export interface EditorPluginOptions {
   extraEditorSlots?: EditorSlot[];
   /**
    * Absolute path to the directory containing the editor SPA's `index.html`
-   * (i.e. `@sim/engine/src/engine/editor`). Defaults to this plugin file's own
+   * (i.e. `@chemicalluck/engine/src/engine/editor`). Defaults to this plugin file's own
    * directory, which is correct when the plugin runs from source. The `sim`
    * CLI passes the resolved path so the editor is served even when the
    * plugin's Node entry is compiled elsewhere.

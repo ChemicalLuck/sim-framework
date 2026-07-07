@@ -1,10 +1,10 @@
-import { cryptoRNG } from '@sim/engine/features/rng/lib/rng';
-import { WeightsBuilder } from '@sim/engine/features/rng/lib/weights';
-import { setView } from '@sim/engine/features/view/slice';
-import { isConditionMet } from '@sim/engine/lib/conditions/evaluator';
-import type { EngineThunk } from '@sim/engine/state/store';
-import { processEffects } from '@sim/engine/state/thunks';
-import type { Effect } from '@sim/engine/types';
+import { cryptoRNG } from '@chemicalluck/engine/features/rng/lib/rng';
+import { WeightsBuilder } from '@chemicalluck/engine/features/rng/lib/weights';
+import { setView } from '@chemicalluck/engine/features/view/slice';
+import { isConditionMet } from '@chemicalluck/engine/lib/conditions/evaluator';
+import type { EngineThunk } from '@chemicalluck/engine/state/store';
+import { processEffects } from '@chemicalluck/engine/state/thunks';
+import type { Effect } from '@chemicalluck/engine/types';
 
 import { setEncounterState, setNpcAction, stopEncounter } from './slice';
 

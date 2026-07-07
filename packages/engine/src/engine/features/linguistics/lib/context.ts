@@ -1,4 +1,4 @@
-import type { BodyAttributes, CharacterProfile } from '@sim/engine/types';
+import type { BodyAttributes, CharacterProfile } from '@chemicalluck/engine/types';
 
 import { getMacros, getTerms } from './config';
 import type { TemplateContext } from './template';

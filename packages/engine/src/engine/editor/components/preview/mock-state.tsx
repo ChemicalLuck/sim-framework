@@ -7,7 +7,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import type { RootState } from '@sim/engine/state/store';
+import type { RootState } from '@chemicalluck/engine/state/store';
 
 /**
  * Editable stand-in for the slices the condition DSL reads, used to evaluate

@@ -1,18 +1,18 @@
-import WithSidebar from '@sim/engine/components/with-sidebar';
+import WithSidebar from '@chemicalluck/engine/components/with-sidebar';
 import {
   setEncounterState,
   setPlayerAction,
-} from '@sim/engine/features/encounter/slice';
+} from '@chemicalluck/engine/features/encounter/slice';
 import {
   processTurn,
   stopEncounterThunk,
-} from '@sim/engine/features/encounter/thunks';
-import { renderText } from '@sim/engine/features/linguistics/lib/template';
-import { useTemplateContext } from '@sim/engine/features/linguistics/use-template-context';
-import { selectNpcById } from '@sim/engine/features/npcs/selectors';
-import { isConditionMet } from '@sim/engine/lib/conditions/evaluator';
-import { cn } from '@sim/engine/lib/css';
-import { useEngineDispatch, useEngineSelector } from '@sim/engine/state/store';
+} from '@chemicalluck/engine/features/encounter/thunks';
+import { renderText } from '@chemicalluck/engine/features/linguistics/lib/template';
+import { useTemplateContext } from '@chemicalluck/engine/features/linguistics/use-template-context';
+import { selectNpcById } from '@chemicalluck/engine/features/npcs/selectors';
+import { isConditionMet } from '@chemicalluck/engine/lib/conditions/evaluator';
+import { cn } from '@chemicalluck/engine/lib/css';
+import { useEngineDispatch, useEngineSelector } from '@chemicalluck/engine/state/store';
 
 function EncounterView() {
   const dispatch = useEngineDispatch();

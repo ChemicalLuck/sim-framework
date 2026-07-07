@@ -8,13 +8,13 @@
 ## Scaffold a game
 
 ```bash
-npm create sim-game my-game
+npm create @chemicalluck/sim-game my-game
 cd my-game
 npm install
 ```
 
 This creates a minimal but complete game — a couple of locations, an item, and all the
-required content files — wired to `@sim/engine` and the `sim` CLI.
+required content files — wired to `@chemicalluck/engine` and the `sim` CLI.
 
 ## Run it
 

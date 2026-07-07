@@ -1,5 +1,5 @@
-import type { JsonAction, JsonActionGroup } from '@sim/engine/features/core/types';
-import type { Condition } from '@sim/engine/types/condition.types';
+import type { JsonAction, JsonActionGroup } from '@chemicalluck/engine/features/core/types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
 
 export type { JsonAction };
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { JsonScene } from '@sim/engine/features/core/types';
-import { parseCondition } from '@sim/engine/lib/conditions';
-import { renderEditorPanel } from '@sim/engine/test-utils/render';
+import type { JsonScene } from '@chemicalluck/engine/features/core/types';
+import { parseCondition } from '@chemicalluck/engine/lib/conditions';
+import { renderEditorPanel } from '@chemicalluck/engine/test-utils/render';
 
 import { PreviewStateProvider } from './mock-state';
 import { NarrativePreview } from './narrative-preview';

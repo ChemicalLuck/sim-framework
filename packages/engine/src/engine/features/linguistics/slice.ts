@@ -34,7 +34,7 @@ export const { setWordChoice, setAllWordChoices } = linguisticsSlice.actions;
 
 export default linguisticsSlice.reducer;
 
-declare module '@sim/engine/state/store' {
+declare module '@chemicalluck/engine/state/store' {
   interface PresentState {
     linguistics: ReturnType<typeof linguisticsSlice.reducer>;
   }

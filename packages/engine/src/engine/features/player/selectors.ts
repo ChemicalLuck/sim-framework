@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { isConditionMet } from '@sim/engine/lib/conditions';
-import { addIndefiniteArticle } from '@sim/engine/lib/linguistics';
-import type { RootState } from '@sim/engine/state/store';
-import type { ActionGroup, BodyAttributes, Equipment } from '@sim/engine/types';
-import type { Wearable } from '@sim/engine/types/item.types';
+import { isConditionMet } from '@chemicalluck/engine/lib/conditions';
+import { addIndefiniteArticle } from '@chemicalluck/engine/lib/linguistics';
+import type { RootState } from '@chemicalluck/engine/state/store';
+import type { ActionGroup, BodyAttributes, Equipment } from '@chemicalluck/engine/types';
+import type { Wearable } from '@chemicalluck/engine/types/item.types';
 
 import { selectNarrativeVars } from '../linguistics/selectors';
 import { describeAppearance } from '../npcs/lib/appearance-config';

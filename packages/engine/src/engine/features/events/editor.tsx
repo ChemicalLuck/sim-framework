@@ -1,4 +1,4 @@
-import type { DataRequirement } from '@sim/engine/editor/lib/effect-editor';
+import type { DataRequirement } from '@chemicalluck/engine/editor/lib/effect-editor';
 
 import { EventsPanel } from './events-panel';
 

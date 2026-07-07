@@ -129,7 +129,7 @@ export interface GamePluginOptions {
    * Absolute path to the engine source root (the directory containing
    * `features/` and `data/`). Defaults to this plugin file's own directory,
    * which is correct when the plugin runs from source. The `sim` CLI passes
-   * the resolved `@sim/engine/src/engine` path so the plugin works even when
+   * the resolved `@chemicalluck/engine/src/engine` path so the plugin works even when
    * its Node entry is compiled to a different location.
    */
   engineDir?: string;

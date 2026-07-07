@@ -63,7 +63,7 @@ export async function runCheck(cwd: string): Promise<number> {
       'virtual:references',
     )) as ReferenceContributions;
     const validation = (await server.ssrLoadModule(
-      '@sim/engine/lib/validation',
+      '@chemicalluck/engine/lib/validation',
     )) as ValidationModule;
 
     const contributions: ReferenceContributions = {

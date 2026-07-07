@@ -1,7 +1,7 @@
-import { Field } from '@sim/engine/components/ui/field';
-import { Input } from '@sim/engine/components/ui/input';
-import { Label } from '@sim/engine/components/ui/label';
-import { defineEffectEditor } from '@sim/engine/editor/lib/effect-editor';
+import { Field } from '@chemicalluck/engine/components/ui/field';
+import { Input } from '@chemicalluck/engine/components/ui/input';
+import { Label } from '@chemicalluck/engine/components/ui/label';
+import { defineEffectEditor } from '@chemicalluck/engine/editor/lib/effect-editor';
 
 interface NpcFormState {
   npcId: string;
@@ -31,7 +31,7 @@ const npc = defineEffectEditor<NpcFormState>({
   ),
 });
 
-declare module '@sim/engine/editor/lib/effect-editor' {
+declare module '@chemicalluck/engine/editor/lib/effect-editor' {
   interface EffectEditorMap {
     npc: typeof npc;
   }

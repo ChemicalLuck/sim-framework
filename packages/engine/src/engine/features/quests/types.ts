@@ -1,7 +1,7 @@
-import type { Action } from '@sim/engine/types/action.types';
-import type { Condition } from '@sim/engine/types/condition.types';
-import type { BaseEffect, Effect } from '@sim/engine/types/effect.types';
-import type { Scene } from '@sim/engine/types/scene.types';
+import type { Action } from '@chemicalluck/engine/types/action.types';
+import type { Condition } from '@chemicalluck/engine/types/condition.types';
+import type { BaseEffect, Effect } from '@chemicalluck/engine/types/effect.types';
+import type { Scene } from '@chemicalluck/engine/types/scene.types';
 
 export type ObjectiveTrigger = Action | Condition;
 export type ObjectiveCondition = Action | Scene | Condition;
@@ -58,7 +58,7 @@ export interface QuestCreateEffect extends BaseEffect<'quest_create'> {
   readonly npcId: string;
 }
 
-declare module '@sim/engine/types/effect.types' {
+declare module '@chemicalluck/engine/types/effect.types' {
   interface EffectMap {
     quest: QuestEffect;
     quest_create: QuestCreateEffect;

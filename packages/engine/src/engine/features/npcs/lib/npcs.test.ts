@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Mulberry32 } from '@sim/engine/features/rng/lib/rng';
-import type { BodyAttributes } from '@sim/engine/types';
+import { Mulberry32 } from '@chemicalluck/engine/features/rng/lib/rng';
+import type { BodyAttributes } from '@chemicalluck/engine/types';
 
 import type { NPC } from '../types';
 import {

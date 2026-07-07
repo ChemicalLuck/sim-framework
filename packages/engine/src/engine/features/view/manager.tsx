@@ -1,6 +1,6 @@
-import { selectView } from '@sim/engine/features/view/selectors';
-import { GlobalLogger } from '@sim/engine/lib/logger';
-import { useEngineSelector } from '@sim/engine/state/store';
+import { selectView } from '@chemicalluck/engine/features/view/selectors';
+import { GlobalLogger } from '@chemicalluck/engine/lib/logger';
+import { useEngineSelector } from '@chemicalluck/engine/state/store';
 
 import { useViews } from './context';
 

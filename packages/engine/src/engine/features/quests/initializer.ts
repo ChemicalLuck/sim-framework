@@ -1,9 +1,9 @@
-import type { EngineStore } from '@sim/engine/state/store';
+import type { EngineStore } from '@chemicalluck/engine/state/store';
 
 import { loadQuests } from './slice';
 import type { Quest } from './types';
 
-declare module '@sim/engine/data' {
+declare module '@chemicalluck/engine/data' {
   interface ContentExtensions {
     quests: Quest[];
   }

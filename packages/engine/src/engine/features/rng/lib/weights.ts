@@ -1,4 +1,4 @@
-import type { Weights } from '@sim/engine/features/rng/weights.types';
+import type { Weights } from '@chemicalluck/engine/features/rng/weights.types';
 
 import { type RNG, buildWeightedCDF, sample } from './rng';
 
