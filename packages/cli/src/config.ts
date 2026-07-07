@@ -91,6 +91,9 @@ export async function buildConfig({
   const user = await loadUserConfig(cwd);
   const gameDir = path.join(cwd, 'src', 'game');
 
+  const userVite = user.vite ?? {};
+  const userOptimize = userVite.optimizeDeps ?? {};
+
   const plugins: PluginOption[] = [
     react(),
     ...(isBuild ? [viteSingleFile({ removeViteModuleLoader: true })] : []),
@@ -120,15 +123,40 @@ export async function buildConfig({
         '~': path.join(cwd, 'src'),
         ...(user.alias ?? {}),
       },
+      // Force a single copy of these, resolved from the game. Matters when the
+      // engine is linked (e.g. `pnpm link` / npm link) for local development:
+      // otherwise its React/store would resolve from the linked location and
+      // duplicate the game's, breaking hooks and the redux context.
+      dedupe: ['react', 'react-dom', 'react-redux'],
     },
-    // The engine ships as source; keep it out of dep pre-bundling so Vite
-    // transforms its .ts/.tsx through the normal pipeline.
-    optimizeDeps: { exclude: ['@chemicalluck/sim-engine'] },
     esbuild: isBuild ? { drop: ['console', 'debugger'] } : undefined,
     build: {
       cssMinify: 'lightningcss',
       rollupOptions: { input: path.join(cwd, 'index.html') },
     },
-    ...(user.vite ?? {}),
+    ...userVite,
+    // Merge optimizeDeps last so a game's own `vite.optimizeDeps` extends —
+    // rather than replaces — the engine essentials below.
+    optimizeDeps: {
+      ...userOptimize,
+      // The engine ships as source (aliased above), so keep it out of dep
+      // pre-bundling and let Vite transform its .ts/.tsx through the normal
+      // pipeline.
+      exclude: ['@chemicalluck/sim-engine', ...(userOptimize.exclude ?? [])],
+      // Because the engine is excluded, Vite's scanner never crawls it to
+      // discover its runtime deps. A few CJS-only ones must be pre-bundled
+      // explicitly, or they get served raw and the browser can't read their
+      // exports (hidden in dev-only IIFEs or `exports.default`, which
+      // cjs-module-lexer can't statically detect):
+      //   • react-redux → useSyncExternalStoreWithSelector (use-sync-external-store)
+      //   • redux-persist/lib/storage → default export (redux-persist has no `exports` map)
+      //   • redux-persist/integration/react → PersistGate
+      include: [
+        'react-redux',
+        'redux-persist/lib/storage',
+        'redux-persist/integration/react',
+        ...(userOptimize.include ?? []),
+      ],
+    },
   };
 }
