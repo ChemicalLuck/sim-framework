@@ -1,0 +1,25 @@
+{
+  "name": "create-sim-game",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Scaffold a new sim game — `npm create sim-game my-game`.",
+  "license": "MIT",
+  "bin": {
+    "create-sim-game": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "template"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "prepack": "node ./scripts/sync-template.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@sim/config": "workspace:*",
+    "@types/node": "^24.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "~5.9.3"
+  }
+}

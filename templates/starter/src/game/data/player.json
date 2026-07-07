@@ -1,0 +1,11 @@
+{
+  "postCharacterCreationView": "DefaultView",
+  "characterCreationSkillPoints": 5,
+  "startLocation": "bedroom",
+  "body": {
+    "height": 170,
+    "weight": 65,
+    "bodyFat": 22,
+    "bustDifference": 0
+  }
+}

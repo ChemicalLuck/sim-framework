@@ -1,0 +1,15 @@
+{
+  "slots": ["baselayer", "legwear", "shoes"],
+  "categories": ["Tops", "Bottoms", "Shoes"],
+  "slotCategoryMap": {
+    "baselayer": "Tops",
+    "legwear": "Bottoms",
+    "shoes": "Shoes"
+  },
+  "slotConflicts": {},
+  "styles": ["casual"],
+  "appearanceKeys": [],
+  "primaryBodyAttributes": [],
+  "estimatedMetrics": {},
+  "sizeSystems": {}
+}

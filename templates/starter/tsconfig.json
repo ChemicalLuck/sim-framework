@@ -1,0 +1,6 @@
+{
+  "extends": "@sim/config/tsconfig/game.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
+  }
+}

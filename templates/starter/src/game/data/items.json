@@ -1,0 +1,23 @@
+[
+  {
+    "kind": "item",
+    "id": "coffee",
+    "name": "Coffee",
+    "value": 2,
+    "description": "A hot cup of coffee.",
+    "actions": [
+      {
+        "actions": [
+          {
+            "kind": "action",
+            "text": "Drink the coffee",
+            "effects": [
+              { "kind": "needs", "need": "Energy", "delta": 20 },
+              { "kind": "inventory", "operation": "remove", "id": "coffee" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

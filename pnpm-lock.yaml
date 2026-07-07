@@ -125,6 +125,21 @@ importers:
         specifier: ^8.45.0
         version: 8.62.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
 
+  packages/create-sim-game:
+    devDependencies:
+      '@sim/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: ^24.10.0
+        version: 24.13.2
+      tsup:
+        specifier: ^8.3.5
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.16)(typescript@5.9.3)
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
+
   packages/engine:
     dependencies:
       '@codemirror/autocomplete':
@@ -287,6 +302,34 @@ importers:
       vitest:
         specifier: ^4.1.6
         version: 4.1.10(@types/node@24.13.2)(jsdom@29.1.1)(vite@7.3.6(@types/node@24.13.2)(jiti@2.7.0)(lightningcss@1.32.0))
+
+  templates/starter:
+    dependencies:
+      '@sim/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      react:
+        specifier: ^19.1.1
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.1.1
+        version: 19.2.7(react@19.2.7)
+      sim:
+        specifier: workspace:*
+        version: link:../../packages/cli
+      tailwindcss:
+        specifier: ^4.1.16
+        version: 4.3.2
+      tw-animate-css:
+        specifier: ^1.4.0
+        version: 1.4.0
+    devDependencies:
+      '@sim/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      typescript:
+        specifier: ~5.9.3
+        version: 5.9.3
 
 packages:
 

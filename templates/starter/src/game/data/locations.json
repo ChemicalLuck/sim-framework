@@ -1,0 +1,14 @@
+[
+  {
+    "id": "bedroom",
+    "name": "Bedroom",
+    "kind": "interior",
+    "description": "Your small bedroom. A bed, a desk, and a window looking out over the street."
+  },
+  {
+    "id": "street",
+    "name": "The Street",
+    "kind": "exterior",
+    "description": "A quiet residential street. This is where your game begins — add more places in src/game/data/locations.json."
+  }
+]

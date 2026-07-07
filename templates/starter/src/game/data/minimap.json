@@ -1,0 +1,7 @@
+{
+  "nodes": {
+    "bedroom": { "x": 40, "y": 60, "label": "Home" },
+    "street": { "x": 130, "y": 60, "label": "Street" }
+  },
+  "zones": []
+}

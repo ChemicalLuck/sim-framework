@@ -1,0 +1,15 @@
+{
+  "needs": {
+    "Energy": 100,
+    "Hunger": 100,
+    "Hygiene": 100,
+    "Fun": 100
+  },
+  "decayRates": {
+    "Energy": 5,
+    "Hunger": 12,
+    "Hygiene": 3,
+    "Fun": 4
+  },
+  "sleepRestoreNeed": "Energy"
+}
