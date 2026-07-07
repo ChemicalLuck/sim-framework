@@ -1,6 +1,7 @@
 import { build, createServer, preview } from 'vite';
 
 import { buildConfig } from './config';
+import { runCheck } from './check';
 
 const HELP = `sim — the sim game framework CLI
 
@@ -42,8 +43,7 @@ async function main(): Promise<void> {
       break;
     }
     case 'check': {
-      console.error('`sim check` is not implemented yet (Phase 3).');
-      process.exit(1);
+      process.exit(await runCheck(cwd));
       break;
     }
     default: {
