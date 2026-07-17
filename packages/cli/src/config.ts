@@ -151,10 +151,15 @@ export async function buildConfig({
       //   • react-redux → useSyncExternalStoreWithSelector (use-sync-external-store)
       //   • redux-persist/lib/storage → default export (redux-persist has no `exports` map)
       //   • redux-persist/integration/react → PersistGate
+      //   • cookie / set-cookie-parser → react-router's browser entry imports
+      //     `parse` from both; both are CJS-only with no `exports` map, so served
+      //     raw they crash with "doesn't provide an export named 'parse'"
       include: [
         'react-redux',
         'redux-persist/lib/storage',
         'redux-persist/integration/react',
+        'cookie',
+        'set-cookie-parser',
         ...(userOptimize.include ?? []),
       ],
     },
