@@ -1,5 +1,12 @@
 # sim-game
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies [b7c0e0c]
+  - @chemicalluck/sim-cli@0.1.3
+
 ## 0.0.2
 
 ### Patch Changes
