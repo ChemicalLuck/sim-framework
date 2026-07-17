@@ -1,5 +1,13 @@
 # @chemicalluck/sim-cli
 
+## 0.1.2
+
+### Patch Changes
+
+- 2fa7677: Pre-bundle react-router's CJS-only deps (`cookie`, `set-cookie-parser`) via
+  `optimizeDeps.include` so games consuming the source-served engine don't crash with
+  "doesn't provide an export named 'parse'".
+
 ## 0.1.1
 
 ### Patch Changes
