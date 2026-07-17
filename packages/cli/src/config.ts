@@ -139,21 +139,36 @@ export async function buildConfig({
     // rather than replaces — the engine essentials below.
     optimizeDeps: {
       ...userOptimize,
+      // The engine is aliased to source and excluded below. Vite's dep scanner
+      // does NOT crawl into excluded deps, so none of the engine's transitive
+      // node_modules deps get discovered from the app graph — they'd be found
+      // lazily at request time, which breaks named/default imports of CJS-only
+      // leaves (the importer is already served before Vite learns the dep needs
+      // interop → "doesn't provide an export named …"). Point the scanner
+      // directly at the engine source so its whole runtime dep graph is
+      // pre-bundled up-front with correct interop. Skip the engine's own tests:
+      // they import dev-only deps (vitest, @testing-library/react) that games
+      // don't install, which would abort the entire scan.
+      entries: [
+        'index.html',
+        path.join(engineDir, '**/*.{ts,tsx}'),
+        `!${path.join(engineDir, '**/*.{test,spec}.{ts,tsx}')}`,
+        `!${path.join(engineDir, '**/test-utils/**')}`,
+        ...(userOptimize.entries ?? []),
+      ],
       // The engine ships as source (aliased above), so keep it out of dep
       // pre-bundling and let Vite transform its .ts/.tsx through the normal
       // pipeline.
       exclude: ['@chemicalluck/sim-engine', ...(userOptimize.exclude ?? [])],
-      // Because the engine is excluded, Vite's scanner never crawls it to
-      // discover its runtime deps. A few CJS-only ones must be pre-bundled
-      // explicitly, or they get served raw and the browser can't read their
-      // exports (hidden in dev-only IIFEs or `exports.default`, which
-      // cjs-module-lexer can't statically detect):
+      // Belt-and-suspenders for a few known CJS-only deps, in case the scan
+      // above misses one (e.g. reached only through a path esbuild can't
+      // statically follow). They get served raw otherwise and the browser
+      // can't read their exports (hidden in dev-only IIFEs or `exports.default`,
+      // which cjs-module-lexer can't statically detect):
       //   • react-redux → useSyncExternalStoreWithSelector (use-sync-external-store)
       //   • redux-persist/lib/storage → default export (redux-persist has no `exports` map)
       //   • redux-persist/integration/react → PersistGate
-      //   • cookie / set-cookie-parser → react-router's browser entry imports
-      //     `parse` from both; both are CJS-only with no `exports` map, so served
-      //     raw they crash with "doesn't provide an export named 'parse'"
+      //   • cookie / set-cookie-parser → react-router's browser entry imports `parse` from both
       include: [
         'react-redux',
         'redux-persist/lib/storage',
