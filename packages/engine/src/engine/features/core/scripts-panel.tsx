@@ -70,8 +70,12 @@ interface AddScriptDialogProps {
 }
 
 function AddScriptDialog({ onAdd }: AddScriptDialogProps) {
-  const { form, submit } = useAddForm(
-    { id: '', order: 'sequential' as 'sequential' | 'random', duration: '60' },
+  const { form, submit } = useAddForm<{
+    id: string;
+    order: 'sequential' | 'random';
+    duration: string;
+  }>(
+    { id: '', order: 'sequential', duration: '60' },
     ({ id, order, duration }) => {
       onAdd({
         id: id.trim(),

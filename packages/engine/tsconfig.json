@@ -9,5 +9,5 @@
       "@chemicalluck/sim-engine/*": ["./src/engine/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "test-setup.ts", "tsup.config.ts", "vitest.config.ts"]
 }

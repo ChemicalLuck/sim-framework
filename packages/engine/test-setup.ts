@@ -19,7 +19,7 @@ class ResizeObserverShim {
 }
 
 if (!globalThis.ResizeObserver) {
-  globalThis.ResizeObserver = ResizeObserverShim as unknown as typeof ResizeObserver;
+  globalThis.ResizeObserver = ResizeObserverShim;
 }
 
 if (typeof Element !== 'undefined') {

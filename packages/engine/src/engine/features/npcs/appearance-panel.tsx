@@ -393,7 +393,7 @@ function FeatureEditor({
           <SectionTitle>Pronoun Mapping</SectionTitle>
           <PronounsEditor
             values={feature.values}
-            pronouns={(feature.pronouns ?? {}) as Record<string, PronounSet>}
+            pronouns={feature.pronouns ?? {}}
             onChange={(p) => {
               onChange({ ...feature, pronouns: p });
             }}

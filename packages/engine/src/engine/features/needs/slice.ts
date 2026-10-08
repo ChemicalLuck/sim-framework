@@ -23,7 +23,7 @@ export function configureNeeds(config: NeedsConfig) {
 function createNeedsSlice() {
   return createSlice({
     name: 'needs',
-    initialState: () => ({ ..._config.get().needs }) as Record<Need, number>,
+    initialState: (): Record<Need, number> => ({ ..._config.get().needs }),
     reducers: {
       decayNeedsByMinutes: (
         state,

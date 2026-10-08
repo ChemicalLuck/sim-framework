@@ -18,7 +18,6 @@ import {
 } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
-import type { ContainerEffect } from './types';
 
 const CONTAINER_OPS = [
   'deposit',
@@ -55,7 +54,7 @@ const container = defineEffectEditor<ContainerFormState>({
   color: 'bg-orange-900/60 text-orange-200',
   label: (e) => {
     if (e.kind !== 'container') return 'fx';
-    const ce = e as unknown as ContainerEffect;
+    const ce = e;
     switch (ce.operation) {
       case 'deposit':
         return `→${ce.containerId}:${ce.itemId}`;

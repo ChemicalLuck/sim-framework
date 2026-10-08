@@ -167,7 +167,7 @@ export function configureAppearance(data: AppearanceJsonData): void {
       ageDist.max,
       ageDist.mean,
       ageDist.stdDev,
-    ) as unknown as Weights<number>,
+    ),
     bodyAttributes: buildBodyRuntime(data.bodyAttributes),
   };
 }
@@ -186,7 +186,7 @@ function buildBodyRuntime(
       base.max,
       base.mean,
       base.stdDev,
-    ) as unknown as Weights<number>;
+    );
     const byDimensionWeights: Record<
       string,
       Record<string, Weights<number>>
@@ -199,7 +199,7 @@ function buildBodyRuntime(
           partial.max ?? base.max,
           partial.mean ?? base.mean,
           partial.stdDev ?? base.stdDev,
-        ) as unknown as Weights<number>;
+        );
       }
     }
     return { ...def, defaultWeights, byDimensionWeights };

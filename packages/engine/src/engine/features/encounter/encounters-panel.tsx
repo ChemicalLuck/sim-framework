@@ -40,7 +40,6 @@ import type { AvailableData } from '@chemicalluck/sim-engine/editor/lib/use-avai
 import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
-import type { JsonEncounter } from '@chemicalluck/sim-engine/features/encounter/authoring.types';
 import type {
   Encounter,
   EncounterAction,
@@ -925,7 +924,7 @@ function EncounterDetail({
 
       <PreviewPane
         kind="encounter"
-        encounter={encounter as unknown as JsonEncounter}
+        encounter={encounter}
       />
     </div>
   );

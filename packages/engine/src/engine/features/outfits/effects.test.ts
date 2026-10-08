@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
-import type { Equipment } from '@chemicalluck/sim-engine/types/character.types';
 import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 import { handleApplyOutfitEffect } from './effects';
@@ -28,7 +27,7 @@ const shoes: Wearable = {
 
 const outfit: Outfit = {
   name: 'Casual',
-  equipment: { hat, shoes, bra: null } as unknown as Equipment,
+  equipment: { hat, shoes, bra: null },
 };
 
 interface DispatchedAction {

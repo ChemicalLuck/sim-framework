@@ -4,7 +4,6 @@ import {
   Suspense,
   createContext,
   use,
-  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -88,7 +87,9 @@ function ReferencesRunner({ onChange }: RunnerProps) {
   useEffect(() => subscribeEditorData(bump), [bump]);
 
   // Recompute only when the cache changes (version bump). readEditorData
-  // suspends until every required file has loaded.
+  // suspends until every required file has loaded — so this must run during
+  // render, not inside the effect below.
+  // eslint-disable-next-line react-x/no-unnecessary-use-memo
   const records = useMemo(() => {
     const dataByFile: DataByFile = Object.fromEntries(
       FILES.map((file) => [file, readEditorData(urlFor(file))]),
@@ -104,14 +105,11 @@ function ReferencesRunner({ onChange }: RunnerProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version]);
 
-  const referencesTo = useCallback<ReferencesTo>(
-    (namespace, id) => reverseReferences(records.refs, namespace, id),
-    [records],
-  );
-
   useEffect(() => {
+    const referencesTo: ReferencesTo = (namespace, id) =>
+      reverseReferences(records.refs, namespace, id);
     onChange({ issues: records.issues, referencesTo });
-  }, [records, referencesTo, onChange]);
+  }, [records, onChange]);
 
   return null;
 }

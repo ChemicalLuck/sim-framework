@@ -7,9 +7,11 @@ interface MilestonesState {
   achieved: string[];
 }
 
+const initialState: MilestonesState = { definitions: [], achieved: [] };
+
 const milestonesSlice = createSlice({
   name: 'milestones',
-  initialState: { definitions: [], achieved: [] } as MilestonesState,
+  initialState,
   reducers: {
     loadMilestones: (state, action: PayloadAction<Milestone[]>) => {
       state.definitions = action.payload;

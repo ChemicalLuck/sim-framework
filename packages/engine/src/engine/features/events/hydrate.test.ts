@@ -50,7 +50,7 @@ function makeCtx(overrides: Partial<HydrationContext> = {}): HydrationContext {
     templates: buildRegistry(
       'template',
       [templateWithId],
-      (t) => (t as WearableTemplate & { id: string }).id,
+      (t) => t.id,
     ),
     scenes: buildRegistry(
       'scene',

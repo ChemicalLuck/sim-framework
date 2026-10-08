@@ -48,7 +48,6 @@ import { appName } from '@chemicalluck/sim-engine/lib/core';
 import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 import type {
   BodyAttributes,
-  CharacterProfile,
   CharacterProfileTemplate,
 } from '@chemicalluck/sim-engine/types';
 
@@ -201,7 +200,7 @@ export function CharacterCustomisationView() {
           entry[1] !== null && visibleIds.has(entry[0]),
       ),
     );
-    dispatch(setProfile({ ...data, appearance } as CharacterProfile));
+    dispatch(setProfile({ ...data, appearance }));
     dispatch(setBody(body));
     for (const [skill, value] of Object.entries(skillAlloc)) {
       if (value > 0) dispatch(updateSkill({ skill, value }));

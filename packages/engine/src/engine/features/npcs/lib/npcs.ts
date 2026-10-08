@@ -75,7 +75,7 @@ export class NpcFactory {
     // Pick remaining features, merging dimension-specific weights
     for (const feat of config.features.filter((f) => !f.isDimension)) {
       const weightMaps: Partial<Weights<string>>[] = [
-        feat.defaultWeights as Weights<string>,
+        feat.defaultWeights,
       ];
       for (const dimId of config.dimensionIds) {
         const dimVal = picked[dimId];
@@ -84,7 +84,7 @@ export class NpcFactory {
           dimId in feat.byDimension &&
           dimVal in feat.byDimension[dimId]
         ) {
-          weightMaps.push(feat.byDimension[dimId][dimVal] as Weights<string>);
+          weightMaps.push(feat.byDimension[dimId][dimVal]);
         }
       }
       picked[feat.id] = pickFeature(weightMaps, feat.values, rng);
