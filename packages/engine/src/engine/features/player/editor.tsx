@@ -13,9 +13,9 @@ interface PlayerCfg {
   postCharacterCreationView: string;
   characterCreationSkillPoints: number;
   startLocation: string;
-  bodyParts: string[];
-  initialItems: string[];
-  initialEquipment: Record<string, string>;
+  bodyParts?: string[];
+  initialItems?: string[];
+  initialEquipment?: Record<string, string>;
 }
 
 interface StringListEditorProps {
@@ -86,10 +86,21 @@ function StringListEditor({
 
 function PlayerDefaultsPanel() {
   const {
-    data: cfg,
+    data: rawCfg,
     saving,
     save,
   } = useEditorData<PlayerCfg>('/editor/api/data/player');
+  // The list/equipment fields are optional in player.json; default them so
+  // the form and its dirty-check see the same baseline.
+  const cfg = useMemo(
+    () => ({
+      ...rawCfg,
+      bodyParts: rawCfg.bodyParts ?? [],
+      initialItems: rawCfg.initialItems ?? [],
+      initialEquipment: rawCfg.initialEquipment ?? {},
+    }),
+    [rawCfg],
+  );
   const { data: locationsData } = useEditorData<LocationNode[]>(
     '/editor/api/data/locations',
   );
