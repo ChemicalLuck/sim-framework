@@ -1,0 +1,14 @@
+{
+  "features": [],
+  "ageDistribution": {
+    "min": 18,
+    "max": 60,
+    "mean": 28,
+    "stdDev": 8
+  },
+  "bodyAttributes": [],
+  "display": {
+    "strangerFeatureIds": [],
+    "metaFeatureIds": []
+  }
+}

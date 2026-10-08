@@ -54,4 +54,25 @@ describe('player editor panel', () => {
     expect(getByText('hands')).toBeInTheDocument();
     expect(getByText('notebook')).toBeInTheDocument();
   });
+
+  it('renders when player.json omits bodyParts, initialItems and initialEquipment', () => {
+    (useEditorData as Mock).mockImplementation((url: string) => {
+      if (url === '/editor/api/data/player')
+        return mockEditorDataHandle({
+          postCharacterCreationView: 'DefaultView',
+          characterCreationSkillPoints: 5,
+          startLocation: 'bedroom',
+        });
+      if (url === '/editor/api/data/locations')
+        return mockEditorDataHandle([{ id: 'bedroom', name: 'Bedroom' }]);
+      throw new Error(`Unexpected editor data url: ${url}`);
+    });
+
+    const { getByText, getByDisplayValue } = renderEditorPanel(
+      <PlayerDefaultsPanel />,
+    );
+
+    expect(getByText('Player Defaults')).toBeInTheDocument();
+    expect(getByDisplayValue('bedroom')).toBeInTheDocument();
+  });
 });

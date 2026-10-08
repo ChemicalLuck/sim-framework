@@ -168,13 +168,12 @@ export async function buildConfig({
       //   • react-redux → useSyncExternalStoreWithSelector (use-sync-external-store)
       //   • redux-persist/lib/storage → default export (redux-persist has no `exports` map)
       //   • redux-persist/integration/react → PersistGate
-      //   • cookie / set-cookie-parser → react-router's browser entry imports `parse` from both
+      // (react-router 8's deps — cookie-es, @remix-run/route-pattern — are ESM
+      // and need no entry; listing an uninstalled dep here is a resolve error.)
       include: [
         'react-redux',
         'redux-persist/lib/storage',
         'redux-persist/integration/react',
-        'cookie',
-        'set-cookie-parser',
         ...(userOptimize.include ?? []),
       ],
     },

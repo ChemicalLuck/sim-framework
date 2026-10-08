@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import react from 'eslint-plugin-react-x';
 import reactRefresh from 'eslint-plugin-react-refresh';
@@ -21,7 +22,8 @@ export function simEslintConfig(options = {}) {
     ignores = [],
   } = options;
 
-  return [
+  // `extends` inside a flat config object is only honoured via defineConfig().
+  return defineConfig([
     { ignores: ['dist', 'src/**/components/ui', ...ignores] },
     {
       files: ['**/*.{ts,tsx}'],
@@ -41,7 +43,7 @@ export function simEslintConfig(options = {}) {
         globals: globals.browser,
       },
     },
-  ];
+  ]);
 }
 
 export default simEslintConfig;
