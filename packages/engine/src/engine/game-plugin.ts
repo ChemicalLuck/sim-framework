@@ -634,6 +634,8 @@ function generateSetupModule(
   // ---- Content extensions (single file or bundle → Content.extensions) ----
   const extImports: string[] = [];
   const extEntries: string[] = [];
+  // Extensions not loaded (optional file absent) — their contentSetup calls are skipped.
+  const skippedExtKeys = new Set<string>();
   for (const { featureName, featureDir, ext } of contentExtensions) {
     if (ext.inputs) {
       // Bundle: multiple JSON files → single hydrated extension entry
@@ -652,7 +654,10 @@ function generateSetupModule(
         );
         inputVars.push({ inputKey: input.inputKey, dataVar });
       }
-      if (skip) continue;
+      if (skip) {
+        skippedExtKeys.add(ext.contentKey);
+        continue;
+      }
       if (!ext.hydratorCall || !ext.hydratorFrom) continue;
       const hydratorAlias = `${featureName}_${ext.hydratorCall}`;
       const absFrom = path.resolve(featureDir, ext.hydratorFrom);
@@ -667,7 +672,10 @@ function generateSetupModule(
       // Single file → optional hydration
       if (!ext.jsonFile) continue;
       const jsonFilePath = path.join(dataDir, ext.jsonFile);
-      if (ext.optional && !fs.existsSync(jsonFilePath)) continue;
+      if (ext.optional && !fs.existsSync(jsonFilePath)) {
+        skippedExtKeys.add(ext.contentKey);
+        continue;
+      }
       const dataVar = `${featureName}_${toCamelCase(path.basename(ext.jsonFile, '.json'))}Data`;
       extImports.push(
         `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
@@ -693,6 +701,9 @@ function generateSetupModule(
   const contentSetupImports: string[] = [];
   const contentSetupCalls: string[] = [];
   for (const { featureName, featureDir, binding } of contentSetupBindings) {
+    if (binding.source !== 'root' && skippedExtKeys.has(binding.contentKey)) {
+      continue;
+    }
     const alias = `${featureName}_${binding.call}`;
     const absFrom = path.resolve(featureDir, binding.from);
     contentSetupImports.push(
