@@ -3,7 +3,7 @@ import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.ty
 import type { EstimatedMetric, LinearModel } from './wearable-config';
 
 function asRecord(body: BodyAttributes): Record<string, number> {
-  return body as unknown as Record<string, number>;
+  return body;
 }
 
 function evaluateLinear(model: LinearModel, body: BodyAttributes): number {

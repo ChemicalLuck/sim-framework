@@ -87,7 +87,7 @@ const config = { sizeSystems, estimatedMetrics };
 // Force exact estimated measurements by storing them as primary attributes,
 // which resolveMetric returns directly.
 const body = (over: Record<string, number>): BodyAttributes =>
-  ({ height: 170, weight: 70, bodyFat: 20, ...over }) as BodyAttributes;
+  ({ height: 170, weight: 70, bodyFat: 20, ...over });
 
 const wearable = (sizeSystem: string, size: string): Wearable => ({
   kind: 'wearable',

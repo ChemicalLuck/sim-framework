@@ -38,7 +38,7 @@ const completeWeights = <K extends string | number>(
   for (const key of allKeys) {
     full[key] = weights[key] ?? 0;
   }
-  return full as Weights<K>;
+  return full;
 };
 
 export const normalDistribution = <T extends number>(

@@ -591,8 +591,8 @@ export function QuestsPanel() {
     saveMessage: 'Quests saved',
     onSave: (items, original) => {
       const renames = diffObjectiveRenames(
-        original as { id: string; objectives: { name: string }[] }[],
-        items as { id: string; objectives: { name: string }[] }[],
+        original,
+        items,
       );
       if (renames.length > 0) {
         const { patched: patchedScenes, count: sceneCount } =

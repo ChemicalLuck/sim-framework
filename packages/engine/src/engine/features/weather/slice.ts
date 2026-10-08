@@ -6,9 +6,11 @@ interface WeatherState {
   conditionOverride: WeatherConditionId | null;
 }
 
+const initialState: WeatherState = { conditionOverride: null };
+
 const weatherSlice = createSlice({
   name: 'weather',
-  initialState: { conditionOverride: null } as WeatherState,
+  initialState,
   reducers: {
     setWeatherOverride: (
       state,

@@ -6,9 +6,11 @@ interface LinguisticsState {
   wordChoices: Record<string, string>;
 }
 
+const initialState: LinguisticsState = { wordChoices: {} };
+
 const linguisticsSlice = createSlice({
   name: 'linguistics',
-  initialState: { wordChoices: {} } as LinguisticsState,
+  initialState,
   reducers: {
     setWordChoice: (
       state,

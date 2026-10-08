@@ -56,11 +56,16 @@ interface AddLocationDialogProps {
 }
 
 function AddLocationDialog({ onAdd, locationIds }: AddLocationDialogProps) {
-  const { form, submit } = useAddForm(
+  const { form, submit } = useAddForm<{
+    id: string;
+    name: string;
+    kind: 'interior' | 'exterior';
+    parent: string;
+  }>(
     {
       id: '',
       name: '',
-      kind: 'interior' as 'interior' | 'exterior',
+      kind: 'interior',
       parent: '',
     },
     ({ id, name, kind, parent }) => {

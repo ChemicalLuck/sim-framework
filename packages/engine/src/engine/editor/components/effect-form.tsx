@@ -153,7 +153,7 @@ export function AddEffectForm({
       </div>
 
       <Fields
-        value={state as never}
+        value={state}
         onChange={(patch) => {
           setState((s: unknown) => ({ ...(s as object), ...patch }));
         }}

@@ -269,7 +269,7 @@ function ItemDetail({
       value: value !== '' ? parseFloat(value) : undefined,
     };
     if (item.kind !== 'wearable') {
-      onChange(base as InventoryItem);
+      onChange(base);
       return;
     }
     const app = overrideAppearance ?? appearance;
@@ -474,7 +474,7 @@ function ItemDetail({
             onChange({
               ...item,
               actions: groups.length ? groups : undefined,
-            } as InventoryItem);
+            });
           }}
           availableData={availableData}
         />

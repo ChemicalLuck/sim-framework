@@ -37,7 +37,6 @@ import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-availa
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
 import type { JsonScript } from '@chemicalluck/sim-engine/features/core/types';
-import type { JsonRandomEvent } from '@chemicalluck/sim-engine/features/events/authoring.types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 interface RawEvent {
@@ -261,7 +260,7 @@ function EventDetail({ event, onChange, refs }: EventDetailProps) {
 
       <PreviewPane
         kind="event"
-        event={event as unknown as JsonRandomEvent}
+        event={event}
         script={script}
       />
     </FieldGroup>
