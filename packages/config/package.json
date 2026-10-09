@@ -1,6 +1,6 @@
 {
   "name": "@chemicalluck/sim-config",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Shared TypeScript, ESLint, and Prettier presets for sim games and the framework.",
   "license": "MIT",

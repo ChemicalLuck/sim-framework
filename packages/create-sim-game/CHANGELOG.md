@@ -1,5 +1,30 @@
 # @chemicalluck/create-sim-game
 
+## 0.1.3
+
+### Patch Changes
+
+- d68825b: `tsconfig/game.json` no longer sets `include`, `baseUrl` or `paths`, which TypeScript
+  resolved inside `node_modules` (so `tsc -p .` found no inputs). Set them in the game's
+  own `tsconfig.json`, as the starter now does:
+  `"compilerOptions": { "paths": { "~/*": ["./src/*"] } }, "include": ["src", "sim-env.d.ts"]`.
+- cb68278: Upgrade react-router to v8. The engine now requires Node.js >=22.22.0 and React >=19.2.7
+  (react-router 8's minimums). The CLI no longer pre-bundles `cookie` / `set-cookie-parser`,
+  which react-router 8 dropped (its replacement deps are ESM); the starter template now
+  depends on React ^19.2.7.
+- a1372bb: Scaffolded games now depend on the framework versions released with the scaffolder
+  (read from the workspace at build time) instead of a hardcoded `^0.1.0`, which would
+  have kept new games on 0.1.x after the engine and CLI move to 0.2.
+- 077d4bb: Fix a freshly scaffolded game crashing on load and in the editor: skip `contentSetup`
+  calls for absent optional content extensions (e.g. `encounters.json`), let the Player
+  Defaults panel handle a `player.json` without `bodyParts` / `initialItems` /
+  `initialEquipment`, and ship the starter's missing data files. The shared ESLint preset
+  now uses `defineConfig` so `extends` works under flat config.
+- 531583c: The starter now ships `lint`, `typecheck` and `test` scripts, an `eslint.config.js`
+  using the shared preset, an example content test, and the dev dependencies they need
+  (`eslint`, `vite`, `vitest`, `jsdom`, Testing Library, `@types/react`,
+  `@types/react-dom`).
+
 ## 0.1.2
 
 ### Patch Changes
