@@ -1,0 +1,10 @@
+{
+  "setup": [
+    {
+      "jsonFile": "relationships.json",
+      "from": "./slice",
+      "call": "configureRelationships",
+      "optional": true
+    }
+  ]
+}

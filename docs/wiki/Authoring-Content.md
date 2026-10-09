@@ -38,6 +38,7 @@ omitted or left as an empty `[]` / `{}`.
 | `events.json` | World events | optional |
 | `quest-templates.json` | Reusable quest templates | optional |
 | `linguistics.json` | Text macros & terms | optional |
+| `relationships.json` | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional |
 
 ## Effects
 
@@ -88,6 +89,14 @@ Actions and objectives can be gated by **conditions**, an expression DSL with a 
 
 Combine with `and` / `or` / `not`. Expression nodes (`location`, `string`, `time`, need
 levels, …) are contributed by features, so the available vocabulary grows with the engine.
+
+The editor writes these from a string DSL, e.g. `money >= 50 && gamehour < 20`. Built-in
+identifiers include `money`, `need.<Name>`, `skill.<id>`, `location`, `gametime`,
+`gamehour`, `relationship.<metric>` (the current NPC in a scene, script, NPC view or
+encounter), `relationship.<npcId>.<metric>`, `milestone.<id>`, `season == '<id>'` and
+`weather == '<id>'`. An unrecognised bare identifier is a parse error; quote string
+literals. `sim check` also flags stored conditions that compare a string with `<`/`>` or
+compare two literals, both signs of a mistyped identifier.
 
 ## Referential integrity
 

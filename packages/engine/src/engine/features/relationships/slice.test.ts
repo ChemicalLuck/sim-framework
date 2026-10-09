@@ -1,6 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
-import reducer, { meetNpc, updateRelationshipMetric } from './slice';
+import reducer, {
+  configureRelationships,
+  meetNpc,
+  updateRelationshipMetric,
+} from './slice';
 
 describe('relationships slice', () => {
   it('starts empty', () => {
@@ -38,10 +42,6 @@ describe('relationships slice', () => {
     expect(next.alice.relationship.Friendship).toBe(8);
   });
 
-  // NOTE: `updateRelationshipMetric` self-initialises with a shallow spread of
-  // DEFAULT_RELATIONSHIP. The nested `relationship` object is the frozen
-  // module constant, so mutating it under Immer throws. In practice callers
-  // are expected to dispatch `meetNpc` first; this test mirrors that contract.
   it('updateRelationshipMetric applies the delta after meetNpc seeds the entry', () => {
     let state = reducer({}, meetNpc('bob'));
     state = reducer(
@@ -53,5 +53,38 @@ describe('relationships slice', () => {
       Romance: 4,
       Attraction: 0,
     });
+  });
+});
+
+describe('relationship metric bounds', () => {
+  afterEach(() => {
+    configureRelationships({});
+  });
+
+  const at = (Friendship: number) => ({
+    alice: { relationship: { Friendship, Romance: 0, Attraction: 0 } },
+  });
+  const delta = (d: number) =>
+    updateRelationshipMetric({
+      npcId: 'alice',
+      metric: 'Friendship',
+      delta: d,
+    });
+
+  it('clamps to 0–100 by default', () => {
+    expect(reducer(at(95), delta(20)).alice.relationship.Friendship).toBe(100);
+    expect(reducer(at(5), delta(-20)).alice.relationship.Friendship).toBe(0);
+  });
+
+  it('clamps to a configured range', () => {
+    configureRelationships({ min: -50, max: 200 });
+    expect(reducer(at(190), delta(20)).alice.relationship.Friendship).toBe(200);
+    expect(reducer(at(0), delta(-80)).alice.relationship.Friendship).toBe(-50);
+  });
+
+  it('self-initialises an unknown npc without touching the defaults', () => {
+    const next = reducer({}, delta(7));
+    expect(next.alice.relationship.Friendship).toBe(7);
+    expect(reducer({}, meetNpc('bob')).bob.relationship.Friendship).toBe(0);
   });
 });
