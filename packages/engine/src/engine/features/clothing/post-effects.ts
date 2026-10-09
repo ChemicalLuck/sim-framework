@@ -9,7 +9,7 @@ import {
   getSizeSystems,
 } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import { getLocationById } from '@chemicalluck/sim-engine/features/travel/lib/world';
-import { computeDayWeather } from '@chemicalluck/sim-engine/features/weather/lib/weather';
+import { selectWeatherConditionId } from '@chemicalluck/sim-engine/features/weather/selectors';
 import type { WeatherConditionId } from '@chemicalluck/sim-engine/features/weather/types';
 import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
@@ -55,13 +55,7 @@ const clothingPostEffect: PostEffectHandler = ({
     group,
   );
 
-  const override = newState.present.weather.conditionOverride;
-  const effectiveId: WeatherConditionId =
-    override ??
-    computeDayWeather(
-      new Date(newState.present.time.timestamp),
-      newState.present.rng.seed,
-    ).conditionId;
+  const effectiveId: WeatherConditionId = selectWeatherConditionId(newState);
 
   const isProtected = equipment[UMBRELLA_SLOT] != null;
   const isWetWeather = WET_WEATHER_CONDITIONS.has(effectiveId);

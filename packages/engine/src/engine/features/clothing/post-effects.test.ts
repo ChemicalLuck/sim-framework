@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
 import { configureWearables } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import { configureWorld } from '@chemicalluck/sim-engine/features/travel/lib/world';

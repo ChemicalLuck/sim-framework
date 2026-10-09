@@ -1,6 +1,11 @@
 import { conditionEvaluators, exprEvaluators } from 'virtual:conditions';
+
 import { type RootState } from '@chemicalluck/sim-engine/state/store';
-import type { ComparisonCondition, Condition, Expr } from '@chemicalluck/sim-engine/types';
+import type {
+  ComparisonCondition,
+  Condition,
+  Expr,
+} from '@chemicalluck/sim-engine/types';
 
 export function evalExpr(state: RootState, expr: Expr): number | string {
   switch (expr.kind) {

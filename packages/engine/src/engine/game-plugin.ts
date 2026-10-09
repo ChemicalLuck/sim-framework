@@ -462,6 +462,9 @@ ${a('conditionParsers').join(',\n')}
 export const exprParsers = [
 ${a('exprParsers').join(',\n')}
 ];
+export const comparisonParsers = [
+${a('comparisonParsers').join(',\n')}
+];
 export const exprKinds = new Set([
 ${a('exprKinds').join(',\n')}
 ]);

@@ -5,7 +5,7 @@ import {
 import { increaseNeedByAmount } from '@chemicalluck/sim-engine/features/needs/slice';
 import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
 
-import { computeDayWeather } from './lib/weather';
+import { selectWeatherConditionId } from './selectors';
 import type { WeatherConditionId } from './types';
 
 const WEATHER_NEED_MODIFIERS: Partial<
@@ -36,13 +36,7 @@ const weatherPostEffect: PostEffectHandler = ({
 
   if (totalMinutes <= 0) return;
 
-  const override = newState.present.weather.conditionOverride;
-  const effectiveId: WeatherConditionId =
-    override ??
-    computeDayWeather(
-      new Date(newState.present.time.timestamp),
-      newState.present.rng.seed,
-    ).conditionId;
+  const effectiveId: WeatherConditionId = selectWeatherConditionId(newState);
 
   const modifiers = WEATHER_NEED_MODIFIERS[effectiveId];
   if (!modifiers) return;
