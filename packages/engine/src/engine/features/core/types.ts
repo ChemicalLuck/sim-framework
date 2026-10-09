@@ -12,6 +12,7 @@ export interface JsonAction {
   text: string;
   effects: JsonEffect[];
   condition?: Condition;
+  lockedText?: string;
   eventIds?: string[];
 }
 

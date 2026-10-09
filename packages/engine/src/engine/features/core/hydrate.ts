@@ -44,6 +44,7 @@ export function hydrateAction(
     kind: 'action',
     text: action.text,
     condition: action.condition,
+    lockedText: action.lockedText,
     effects: action.effects.map((e) => hydrateEffect(e, ctx)),
     eventIds: action.eventIds,
   };

@@ -170,6 +170,16 @@ describe('hydrateAction', () => {
     expect(result.eventIds).toEqual(['evt1']);
   });
 
+  it('preserves lockedText', () => {
+    const json: JsonAction = {
+      kind: 'action',
+      text: 'Flirt',
+      effects: [],
+      lockedText: 'Requires Charm 3',
+    };
+    expect(hydrateAction(json, ctx).lockedText).toBe('Requires Charm 3');
+  });
+
   it('hydrates each effect', () => {
     const json: JsonAction = {
       kind: 'action',
