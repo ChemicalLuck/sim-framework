@@ -96,7 +96,7 @@ export function ConditionEditor({
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="need.energy >= 50 || milestone.has_key"
+                    placeholder="need.Energy >= 50 || milestone.has_key"
                     className="h-7 text-xs font-mono bg-zinc-800 border-zinc-600 flex-1"
                     autoFocus
                     onKeyDown={(e) => {
