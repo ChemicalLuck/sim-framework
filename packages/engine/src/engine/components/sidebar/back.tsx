@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { ActionCreators } from 'redux-undo';
 
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { selectUndoEnabled } from '@chemicalluck/sim-engine/features/save/selectors';
 import {
   useEngineDispatch,
   useEngineSelector,
@@ -13,6 +14,7 @@ export default function BackButton() {
 
   const canUndo = useEngineSelector((state) => state.past.length > 0);
   const canRedo = useEngineSelector((state) => state.future.length > 0);
+  const undoEnabled = useEngineSelector(selectUndoEnabled);
 
   const onUndo = useCallback(() => {
     if (canUndo) dispatch(ActionCreators.undo());
@@ -21,6 +23,8 @@ export default function BackButton() {
   const onRedo = useCallback(() => {
     if (canRedo) dispatch(ActionCreators.redo());
   }, [dispatch, canRedo]);
+
+  if (!undoEnabled) return null;
 
   return (
     <div className="flex gap-2">

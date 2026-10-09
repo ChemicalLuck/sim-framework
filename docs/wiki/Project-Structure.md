@@ -38,8 +38,16 @@ interface GameConfig {
   sidebar?: React.ComponentType;              // replace the default sidebar
   views?: ViewsRegistry;                      // register extra views
   persistTransforms?: Transform<unknown, unknown>[];  // redux-persist transforms
+  undoLimit?: number;                         // Back-button undo steps (default 10, 0 disables)
+  ironman?: 'never' | 'optional' | 'always';  // ironman runs (default 'never')
 }
 ```
+
+An ironman run has no undo or Back button and no manual save/load; the continuous
+autosave is its only save. With `ironman: 'optional'` the player chooses it with a
+checkbox at New Game; with `'always'` every run is ironman. The choice is stored with the
+run and can't be changed mid-run. A custom sidebar can read it with
+`selectIronman` / `selectUndoEnabled` from `@chemicalluck/sim-engine/features/save/selectors`.
 
 ```tsx
 <GameEngine config={{ sidebar: MySidebar }} />
