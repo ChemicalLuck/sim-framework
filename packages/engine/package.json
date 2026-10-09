@@ -35,7 +35,16 @@
     "./editor/index.html": "./src/engine/editor/index.html",
     "./vite-env": "./src/engine/vite-env.d.ts",
     "./package.json": "./package.json",
-    "./*": "./src/engine/*"
+    "./*": {
+      "types": [
+        "./src/engine/*.ts",
+        "./src/engine/*.tsx",
+        "./src/engine/*/index.ts",
+        "./src/engine/*/index.tsx",
+        "./src/engine/*"
+      ],
+      "default": "./src/engine/*"
+    }
   },
   "scripts": {
     "build": "tsup",
