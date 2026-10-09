@@ -3,9 +3,14 @@ import {
   dispatchWithGroup,
 } from '@chemicalluck/sim-engine/features/core/types';
 import type { SleepEffect } from '@chemicalluck/sim-engine/features/time/types';
-import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
+import type { EngineThunk } from '@chemicalluck/sim-engine/state/store';
+import {
+  type PostEffectHandler,
+  processEffects,
+} from '@chemicalluck/sim-engine/state/thunks';
 
-import { decayNeedsByMinutes } from './slice';
+import { crossedThresholds, getNeedThresholds } from './lib/thresholds';
+import { decayNeedsByMinutes, getNeedOptions } from './slice';
 
 function sleepMinutes(effect: SleepEffect, prevTimestamp: number): number {
   if (effect.wakeTime !== undefined) {
@@ -19,27 +24,41 @@ function sleepMinutes(effect: SleepEffect, prevTimestamp: number): number {
   return 0;
 }
 
+/** Apply the effects of any need thresholds crossed since `prevNeeds`. */
+const applyThresholds =
+  (prevNeeds: Record<string, number>, group: string): EngineThunk =>
+  (dispatch, getState) => {
+    const crossed = crossedThresholds(
+      prevNeeds,
+      getState().present.needs,
+      getNeedThresholds(),
+      getNeedOptions(),
+    );
+    for (const t of crossed) dispatch(processEffects(t.effects, group));
+  };
+
+/**
+ * Decays needs for the clock time the batch advanced (by any effect, not only
+ * `time`), treating `sleep` effects' minutes as asleep and the rest as awake,
+ * then fires any thresholds the needs crossed.
+ */
 const needsDecayPostEffect: PostEffectHandler = ({
   dispatch,
   group,
   effects,
   prevState,
+  newState,
 }: EffectContext) => {
-  const timeMinutes = effects
-    .filter((e) => e.kind === 'time')
-    .reduce((sum, e) => sum + (e.hours ?? 0) * 60 + e.minutes, 0);
-  if (timeMinutes > 0) {
-    dispatchWithGroup(
-      dispatch,
-      decayNeedsByMinutes({ minutes: timeMinutes, sleep: false }),
-      group,
-    );
-  }
-
   const prevTimestamp = prevState.present.time.timestamp;
+  const elapsed = newState
+    ? Math.round((newState.present.time.timestamp - prevTimestamp) / 60_000)
+    : 0;
+
+  let sleptMinutes = 0;
   for (const effect of effects.filter((e) => e.kind === 'sleep')) {
     const minutes = sleepMinutes(effect, prevTimestamp);
     if (minutes > 0) {
+      sleptMinutes += minutes;
       dispatchWithGroup(
         dispatch,
         decayNeedsByMinutes({ minutes, sleep: true }),
@@ -47,6 +66,17 @@ const needsDecayPostEffect: PostEffectHandler = ({
       );
     }
   }
+
+  const awakeMinutes = elapsed - sleptMinutes;
+  if (awakeMinutes > 0) {
+    dispatchWithGroup(
+      dispatch,
+      decayNeedsByMinutes({ minutes: awakeMinutes, sleep: false }),
+      group,
+    );
+  }
+
+  dispatch(applyThresholds(prevState.present.needs, group));
 };
 
 export default [needsDecayPostEffect];

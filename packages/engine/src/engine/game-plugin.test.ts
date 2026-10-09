@@ -41,3 +41,29 @@ describe('virtual:game-setup contentSetup bindings', () => {
     );
   });
 });
+
+describe('virtual:game-setup data imports', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  it('imports a JSON file once when a setup binding and a content extension share it', () => {
+    fs.writeFileSync(path.join(gameDir, 'data', 'needs.json'), '{}');
+    const code = generateSetup(gameDir);
+    const imports = code
+      .split('\n')
+      .filter((l) => l.startsWith("import needs_needsData from "));
+    expect(imports).toHaveLength(1);
+    expect(code).toContain('needs_configureNeeds(needs_needsData);');
+    expect(code).toContain(
+      'needs_configureNeedThresholds(content.extensions.needThresholds);',
+    );
+  });
+});

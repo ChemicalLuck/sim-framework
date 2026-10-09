@@ -75,6 +75,34 @@ An item that restores energy and is consumed:
 
 Extensions can add their own effect kinds — see [[Extensions]].
 
+## Needs
+
+`needs.json` sets each need's starting value and decay rate (points per hour the value
+falls; a negative rate makes it rise). Needs decay for all clock time an action advances.
+Optional per-need `options`:
+
+```json
+{
+  "needs": { "Energy": 100, "Intoxication": 0 },
+  "decayRates": { "Energy": 5, "Intoxication": 8 },
+  "options": {
+    "Intoxication": {
+      "direction": "inverse",
+      "hideAtZero": true,
+      "thresholds": [
+        { "at": 100, "effects": [{ "kind": "view", "sceneId": "passed_out" }] }
+      ]
+    }
+  }
+}
+```
+
+- `direction`: `normal` (bad at 0, the default) or `inverse` (bad at 100). It sets the
+  display colours, and sleep slows only changes toward the bad end.
+- `hideAtZero`: hide the need in the sidebar while it is 0.
+- `thresholds`: effects applied when the need crosses `at` toward its bad end (or the
+  direction given by `"when": "rising" | "falling"`), including reaching 0 or 100.
+
 ## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each

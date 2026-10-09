@@ -5,5 +5,20 @@
       "from": "./slice",
       "call": "configureNeeds"
     }
+  ],
+  "contentExtensions": [
+    {
+      "jsonFile": "needs.json",
+      "contentKey": "needThresholds",
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateNeedThresholds"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "needThresholds",
+      "from": "./lib/thresholds",
+      "call": "configureNeedThresholds"
+    }
   ]
 }
