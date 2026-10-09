@@ -1,4 +1,5 @@
 import { GraduationCap } from 'lucide-react';
+
 import WithCentered from '@chemicalluck/sim-engine/components/with-centered';
 import { appName } from '@chemicalluck/sim-engine/lib/core';
 

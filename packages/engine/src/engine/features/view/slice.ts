@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 
 /**

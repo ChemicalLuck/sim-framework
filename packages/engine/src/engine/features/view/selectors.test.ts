@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { selectDescription, selectView } from './selectors';

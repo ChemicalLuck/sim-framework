@@ -75,6 +75,20 @@ An item that restores energy and is consumed:
 
 Extensions can add their own effect kinds — see [[Extensions]].
 
+## Scripts
+
+A script plays its scenes in order (or randomly), one per action, advancing time each
+turn, then applies `completionEffects`. Add `leave` to let the player end it early:
+
+```json
+"leave": { "text": "Clock out", "effects": [], "scaleCompletionEffects": true }
+```
+
+The leave action appears on every scene. It applies `leave.effects` and, with
+`scaleCompletionEffects`, the completion effects with each numeric `delta`/`amount` scaled
+by the fraction of scenes completed. It returns to the default view unless one of those
+effects changes the view. Time already spent stays spent; leaving adds none.
+
 ## Conditions
 
 Actions and objectives can be gated by **conditions**, an expression DSL with a `kind`:
