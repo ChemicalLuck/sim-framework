@@ -48,7 +48,7 @@ Actions apply **effects** — the only way player actions change state. Each eff
 ```json
 { "kind": "needs", "need": "Energy", "delta": 20 }
 { "kind": "inventory", "operation": "remove", "id": "coffee" }
-{ "kind": "money", "delta": -5 }
+{ "kind": "money", "amount": -5 }
 { "kind": "sleep", "wakeTime": 7 }
 { "kind": "view", "activeViewId": "DefaultView", "props": {} }
 ```
