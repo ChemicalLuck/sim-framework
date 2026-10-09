@@ -88,7 +88,6 @@ function buildDagreLayout(
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   dagre.layout(g);
 
   const positions: Record<string, { x: number; y: number }> = {};
