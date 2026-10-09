@@ -1,7 +1,8 @@
-import { build, createServer, preview } from 'vite';
+import { build, createServer, preview } from "vite";
 
-import { buildConfig } from './config';
-import { runCheck } from './check';
+import { buildConfig } from "./config";
+import { runCheck } from "./check";
+import { runTests } from "./test";
 
 const HELP = `sim — the sim game framework CLI
 
@@ -10,7 +11,8 @@ Usage:
   sim build     Type-agnostic single-file build → dist/index.html
   sim editor    Start the dev server and print the editor URL
   sim preview   Preview a production build
-  sim check     Validate game content (coming soon)
+  sim check     Validate game content references
+  sim test      Run the game's tests with vitest (--watch to keep running)
 `;
 
 async function main(): Promise<void> {
@@ -18,32 +20,37 @@ async function main(): Promise<void> {
   const cmd = process.argv[2];
 
   switch (cmd) {
-    case 'dev':
-    case 'editor': {
+    case "dev":
+    case "editor": {
       const server = await createServer(
-        await buildConfig({ cwd, build: false, mode: 'development' }),
+        await buildConfig({ cwd, build: false, mode: "development" }),
       );
       await server.listen();
       server.printUrls();
-      if (cmd === 'editor') {
+      if (cmd === "editor") {
         const base = server.resolvedUrls?.local[0];
-        console.log(`\n  ➜  Editor:  ${base ? `${base}editor` : '/editor'}\n`);
+        console.log(`\n  ➜  Editor:  ${base ? `${base}editor` : "/editor"}\n`);
       }
       break;
     }
-    case 'build': {
-      await build(await buildConfig({ cwd, build: true, mode: 'production' }));
+    case "build": {
+      await build(await buildConfig({ cwd, build: true, mode: "production" }));
       break;
     }
-    case 'preview': {
+    case "preview": {
       const server = await preview(
-        await buildConfig({ cwd, build: true, mode: 'production' }),
+        await buildConfig({ cwd, build: true, mode: "production" }),
       );
       server.printUrls();
       break;
     }
-    case 'check': {
+    case "check": {
       process.exit(await runCheck(cwd));
+      break;
+    }
+    case "test": {
+      const code = await runTests(cwd, process.argv.slice(3));
+      if (!process.argv.includes("--watch")) process.exit(code);
       break;
     }
     default: {

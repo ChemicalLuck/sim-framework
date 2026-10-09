@@ -1,9 +1,9 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
-import { createServer } from 'vite';
+import { createServer } from "vite";
 
-import { buildConfig } from './config';
+import { buildConfig } from "./config";
 
 interface ValidationIssue {
   section: string;
@@ -31,9 +31,9 @@ function loadDataDir(dataDir: string): Record<string, unknown> {
   const dataByFile: Record<string, unknown> = {};
   if (!fs.existsSync(dataDir)) return dataByFile;
   for (const entry of fs.readdirSync(dataDir)) {
-    if (!entry.endsWith('.json')) continue;
-    const name = entry.replace(/\.json$/, '');
-    const raw = fs.readFileSync(path.join(dataDir, entry), 'utf-8');
+    if (!entry.endsWith(".json")) continue;
+    const name = entry.replace(/\.json$/, "");
+    const raw = fs.readFileSync(path.join(dataDir, entry), "utf-8");
     try {
       dataByFile[name] = JSON.parse(raw);
     } catch (err) {
@@ -50,20 +50,20 @@ function loadDataDir(dataDir: string): Record<string, unknown> {
  * the game's data JSON. Returns a process exit code.
  */
 export async function runCheck(cwd: string): Promise<number> {
-  const base = await buildConfig({ cwd, build: false, mode: 'production' });
+  const base = await buildConfig({ cwd, build: false, mode: "production" });
   const server = await createServer({
     ...base,
-    appType: 'custom',
-    logLevel: 'silent',
+    appType: "custom",
+    logLevel: "silent",
     server: { middlewareMode: true },
   });
 
   try {
     const refs = (await server.ssrLoadModule(
-      'virtual:references',
+      "virtual:references",
     )) as ReferenceContributions;
     const validation = (await server.ssrLoadModule(
-      '@chemicalluck/sim-engine/lib/validation',
+      "@chemicalluck/sim-engine/lib/validation",
     )) as ValidationModule;
 
     const contributions: ReferenceContributions = {
@@ -74,7 +74,7 @@ export async function runCheck(cwd: string): Promise<number> {
       referenceRewriters: refs.referenceRewriters,
     };
 
-    const dataByFile = loadDataDir(path.join(cwd, 'src', 'game', 'data'));
+    const dataByFile = loadDataDir(path.join(cwd, "src", "game", "data"));
 
     const missing = validation
       .requiredFiles(contributions)
@@ -93,11 +93,11 @@ export async function runCheck(cwd: string): Promise<number> {
       for (const issue of issues) {
         console.error(`   ${issue.source}: ${issue.message}`);
       }
-      console.error('');
+      console.error("");
       return 1;
     }
 
-    console.log('✓ Content OK — no broken references.');
+    console.log("✓ Content OK — no broken references.");
     return 0;
   } finally {
     await server.close();

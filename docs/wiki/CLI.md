@@ -10,7 +10,10 @@ The `sim` binary wraps Vite and the engine's plugins. Your game defines these sc
     "build": "sim build",
     "editor": "sim editor",
     "preview": "sim preview",
-    "check": "sim check"
+    "check": "sim check",
+    "test": "sim test",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p ."
   }
 }
 ```
@@ -36,7 +39,24 @@ Serves a production build locally to sanity-check the single-file output.
 Validates content referential integrity — every reference in your data (item ids, location
 ids, scene ids, …) must resolve to something that exists. Prints each issue as
 `source: references unknown <kind> '<id>'` and exits non-zero if any are found. It also
-warns about data files that are referenced but missing. Run it in CI.
+warns about data files that are referenced but missing. It also flags conditions that
+compare a string with `<`/`>` or compare two literals (usually a mistyped identifier). Run
+it in CI.
+
+### `sim test`
+Runs your `src/**/*.test.{ts,tsx}` files with vitest, using the same setup as `sim dev`
+(engine and `~` aliases, `virtual:*` modules, React dedupe) plus jsdom, vitest globals and
+the `@testing-library/jest-dom` matchers when installed. Runs once and exits non-zero on
+failure; pass `--watch` to keep running, and file filters to narrow the run. vitest and
+jsdom come from your project (the starter installs them).
+
+For editor integrations that need a `vitest.config.ts`, the same config is exported:
+
+```ts
+import { simVitestConfig } from '@chemicalluck/sim-cli/vitest';
+
+export default simVitestConfig();
+```
 
 ## How it finds the engine
 

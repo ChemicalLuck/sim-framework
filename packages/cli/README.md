@@ -9,7 +9,11 @@ sim build     # single self-contained dist/index.html
 sim editor    # dev server + prints the editor URL
 sim preview   # preview a production build
 sim check     # validate content references (CI-friendly exit code)
+sim test      # run the game's tests with vitest (--watch to keep running)
 ```
+
+A game's `vitest.config.ts` can reuse the same setup:
+`export default simVitestConfig()` from `@chemicalluck/sim-cli/vitest`.
 
 It resolves [`@chemicalluck/sim-engine`](https://www.npmjs.com/package/@chemicalluck/sim-engine)
 from your project and assembles the Vite pipeline (React, Tailwind, the engine's
