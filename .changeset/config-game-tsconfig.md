@@ -1,5 +1,5 @@
 ---
-"@chemicalluck/sim-config": minor
+"@chemicalluck/sim-config": patch
 "@chemicalluck/create-sim-game": patch
 ---
 
