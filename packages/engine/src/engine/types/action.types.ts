@@ -6,5 +6,10 @@ export interface Action {
   text: string;
   effects?: Effect[];
   condition?: Condition;
+  /**
+   * Shown when `condition` isn't met: the action is rendered disabled with this
+   * text (e.g. "Requires Charm 3") instead of being hidden.
+   */
+  lockedText?: string;
   eventIds?: string[];
 }

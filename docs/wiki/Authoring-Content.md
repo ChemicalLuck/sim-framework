@@ -87,6 +87,10 @@ Actions and objectives can be gated by **conditions**, an expression DSL with a 
 }
 ```
 
+An action whose condition isn't met is hidden, wherever it appears (locations, scenes,
+scripts, items, …). Set `"lockedText": "Requires Charm 3"` on the action to show it
+disabled with that text instead.
+
 Combine with `and` / `or` / `not`. Expression nodes (`location`, `string`, `time`, need
 levels, …) are contributed by features, so the available vocabulary grows with the engine.
 

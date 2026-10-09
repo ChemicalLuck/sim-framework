@@ -1,7 +1,9 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
+
 import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
+import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -157,9 +159,26 @@ export function ActionRow({
           <ConditionField
             condition={action.condition}
             onChange={(c) => {
-              onChange({ ...action, condition: c });
+              onChange({
+                ...action,
+                condition: c,
+                lockedText: c ? action.lockedText : undefined,
+              });
             }}
           />
+          {action.condition && (
+            <Input
+              value={action.lockedText ?? ''}
+              onChange={(e) => {
+                onChange({
+                  ...action,
+                  lockedText: e.target.value || undefined,
+                });
+              }}
+              placeholder="Locked text (optional, e.g. Requires Charm 3): show disabled instead of hiding"
+              className="mt-1.5 h-7 text-xs"
+            />
+          )}
         </div>
       </div>
     </div>

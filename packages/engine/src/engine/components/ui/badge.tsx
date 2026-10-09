@@ -1,6 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 import * as React from 'react';
+
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 const badgeVariants = cva(
