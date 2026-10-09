@@ -8,7 +8,10 @@
     "build": "sim build",
     "editor": "sim editor",
     "preview": "sim preview",
-    "check": "sim check"
+    "check": "sim check",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p .",
+    "test": "sim test"
   },
   "dependencies": {
     "@chemicalluck/sim-engine": "workspace:*",
@@ -20,6 +23,14 @@
   },
   "devDependencies": {
     "@chemicalluck/sim-config": "workspace:*",
-    "typescript": "~5.9.3"
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "eslint": "^9.36.0",
+    "jsdom": "^29.1.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7",
+    "vitest": "^4.1.6"
   }
 }

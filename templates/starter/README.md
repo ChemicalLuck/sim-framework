@@ -9,6 +9,9 @@ npm run dev       # dev server — game at /, content editor at /editor
 npm run build     # single self-contained dist/index.html
 npm run check     # validate content references
 npm run preview   # preview a production build
+npm test          # run src/**/*.test.{ts,tsx} with vitest
+npm run lint      # ESLint (typed rules from @chemicalluck/sim-config)
+npm run typecheck # TypeScript
 ```
 
 ## Structure
