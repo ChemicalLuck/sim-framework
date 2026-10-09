@@ -2,12 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-/** Version ranges written into the scaffolded game's package.json. */
-const FRAMEWORK_VERSIONS: Record<string, string> = {
-  '@chemicalluck/sim-engine': '^0.1.0',
-  '@chemicalluck/sim-cli': '^0.1.0',
-  '@chemicalluck/sim-config': '^0.1.0',
-};
+/**
+ * Version ranges written into the scaffolded game's package.json: the
+ * framework packages' versions at build time (see tsup.config.ts).
+ */
+declare const __FRAMEWORK_VERSIONS__: Record<string, string>;
+const FRAMEWORK_VERSIONS = __FRAMEWORK_VERSIONS__;
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
