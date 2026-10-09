@@ -1,5 +1,28 @@
 # @chemicalluck/sim-cli
 
+## 0.2.0
+
+### Minor Changes
+
+- e8d09c9: Add `sim test`, which runs a game's tests with vitest using the same engine setup as
+  `sim dev` (aliases, `virtual:*` modules, React dedupe) plus jsdom, globals and the
+  jest-dom matchers. The config is also exported as `simVitestConfig()` from
+  `@chemicalluck/sim-cli/vitest` for a game's own `vitest.config.ts`.
+
+### Patch Changes
+
+- cb68278: Upgrade react-router to v8. The engine now requires Node.js >=22.22.0 and React >=19.2.7
+  (react-router 8's minimums). The CLI no longer pre-bundles `cookie` / `set-cookie-parser`,
+  which react-router 8 dropped (its replacement deps are ESM); the starter template now
+  depends on React ^19.2.7.
+- Updated dependencies [8f7eefa]
+- Updated dependencies [3928102]
+- Updated dependencies [811d46f]
+- Updated dependencies [dea91af]
+- Updated dependencies [cb68278]
+- Updated dependencies [077d4bb]
+  - @chemicalluck/sim-engine@0.2.0
+
 ## 0.1.3
 
 ### Patch Changes
