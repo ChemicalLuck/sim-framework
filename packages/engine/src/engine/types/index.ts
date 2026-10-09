@@ -1,3 +1,6 @@
+// Bring every built-in feature's EffectMap/ConditionMap augmentations along.
+import type {} from '../state/augmentations';
+
 export * from './action-group.types';
 export * from './action.types';
 export * from './character.types';

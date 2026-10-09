@@ -1,0 +1,6 @@
+{
+  // Declarations for the Node-side Vite plugins only. Keeps the browser
+  // runtime (feature slices and their augmentations) out of the dts program.
+  "extends": "./tsconfig.json",
+  "include": ["src/engine/game-plugin.ts", "src/engine/editor/editor-plugin.ts"]
+}
