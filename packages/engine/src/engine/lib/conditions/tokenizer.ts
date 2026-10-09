@@ -47,9 +47,10 @@ export function tokenize(input: string): Token[] {
       while (i < s.length) {
         const c = s[i];
         if (c === '\\') {
-          const next = s[i + 1];
-          buf += next;
+          // Escaped character: take it literally (e.g. \' or \\).
+          if (i + 1 < s.length) buf += s[i + 1];
           i += 2;
+          continue;
         }
         if (c === quote) {
           closed = true;

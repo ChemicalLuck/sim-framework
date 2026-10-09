@@ -1,4 +1,5 @@
 import { conditionSerializers, exprSerializers } from 'virtual:conditions';
+
 import type {
   ComparisonCondition,
   Condition,
@@ -10,7 +11,7 @@ function serializeExpr(e: Expr): string {
     case 'const':
       return String(e.value);
     case 'string':
-      return `'${e.value}'`;
+      return `'${e.value.replace(/[\\']/g, '\\$&')}'`;
     case 'date':
       return `'${e.value}'`;
     default: {

@@ -22,6 +22,14 @@ describe('parseCondition', () => {
     });
   });
 
+  it('round-trips string literals containing quotes and backslashes', () => {
+    const c = parseCondition("location == 'it\\'s a \\\\ path'");
+    expect(c).toMatchObject({
+      rhs: { kind: 'string', value: "it's a \\ path" },
+    });
+    expect(parseCondition(conditionToString(c))).toEqual(c);
+  });
+
   it.each([
     'money.balance >= 50',
     'needs.energy > 0.25',
