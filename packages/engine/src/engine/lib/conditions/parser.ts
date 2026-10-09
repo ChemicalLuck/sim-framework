@@ -1,5 +1,15 @@
-import { conditionParsers, exprKinds, exprParsers } from 'virtual:conditions';
-import type { ComparisonCondition, Condition, Expr } from '@chemicalluck/sim-engine/types';
+import {
+  comparisonParsers,
+  conditionParsers,
+  exprKinds,
+  exprParsers,
+} from 'virtual:conditions';
+
+import type {
+  ComparisonCondition,
+  Condition,
+  Expr,
+} from '@chemicalluck/sim-engine/types';
 
 import { type Token, tokenize } from './tokenizer';
 
@@ -148,6 +158,9 @@ function parseAnd(tokens: Token[], s: ParserState): Condition {
 }
 
 function parseComparison(tokens: Token[], s: ParserState): Condition {
+  const special = parseSpecialComparison(tokens, s);
+  if (special) return special;
+
   const leftOperand = parseOperand(tokens, s);
 
   if (isConditionNode(leftOperand)) {
@@ -194,6 +207,28 @@ function parseComparison(tokens: Token[], s: ParserState): Condition {
   }
 }
 
+/**
+ * `<identifier> <op> <literal>` comparisons that a feature parses into its own
+ * condition kind (e.g. `season == 'summer'`), matching its serializer.
+ */
+function parseSpecialComparison(
+  tokens: Token[],
+  s: ParserState,
+): Condition | null {
+  if (s.pos + 3 > tokens.length) return null;
+  const [id, op, rhs] = tokens.slice(s.pos, s.pos + 3);
+  if (id.type !== 'identifier' || op.type !== 'operator') return null;
+  if (rhs.type !== 'string' && rhs.type !== 'number') return null;
+  for (const parse of comparisonParsers) {
+    const result = parse(id.value, op.value, rhs.value);
+    if (result !== null) {
+      s.pos += 3;
+      return result;
+    }
+  }
+  return null;
+}
+
 function parseOperand(tokens: Token[], s: ParserState): Expr | Condition {
   const tok = peek(tokens, s);
   if (!tok) throw new Error('Unexpected end of input while parsing operand');
@@ -237,7 +272,9 @@ function parseIdentifierAsExpr(id: string): Expr | Condition {
     if (result !== null) return result;
   }
 
-  return expr.string(id);
+  throw new Error(
+    `Unknown identifier '${id}'. Quote string literals ('${id}') or use a registered expression such as money, need.<Name>, skill.<id> or gamehour.`,
+  );
 }
 
 const CORE_EXPR_KINDS = new Set(['const', 'string', 'date']);

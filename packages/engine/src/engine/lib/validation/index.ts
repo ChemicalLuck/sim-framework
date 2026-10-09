@@ -106,7 +106,10 @@ export function validateReferences(
     contributions.nodeRefExtractors,
     dataByFile,
   );
-  const issues: ValidationIssue[] = [];
+  const issues: ValidationIssue[] = conditionIssues(
+    contributions.referenceProviders,
+    dataByFile,
+  );
   for (const rec of records) {
     const registry = registries.get(rec.namespace);
     if (registry && !registry.has(rec.id)) {
@@ -114,6 +117,63 @@ export function validateReferences(
         section: rec.section,
         source: rec.source,
         message: `references unknown ${rec.namespace} '${rec.id}'`,
+      });
+    }
+  }
+  return issues;
+}
+
+const COMPARISON_KINDS = new Set(['lt', 'lte', 'eq', 'neq', 'gt', 'gte']);
+const NUMERIC_COMPARISON_KINDS = new Set(['lt', 'lte', 'gt', 'gte']);
+
+/**
+ * Describe what's wrong with a single condition node, or `null` if nothing is.
+ * Catches the shapes an unrecognised identifier used to produce (it was parsed
+ * as a string literal): a numeric comparison against a string, which throws at
+ * runtime, and a comparison between two literals, which is constant.
+ */
+export function conditionNodeProblem(node: RefNode): string | null {
+  const n = node as {
+    kind?: string;
+    lhs?: { kind?: string };
+    rhs?: { kind?: string };
+  };
+  if (!n.kind || !COMPARISON_KINDS.has(n.kind)) return null;
+  const literal = (e?: { kind?: string }) =>
+    e?.kind === 'string' || e?.kind === 'const' || e?.kind === 'date';
+  const isString = (e?: { kind?: string }) => e?.kind === 'string';
+  if (
+    NUMERIC_COMPARISON_KINDS.has(n.kind) &&
+    (isString(n.lhs) || isString(n.rhs))
+  ) {
+    return 'condition compares a string with <, >, <= or >= (an operand is likely an unrecognised identifier)';
+  }
+  if (literal(n.lhs) && literal(n.rhs)) {
+    return 'condition compares two literals and is constant (an operand is likely an unrecognised identifier)';
+  }
+  return null;
+}
+
+const CONDITION_PROBLEM = '\0condition';
+
+/** Run every content provider looking for malformed condition nodes. */
+function conditionIssues(
+  providers: ReferenceProvider[],
+  dataByFile: DataByFile,
+): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const extract = (node: RefNode): ContentRef[] => {
+    const problem = conditionNodeProblem(node);
+    return problem ? [{ namespace: CONDITION_PROBLEM, id: problem }] : [];
+  };
+  for (const provider of providers) {
+    const data = dataByFile[provider.file];
+    if (data === undefined) continue;
+    for (const rec of provider.collect(data, extract)) {
+      issues.push({
+        section: rec.section,
+        source: rec.source,
+        message: rec.id,
       });
     }
   }

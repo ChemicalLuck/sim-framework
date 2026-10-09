@@ -1,8 +1,12 @@
 import { ChevronDown, ChevronRight, X } from 'lucide-react';
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Checkbox } from '@chemicalluck/sim-engine/components/ui/checkbox';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -44,6 +48,7 @@ import { NpcSelectionEditor } from '@chemicalluck/sim-engine/features/npcs/npc-s
 import type { ActionGroup } from '@chemicalluck/sim-engine/types/action-group.types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 import type { NpcSelection } from '@chemicalluck/sim-engine/types/npc-filter.types';
+import type { ScriptLeave } from '@chemicalluck/sim-engine/types/script.types';
 
 interface RawScriptScene {
   kind: 'scene';
@@ -60,6 +65,7 @@ interface RawScript {
   hideProgress?: boolean;
   npcSelection?: NpcSelection;
   completionEffects?: Effect[];
+  leave?: ScriptLeave;
   scenes: RawScriptScene[];
 }
 
@@ -220,17 +226,22 @@ function SceneEditor({ scene, index, onChange, onRemove }: SceneEditorProps) {
 // ── Completion effects editor ─────────────────────────────────────
 
 interface CompletionEffectsProps {
+  label?: string;
   effects: Effect[];
   onChange: (effects: Effect[]) => void;
 }
 
-function CompletionEffects({ effects, onChange }: CompletionEffectsProps) {
+function CompletionEffects({
+  label = 'Completion effects',
+  effects,
+  onChange,
+}: CompletionEffectsProps) {
   const [adding, setAdding] = useState(false);
   const availableData = useAvailableData();
 
   return (
     <Field>
-      <Label>Completion effects</Label>
+      <Label>{label}</Label>
       <div className="flex flex-wrap gap-1 items-center min-h-[24px]">
         {effects.map((eff, i) => (
           <EffectChip
@@ -266,6 +277,67 @@ function CompletionEffects({ effects, onChange }: CompletionEffectsProps) {
           }}
           availableData={availableData}
         />
+      )}
+    </Field>
+  );
+}
+
+// ── Leave-early editor ────────────────────────────────────────────
+
+interface LeaveEditorProps {
+  leave: ScriptLeave | undefined;
+  onChange: (leave: ScriptLeave | undefined) => void;
+}
+
+function LeaveEditor({ leave, onChange }: LeaveEditorProps) {
+  return (
+    <Field>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id="allowLeave"
+          checked={leave !== undefined}
+          onCheckedChange={(v) => {
+            onChange(v ? {} : undefined);
+          }}
+        />
+        <Label htmlFor="allowLeave">Allow leaving early</Label>
+      </div>
+      {leave && (
+        <div className="space-y-2 pl-6">
+          <Input
+            value={leave.text ?? ''}
+            placeholder="Leave"
+            onChange={(e) => {
+              onChange({ ...leave, text: e.target.value || undefined });
+            }}
+            className="bg-zinc-800 border-zinc-600"
+          />
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="scaleCompletionEffects"
+              checked={leave.scaleCompletionEffects ?? false}
+              onCheckedChange={(v) => {
+                onChange({
+                  ...leave,
+                  scaleCompletionEffects: v ? true : undefined,
+                });
+              }}
+            />
+            <Label htmlFor="scaleCompletionEffects">
+              Apply completion effects scaled by progress
+            </Label>
+          </div>
+          <CompletionEffects
+            label="Leave effects"
+            effects={leave.effects ?? []}
+            onChange={(effects) => {
+              onChange({
+                ...leave,
+                effects: effects.length ? effects : undefined,
+              });
+            }}
+          />
+        </div>
       )}
     </Field>
   );
@@ -368,6 +440,13 @@ function ScriptDetail({ script, onChange, refs }: ScriptDetailProps) {
         effects={script.completionEffects ?? []}
         onChange={(effects) => {
           onChange({ ...script, completionEffects: effects });
+        }}
+      />
+
+      <LeaveEditor
+        leave={script.leave}
+        onChange={(leave) => {
+          onChange({ ...script, leave });
         }}
       />
 

@@ -38,6 +38,7 @@ omitted or left as an empty `[]` / `{}`.
 | `events.json` | World events | optional |
 | `quest-templates.json` | Reusable quest templates | optional |
 | `linguistics.json` | Text macros & terms | optional |
+| `relationships.json` | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional |
 
 ## Effects
 
@@ -47,7 +48,7 @@ Actions apply **effects** — the only way player actions change state. Each eff
 ```json
 { "kind": "needs", "need": "Energy", "delta": 20 }
 { "kind": "inventory", "operation": "remove", "id": "coffee" }
-{ "kind": "money", "delta": -5 }
+{ "kind": "money", "amount": -5 }
 { "kind": "sleep", "wakeTime": 7 }
 { "kind": "view", "activeViewId": "DefaultView", "props": {} }
 ```
@@ -74,6 +75,48 @@ An item that restores energy and is consumed:
 
 Extensions can add their own effect kinds — see [[Extensions]].
 
+## Needs
+
+`needs.json` sets each need's starting value and decay rate (points per hour the value
+falls; a negative rate makes it rise). Needs decay for all clock time an action advances.
+Optional per-need `options`:
+
+```json
+{
+  "needs": { "Energy": 100, "Intoxication": 0 },
+  "decayRates": { "Energy": 5, "Intoxication": 8 },
+  "options": {
+    "Intoxication": {
+      "direction": "inverse",
+      "hideAtZero": true,
+      "thresholds": [
+        { "at": 100, "effects": [{ "kind": "view", "sceneId": "passed_out" }] }
+      ]
+    }
+  }
+}
+```
+
+- `direction`: `normal` (bad at 0, the default) or `inverse` (bad at 100). It sets the
+  display colours, and sleep slows only changes toward the bad end.
+- `hideAtZero`: hide the need in the sidebar while it is 0.
+- `thresholds`: effects applied when the need crosses `at` toward its bad end (or the
+  direction given by `"when": "rising" | "falling"`), including reaching 0 or 100.
+
+## Scripts
+
+A script plays its scenes in order (or randomly), one per action, advancing time each
+turn, then applies `completionEffects`. Add `leave` to let the player end it early:
+
+```json
+"leave": { "text": "Clock out", "effects": [], "scaleCompletionEffects": true }
+```
+
+The leave action appears on every scene. It applies `leave.effects` and, with
+`scaleCompletionEffects`, the completion effects with each numeric `delta`/`amount` scaled
+by the fraction of scenes completed. It returns to the default view unless one of those
+effects changes the view. Time already spent stays spent; leaving adds none.
+
 ## Conditions
 
 Actions and objectives can be gated by **conditions**, an expression DSL with a `kind`:
@@ -86,8 +129,20 @@ Actions and objectives can be gated by **conditions**, an expression DSL with a 
 }
 ```
 
+An action whose condition isn't met is hidden, wherever it appears (locations, scenes,
+scripts, items, …). Set `"lockedText": "Requires Charm 3"` on the action to show it
+disabled with that text instead.
+
 Combine with `and` / `or` / `not`. Expression nodes (`location`, `string`, `time`, need
 levels, …) are contributed by features, so the available vocabulary grows with the engine.
+
+The editor writes these from a string DSL, e.g. `money >= 50 && gamehour < 20`. Built-in
+identifiers include `money`, `need.<Name>`, `skill.<id>`, `location`, `gametime`,
+`gamehour`, `relationship.<metric>` (the current NPC in a scene, script, NPC view or
+encounter), `relationship.<npcId>.<metric>`, `milestone.<id>`, `season == '<id>'` and
+`weather == '<id>'`. An unrecognised bare identifier is a parse error; quote string
+literals. `sim check` also flags stored conditions that compare a string with `<`/`>` or
+compare two literals, both signs of a mistyped identifier.
 
 ## Referential integrity
 

@@ -1,4 +1,5 @@
 import { effectHydrators } from 'virtual:game-extensions';
+
 import type { Registry } from '@chemicalluck/sim-engine/data/registry';
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type { ActionGroup } from '@chemicalluck/sim-engine/types/action-group.types';
@@ -44,6 +45,7 @@ export function hydrateAction(
     kind: 'action',
     text: action.text,
     condition: action.condition,
+    lockedText: action.lockedText,
     effects: action.effects.map((e) => hydrateEffect(e, ctx)),
     eventIds: action.eventIds,
   };
@@ -82,6 +84,10 @@ export function hydrateScript(
   const completionEffects = scriptJson.completionEffects?.map((e) =>
     hydrateEffect(e, ctx),
   );
+  const leave = scriptJson.leave && {
+    ...scriptJson.leave,
+    effects: scriptJson.leave.effects?.map((e) => hydrateEffect(e, ctx)),
+  };
 
   if (scriptJson.duration !== undefined) {
     return {
@@ -89,6 +95,7 @@ export function hydrateScript(
       duration: scriptJson.duration,
       scenes,
       completionEffects,
+      leave,
       npcSelection: scriptJson.npcSelection,
       hideProgress: scriptJson.hideProgress,
     };
@@ -98,6 +105,7 @@ export function hydrateScript(
     endTime: scriptJson.endTime ?? 0,
     scenes,
     completionEffects,
+    leave,
     npcSelection: scriptJson.npcSelection,
     hideProgress: scriptJson.hideProgress,
   };

@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
 import { ActionButtonList } from '@chemicalluck/sim-engine/components/action-button-list';
 import { ActionGroup } from '@chemicalluck/sim-engine/components/action-group';
 import { ItemActionsButtonsList } from '@chemicalluck/sim-engine/components/item-actions-button-list';
@@ -11,7 +13,10 @@ import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import { selectTimestamp } from '@chemicalluck/sim-engine/features/time/selectors';
 import * as effects from '@chemicalluck/sim-engine/features/view/helpers';
 import { selectDescription } from '@chemicalluck/sim-engine/features/view/selectors';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineSelector,
+} from '@chemicalluck/sim-engine/state/store';
 import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Script } from '@chemicalluck/sim-engine/types';
 
@@ -96,6 +101,11 @@ function ScriptView({ script, npcIds = EMPTY_NPC_IDS }: ScriptViewProps) {
             />
           </div>
         ))}
+        {script.leave && (
+          <ActionButton effects={effects.earlyExitEffects(script, step)}>
+            {resolve(script.leave.text ?? 'Leave')}
+          </ActionButton>
+        )}
         <ItemActionsButtonsList />
       </ActionGroup>
     </WithSidebar>

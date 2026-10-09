@@ -169,3 +169,48 @@ describe('rewriteReferences', () => {
     expect(issues.some((i) => i.message.includes('apple'))).toBe(false);
   });
 });
+
+describe('condition validation', () => {
+  const withCondition = (condition: unknown) => ({
+    ...dataByFile,
+    pages: [{ id: 'p', effects: [condition] }],
+  });
+
+  it('flags numeric comparisons against a string (unrecognised identifier)', () => {
+    const issues = validateReferences(
+      withCondition({
+        kind: 'gte',
+        lhs: { kind: 'string', value: 'money.balance' },
+        rhs: { kind: 'const', value: 50 },
+      }),
+      contributions,
+    );
+    expect(issues).toHaveLength(1);
+    expect(issues[0].source).toBe('page:p');
+    expect(issues[0].message).toMatch(/identifier/);
+  });
+
+  it('flags constant literal-vs-literal comparisons', () => {
+    const issues = validateReferences(
+      withCondition({
+        kind: 'eq',
+        lhs: { kind: 'string', value: 'season' },
+        rhs: { kind: 'string', value: 'summer' },
+      }),
+      contributions,
+    );
+    expect(issues).toHaveLength(1);
+  });
+
+  it('accepts comparisons against a registered expression', () => {
+    const issues = validateReferences(
+      withCondition({
+        kind: 'eq',
+        lhs: { kind: 'location' },
+        rhs: { kind: 'string', value: 'cafe' },
+      }),
+      contributions,
+    );
+    expect(issues).toEqual([]);
+  });
+});

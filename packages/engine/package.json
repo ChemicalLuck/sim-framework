@@ -35,7 +35,16 @@
     "./editor/index.html": "./src/engine/editor/index.html",
     "./vite-env": "./src/engine/vite-env.d.ts",
     "./package.json": "./package.json",
-    "./*": "./src/engine/*"
+    "./*": {
+      "types": [
+        "./src/engine/*.ts",
+        "./src/engine/*.tsx",
+        "./src/engine/*/index.ts",
+        "./src/engine/*/index.tsx",
+        "./src/engine/*"
+      ],
+      "default": "./src/engine/*"
+    }
   },
   "scripts": {
     "build": "tsup",
@@ -48,6 +57,8 @@
     "node": ">=22.22.0"
   },
   "peerDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "vite": "^7"

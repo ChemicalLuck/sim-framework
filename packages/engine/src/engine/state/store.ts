@@ -21,7 +21,12 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import type { StateWithHistory } from 'redux-undo';
-import undoable from 'redux-undo';
+import undoable, {
+  ActionTypes as UndoActionTypes,
+  newHistory,
+} from 'redux-undo';
+
+import type {} from './augmentations';
 
 // Features augment this interface to register their slice state type.
 // Augmentation pattern: declare module '@chemicalluck/sim-engine/state/store' { interface PresentState { myKey: MyState; } }
@@ -82,9 +87,30 @@ interface GroupedAction extends UnknownAction {
   };
 }
 
+export interface StoreOptions {
+  /** Undo steps kept for the Back button (default 10). 0 disables undo. */
+  undoLimit?: number;
+}
+
+const HISTORY_ACTION_TYPES = new Set<string>([
+  UndoActionTypes.UNDO,
+  UndoActionTypes.REDO,
+  UndoActionTypes.JUMP,
+  UndoActionTypes.JUMP_TO_PAST,
+  UndoActionTypes.JUMP_TO_FUTURE,
+]);
+
+function isIronman(present: unknown): boolean {
+  return (
+    (present as { save?: { ironman?: boolean } } | undefined)?.save?.ironman ===
+    true
+  );
+}
+
 export function buildStore(
   reducers: Record<string, Reducer<unknown>> = {},
   additionalTransforms: Transform<unknown, unknown>[] = [],
+  { undoLimit = 10 }: StoreOptions = {},
 ) {
   const compactTransform = createCompactTransform();
   const persistConfig = {
@@ -96,13 +122,32 @@ export function buildStore(
 
   const rootReducer = combineReducers(reducers);
 
-  const persistedReducer = persistReducer(
-    persistConfig,
-    undoable(rootReducer, {
-      groupBy: (action: GroupedAction) => action.meta?.group ?? null,
-      limit: 10,
-    }),
-  );
+  const historyReducer = undoable(rootReducer, {
+    groupBy: (action: GroupedAction) => action.meta?.group ?? null,
+    // redux-undo's limit counts the present state too.
+    limit: undoLimit + 1,
+    // Record nothing when undo is disabled or the run is ironman.
+    filter: (_action, present) => undoLimit > 0 && !isIronman(present),
+    syncFilter: true,
+  });
+
+  // An ironman run can't step back, even into history recorded before it.
+  const guardedReducer: typeof historyReducer = (state, action) => {
+    if (
+      state &&
+      HISTORY_ACTION_TYPES.has(action.type) &&
+      isIronman(state.present)
+    ) {
+      return state;
+    }
+    const next = historyReducer(state, action);
+    if (isIronman(next.present) && (next.past.length || next.future.length)) {
+      return newHistory([], next.present, []);
+    }
+    return next;
+  };
+
+  const persistedReducer = persistReducer(persistConfig, guardedReducer);
 
   const store = configureStore({
     reducer: persistedReducer,

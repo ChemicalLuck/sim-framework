@@ -1,6 +1,12 @@
 {
   "extends": "@chemicalluck/sim-config/tsconfig/game.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo"
-  }
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
+    // Set here rather than in the preset: TypeScript resolves these relative to
+    // the config file that declares them.
+    "paths": {
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "sim-env.d.ts"]
 }

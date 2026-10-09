@@ -2,7 +2,7 @@
   "name": "@chemicalluck/sim-cli",
   "version": "0.1.3",
   "type": "module",
-  "description": "The sim game framework CLI — dev server, single-file build, and content editor.",
+  "description": "The sim game framework CLI \u2014 dev server, single-file build, and content editor.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,9 +15,17 @@
     "access": "public"
   },
   "bin": {
-    "sim": "./dist/index.js"
+    "sim": "./bin/sim.js"
+  },
+  "exports": {
+    "./vitest": {
+      "types": "./dist/vitest.d.ts",
+      "default": "./dist/vitest.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
+    "bin",
     "dist"
   ],
   "scripts": {

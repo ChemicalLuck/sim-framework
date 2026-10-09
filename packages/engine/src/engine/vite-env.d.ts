@@ -2,8 +2,14 @@ declare module 'virtual:game-extensions' {
   import type { ComponentType } from 'react';
   import type { Reducer } from '@reduxjs/toolkit';
   import type { EffectHydrator } from '@chemicalluck/sim-engine/data/effect-hydrators';
-  import type { EffectHandler, PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
-  import type { EngineStore, RootState } from '@chemicalluck/sim-engine/state/store';
+  import type {
+    EffectHandler,
+    PostEffectHandler,
+  } from '@chemicalluck/sim-engine/state/thunks';
+  import type {
+    EngineStore,
+    RootState,
+  } from '@chemicalluck/sim-engine/state/store';
   import type { ActionGroup } from '@chemicalluck/sim-engine/types';
 
   export const slices: Record<string, Reducer>;
@@ -52,6 +58,12 @@ declare module 'virtual:conditions' {
   >;
   export const conditionParsers: ((identifier: string) => Condition | null)[];
   export const exprParsers: ((identifier: string) => Expr | null)[];
+  /** Parse `<identifier> <op> <literal>` into a feature-owned condition kind. */
+  export const comparisonParsers: ((
+    identifier: string,
+    op: string,
+    value: string | number,
+  ) => Condition | null)[];
   export const exprKinds: Set<string>;
   export const conditionSerializers: Record<
     string,

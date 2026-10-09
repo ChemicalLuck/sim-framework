@@ -1,4 +1,5 @@
 import editorExtensions from 'virtual:editor-extensions';
+
 import { Field } from '@chemicalluck/sim-engine/components/ui/field';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { Label } from '@chemicalluck/sim-engine/components/ui/label';
@@ -14,7 +15,10 @@ import {
   type DataRequirement,
   defineEffectEditor,
 } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
-import { NPC_VIEW_IDS, VIEW_IDS } from '@chemicalluck/sim-engine/features/view/slice';
+import {
+  NPC_VIEW_IDS,
+  VIEW_IDS,
+} from '@chemicalluck/sim-engine/features/view/slice';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 function getAllViewIds(): string[] {

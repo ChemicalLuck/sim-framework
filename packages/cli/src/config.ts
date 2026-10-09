@@ -1,12 +1,12 @@
-import fs from 'node:fs';
-import { createRequire } from 'node:module';
-import path from 'node:path';
-import { pathToFileURL } from 'node:url';
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import type { InlineConfig, PluginOption } from 'vite';
-import { viteSingleFile } from 'vite-plugin-singlefile';
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
+import type { InlineConfig, PluginOption } from "vite";
+import { viteSingleFile } from "vite-plugin-singlefile";
 
 const require = createRequire(import.meta.url);
 
@@ -34,24 +34,30 @@ interface ResolvedEngine {
  * plugins are compiled JS and imported dynamically.
  */
 async function loadEngine(cwd: string): Promise<ResolvedEngine> {
-  const enginePkg = require.resolve('@chemicalluck/sim-engine/package.json', {
+  const enginePkg = require.resolve("@chemicalluck/sim-engine/package.json", {
     paths: [cwd],
   });
   const engineRoot = path.dirname(enginePkg);
-  const engineDir = path.join(engineRoot, 'src', 'engine');
+  const engineDir = path.join(engineRoot, "src", "engine");
 
-  const gamePluginPath = require.resolve('@chemicalluck/sim-engine/game-plugin', {
-    paths: [cwd],
-  });
-  const editorPluginPath = require.resolve('@chemicalluck/sim-engine/editor/editor-plugin', {
-    paths: [cwd],
-  });
+  const gamePluginPath = require.resolve(
+    "@chemicalluck/sim-engine/game-plugin",
+    {
+      paths: [cwd],
+    },
+  );
+  const editorPluginPath = require.resolve(
+    "@chemicalluck/sim-engine/editor/editor-plugin",
+    {
+      paths: [cwd],
+    },
+  );
 
   const gameMod = (await import(pathToFileURL(gamePluginPath).href)) as {
-    gamePlugin: ResolvedEngine['gamePlugin'];
+    gamePlugin: ResolvedEngine["gamePlugin"];
   };
   const editorMod = (await import(pathToFileURL(editorPluginPath).href)) as {
-    editorPlugin: ResolvedEngine['editorPlugin'];
+    editorPlugin: ResolvedEngine["editorPlugin"];
   };
 
   return {
@@ -62,7 +68,7 @@ async function loadEngine(cwd: string): Promise<ResolvedEngine> {
 }
 
 async function loadUserConfig(cwd: string): Promise<SimUserConfig> {
-  for (const name of ['sim.config.js', 'sim.config.mjs']) {
+  for (const name of ["sim.config.js", "sim.config.mjs"]) {
     const p = path.join(cwd, name);
     if (fs.existsSync(p)) {
       const mod = (await import(pathToFileURL(p).href)) as {
@@ -89,7 +95,7 @@ export async function buildConfig({
 }: BuildConfigOptions): Promise<InlineConfig> {
   const { engineDir, gamePlugin, editorPlugin } = await loadEngine(cwd);
   const user = await loadUserConfig(cwd);
-  const gameDir = path.join(cwd, 'src', 'game');
+  const gameDir = path.join(cwd, "src", "game");
 
   const userVite = user.vite ?? {};
   const userOptimize = userVite.optimizeDeps ?? {};
@@ -100,11 +106,11 @@ export async function buildConfig({
     tailwindcss(),
     gamePlugin({ gameDir, engineDir, extraSlots: user.extraSlots }),
     editorPlugin({
-      dataDir: path.join(gameDir, 'data'),
-      extensionsDir: path.join(gameDir, 'extensions'),
-      engineFeaturesDir: path.join(engineDir, 'features'),
-      editorAppDir: path.join(engineDir, 'editor'),
-      gameStyles: path.join(gameDir, 'index.css'),
+      dataDir: path.join(gameDir, "data"),
+      extensionsDir: path.join(gameDir, "extensions"),
+      engineFeaturesDir: path.join(engineDir, "features"),
+      editorAppDir: path.join(engineDir, "editor"),
+      gameStyles: path.join(gameDir, "index.css"),
     }),
     ...(user.plugins ?? []),
   ];
@@ -119,20 +125,20 @@ export async function buildConfig({
         // Resolve the engine to its source directory so Vite does normal
         // file/index resolution (package `exports` wildcards don't probe for
         // directory `index` files) and transforms the .tsx as source.
-        '@chemicalluck/sim-engine': engineDir,
-        '~': path.join(cwd, 'src'),
+        "@chemicalluck/sim-engine": engineDir,
+        "~": path.join(cwd, "src"),
         ...(user.alias ?? {}),
       },
       // Force a single copy of these, resolved from the game. Matters when the
       // engine is linked (e.g. `pnpm link` / npm link) for local development:
       // otherwise its React/store would resolve from the linked location and
       // duplicate the game's, breaking hooks and the redux context.
-      dedupe: ['react', 'react-dom', 'react-redux'],
+      dedupe: ["react", "react-dom", "react-redux"],
     },
-    esbuild: isBuild ? { drop: ['console', 'debugger'] } : undefined,
+    esbuild: isBuild ? { drop: ["console", "debugger"] } : undefined,
     build: {
-      cssMinify: 'lightningcss',
-      rollupOptions: { input: path.join(cwd, 'index.html') },
+      cssMinify: "lightningcss",
+      rollupOptions: { input: path.join(cwd, "index.html") },
     },
     ...userVite,
     // Merge optimizeDeps last so a game's own `vite.optimizeDeps` extends —
@@ -150,16 +156,16 @@ export async function buildConfig({
       // they import dev-only deps (vitest, @testing-library/react) that games
       // don't install, which would abort the entire scan.
       entries: [
-        'index.html',
-        path.join(engineDir, '**/*.{ts,tsx}'),
-        `!${path.join(engineDir, '**/*.{test,spec}.{ts,tsx}')}`,
-        `!${path.join(engineDir, '**/test-utils/**')}`,
+        "index.html",
+        path.join(engineDir, "**/*.{ts,tsx}"),
+        `!${path.join(engineDir, "**/*.{test,spec}.{ts,tsx}")}`,
+        `!${path.join(engineDir, "**/test-utils/**")}`,
         ...(userOptimize.entries ?? []),
       ],
       // The engine ships as source (aliased above), so keep it out of dep
       // pre-bundling and let Vite transform its .ts/.tsx through the normal
       // pipeline.
-      exclude: ['@chemicalluck/sim-engine', ...(userOptimize.exclude ?? [])],
+      exclude: ["@chemicalluck/sim-engine", ...(userOptimize.exclude ?? [])],
       // Belt-and-suspenders for a few known CJS-only deps, in case the scan
       // above misses one (e.g. reached only through a path esbuild can't
       // statically follow). They get served raw otherwise and the browser
@@ -171,9 +177,9 @@ export async function buildConfig({
       // (react-router 8's deps — cookie-es, @remix-run/route-pattern — are ESM
       // and need no entry; listing an uninstalled dep here is a resolve error.)
       include: [
-        'react-redux',
-        'redux-persist/lib/storage',
-        'redux-persist/integration/react',
+        "react-redux",
+        "redux-persist/lib/storage",
+        "redux-persist/integration/react",
         ...(userOptimize.include ?? []),
       ],
     },

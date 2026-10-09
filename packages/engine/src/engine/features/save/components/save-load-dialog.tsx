@@ -1,6 +1,7 @@
 import { Save } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Dialog,
@@ -12,7 +13,11 @@ import {
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { selectPlayerName } from '@chemicalluck/sim-engine/features/player/selectors';
 import { SaveSlotList } from '@chemicalluck/sim-engine/features/save/components/save-slot-list';
-import { getSaveSlots, saveGame } from '@chemicalluck/sim-engine/features/save/saves';
+import {
+  getSaveSlots,
+  saveGame,
+} from '@chemicalluck/sim-engine/features/save/saves';
+import { selectIronman } from '@chemicalluck/sim-engine/features/save/selectors';
 import { selectTimestamp } from '@chemicalluck/sim-engine/features/time/selectors';
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
@@ -22,6 +27,8 @@ export default function SaveLoadDialog() {
 
   const playerName = useEngineSelector(selectPlayerName);
   const time = useEngineSelector(selectTimestamp);
+  // Ironman runs keep only the continuous autosave.
+  const ironman = useEngineSelector(selectIronman);
 
   const handleSave = () => {
     if (!saveName.trim()) return;
@@ -30,6 +37,8 @@ export default function SaveLoadDialog() {
     setSaveName('');
     toast.success('Game Saved');
   };
+
+  if (ironman) return null;
 
   return (
     <Dialog>

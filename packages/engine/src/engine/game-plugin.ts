@@ -462,6 +462,9 @@ ${a('conditionParsers').join(',\n')}
 export const exprParsers = [
 ${a('exprParsers').join(',\n')}
 ];
+export const comparisonParsers = [
+${a('comparisonParsers').join(',\n')}
+];
 export const exprKinds = new Set([
 ${a('exprKinds').join(',\n')}
 ]);
@@ -677,9 +680,13 @@ function generateSetupModule(
         continue;
       }
       const dataVar = `${featureName}_${toCamelCase(path.basename(ext.jsonFile, '.json'))}Data`;
-      extImports.push(
-        `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
-      );
+      // A setup binding may already import the same file (e.g. needs.json).
+      if (!importedDataVars.has(dataVar)) {
+        extImports.push(
+          `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
+        );
+        importedDataVars.add(dataVar);
+      }
       if (ext.hydratorFrom && ext.hydratorCall) {
         const hydratorAlias = `${featureName}_${ext.hydratorCall}`;
         const absFrom = path.resolve(featureDir, ext.hydratorFrom);

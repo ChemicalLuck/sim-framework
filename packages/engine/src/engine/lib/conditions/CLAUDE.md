@@ -17,30 +17,51 @@ All three phases are extensible. Features and extensions can add new expression 
 
 ```
 # Comparison (lhs op rhs)
-money.balance >= 50
-player.locationId == 'campus_library'
-time.hour < 18
+money >= 50
+location == 'campus_library'
+gamehour < 18
 
 # Boolean operators (left-to-right, && binds tighter than ||)
-money.balance >= 50 && time.hour < 20
-quest.stage == 'complete' || milestone.freshman_week
+money >= 50 && gamehour < 20
+skill.charm >= 3 || milestone.freshman_week
 
 # Grouping
-(money.balance >= 10 || has_dirty_clothes) && time.hour > 8
+(money >= 10 || has_dirty_clothes) && gamehour > 8
 
 # String literals (single or double quotes)
-player.locationId == "campus_cafe"
+location == "campus_cafe"
 
 # Numeric literals
-needs.energy > 0.25
+need.Energy > 25
 
 # Date literals (ISO 8601 strings are parsed automatically)
-time.date >= '2025-09-01'
+gametime >= '2025-09-01'
+
+# Feature-owned comparisons
+season == 'summer'
+weather == 'rainy'
 ```
 
-**Comparison operators:** `<`, `<=`, `==`, `!=`, `>`, `>=`  
-**Boolean operators:** `&&`, `||`  
-**Identifiers:** dot-separated (e.g. `money.balance`, `needs.hunger`)
+**Comparison operators:** `<`, `<=`, `==`, `!=`, `>`, `>=`
+**Boolean operators:** `&&`, `||`
+**Identifiers:** must be registered by a feature or extension. An unrecognised
+bare identifier is a parse error — quote string literals.
+
+Built-in identifiers:
+
+| Identifier                                               | Kind      | Feature       |
+| -------------------------------------------------------- | --------- | ------------- |
+| `money`                                                  | number    | money         |
+| `need.<Name>`                                            | number    | needs         |
+| `npcNeed.<name>`                                         | number    | encounter     |
+| `skill.<id>`                                             | number    | player        |
+| `location`                                               | string    | player        |
+| `gametime`, `gamehour`                                   | number    | time          |
+| `relationship.<metric>`, `relationship.<npcId>.<metric>` | number    | relationships |
+| `milestone.<id>`                                         | condition | milestones    |
+| `container.<id>.has_items`, `container.<id>.has_dirty`   | condition | containers    |
+| `has_dirty_clothes`, `has_wet_clothes`                   | condition | clothing      |
+| `season == '<id>'`, `weather == '<id>'`                  | condition | weather       |
 
 ## Built-In Types
 
@@ -69,7 +90,13 @@ declare module '~/engine/types/condition.types' {
 }
 ```
 
-Then register a parser and evaluator via `virtual:conditions` (declared in `feature.json`).
+Then export `exprParsers`, `exprEvaluators`, `exprKinds` and `exprSerializers`
+from the feature's `conditions.ts`; they are merged into `virtual:conditions`
+automatically.
+
+`comparisonParsers` (`(identifier, op, literal) => Condition | null`) let a
+feature parse a whole `<identifier> <op> <literal>` comparison into its own
+condition kind, e.g. `season == 'summer'`.
 
 Features add new condition kinds via `ConditionMap` augmentation and a corresponding evaluator.
 
@@ -85,7 +112,7 @@ import { evalExpr } from '~/engine/lib/conditions';
 // TypeScript-only builders (no string parsing):
 import { cond, expr } from '~/engine/lib/conditions/parser';
 
-parseCondition('money.balance >= 50'); // throws on syntax error
+parseCondition('money >= 50'); // throws on syntax error or unknown identifier
 parseConditionSafe('...'); // wraps error with input context
 isConditionMet(state, condition); // evaluates against Redux state
 ```

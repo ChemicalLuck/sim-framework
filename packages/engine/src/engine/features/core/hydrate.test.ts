@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type {
@@ -170,6 +171,16 @@ describe('hydrateAction', () => {
     expect(result.eventIds).toEqual(['evt1']);
   });
 
+  it('preserves lockedText', () => {
+    const json: JsonAction = {
+      kind: 'action',
+      text: 'Flirt',
+      effects: [],
+      lockedText: 'Requires Charm 3',
+    };
+    expect(hydrateAction(json, ctx).lockedText).toBe('Requires Charm 3');
+  });
+
   it('hydrates each effect', () => {
     const json: JsonAction = {
       kind: 'action',
@@ -237,6 +248,24 @@ describe('hydrateScript', () => {
       scenes: [minimalScene],
     };
     expect(hydrateScript(json, ctx).order).toBe('random');
+  });
+
+  it('hydrates the leave option and its effects', () => {
+    const json: JsonScript = {
+      id: 's',
+      order: 'sequential',
+      duration: 60,
+      scenes: [minimalScene],
+      leave: {
+        text: 'Clock out',
+        scaleCompletionEffects: true,
+        effects: [{ kind: 'inventory', operation: 'add', itemId: 'apple' }],
+      },
+    };
+    const { leave } = hydrateScript(json, ctx);
+    expect(leave?.text).toBe('Clock out');
+    expect(leave?.scaleCompletionEffects).toBe(true);
+    expect(leave?.effects?.[0]).toMatchObject({ kind: 'inventory', item });
   });
 
   it('preserves duration and omits endTime', () => {

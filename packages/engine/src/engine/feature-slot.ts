@@ -22,7 +22,7 @@ export interface FeatureSlotSpec {
 /**
  * NOTE: `conditions.ts` files are scanned by a separate convention outside
  * the slot system. Any feature or extension may export `default` (condition
- * evaluators), `exprEvaluators`, `conditionParsers`, `exprParsers`,
+ * evaluators), `exprEvaluators`, `conditionParsers`, `exprParsers`, `comparisonParsers`,
  * `exprKinds`, `conditionSerializers`, or `exprSerializers` from a
  * `conditions.ts` file and they will be merged into `virtual:conditions`
  * automatically — no manifest entry required.

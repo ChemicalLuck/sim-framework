@@ -76,6 +76,12 @@ export const referenceProviders: ReferenceProvider[] = [
           'scripts',
           extract,
         ),
+        ...collectEffectRefs(
+          script.leave?.effects,
+          `script:${script.id}`,
+          'scripts',
+          extract,
+        ),
         ...script.scenes.flatMap((scene) =>
           collectActionGroupRefs(
             scene.actions,
@@ -128,6 +134,7 @@ export const referenceRewriters: ReferenceRewriter[] = [
       let count = 0;
       for (const script of data as JsonScript[]) {
         count += rewriteEffectRefs(script.completionEffects, rewriteNode);
+        count += rewriteEffectRefs(script.leave?.effects, rewriteNode);
         for (const scene of script.scenes) {
           count += rewriteActionGroupRefs(
             scene.actions,

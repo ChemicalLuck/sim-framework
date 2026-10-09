@@ -4,17 +4,26 @@ import type { Transform } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import * as gameExtensions from 'virtual:game-extensions';
 import 'virtual:game-setup';
+
 import { GameSidebar as DefaultSidebar } from '@chemicalluck/sim-engine/components/sidebar';
 import { SidebarComponentContext } from '@chemicalluck/sim-engine/components/sidebar/context';
 import { SidebarProvider } from '@chemicalluck/sim-engine/components/ui/sidebar';
 import { Toaster } from '@chemicalluck/sim-engine/components/ui/sonner';
 import { ThemeProvider } from '@chemicalluck/sim-engine/components/ui/theme-provider';
 import {
+  type IronmanMode,
+  configureRunOptions,
+  getRunOptions,
+} from '@chemicalluck/sim-engine/features/save/slice';
+import {
   ViewsContext,
   type ViewsRegistry,
 } from '@chemicalluck/sim-engine/features/view/context';
 import ViewManager from '@chemicalluck/sim-engine/features/view/manager';
-import { type EngineStore, buildStore } from '@chemicalluck/sim-engine/state/store';
+import {
+  type EngineStore,
+  buildStore,
+} from '@chemicalluck/sim-engine/state/store';
 import { initProcessEffects } from '@chemicalluck/sim-engine/state/thunks';
 
 export interface GameConfig {
@@ -24,9 +33,22 @@ export interface GameConfig {
   views?: ViewsRegistry;
   /** Additional redux-persist transforms */
   persistTransforms?: Transform<unknown, unknown>[];
+  /** Undo steps kept for the Back button (default 10). 0 disables undo. */
+  undoLimit?: number;
+  /**
+   * Ironman mode: no undo and no manual save/load for the run, which is chosen
+   * at New Game and stored with it. `never` (default), `optional` (a New Game
+   * checkbox) or `always`.
+   */
+  ironman?: IronmanMode;
 }
 
 function setupGame(config: GameConfig) {
+  configureRunOptions({
+    ...(config.undoLimit !== undefined && { undoLimit: config.undoLimit }),
+    ...(config.ironman !== undefined && { ironman: config.ironman }),
+  });
+
   initProcessEffects(
     gameExtensions.effectHandlers,
     gameExtensions.postEffectHandlers,
@@ -35,6 +57,7 @@ function setupGame(config: GameConfig) {
   const { store, persistor } = buildStore(
     gameExtensions.slices,
     config.persistTransforms ?? [],
+    { undoLimit: getRunOptions().undoLimit },
   );
 
   gameExtensions.storeInitializers.forEach((init) => {

@@ -1,5 +1,6 @@
 import { Slot } from '@radix-ui/react-slot';
 import * as React from 'react';
+
 import { getEvents } from '@chemicalluck/sim-engine/features/events/lib';
 import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import { applyNpcSelection } from '@chemicalluck/sim-engine/features/view/effects';
@@ -7,7 +8,10 @@ import { setView } from '@chemicalluck/sim-engine/features/view/slice';
 import { useKeybind } from '@chemicalluck/sim-engine/hooks/use-keybind';
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
-import { useEngineDispatch, useEngineStore } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineStore,
+} from '@chemicalluck/sim-engine/state/store';
 import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
