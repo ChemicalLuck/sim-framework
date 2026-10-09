@@ -59,7 +59,7 @@ describe('virtual:game-setup data imports', () => {
     const code = generateSetup(gameDir);
     const imports = code
       .split('\n')
-      .filter((l) => l.startsWith("import needs_needsData from "));
+      .filter((l) => l.startsWith('import needs_needsData from '));
     expect(imports).toHaveLength(1);
     expect(code).toContain('needs_configureNeeds(needs_needsData);');
     expect(code).toContain(
