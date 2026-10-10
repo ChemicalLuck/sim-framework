@@ -168,6 +168,9 @@ Optional per-need `options`:
 - `thresholds`: effects applied when the need crosses `at` toward its bad end (or the
   direction given by `"when": "rising" | "falling"`), including reaching 0 or 100.
 
+The `needs` keys declare the needs; `sim check` flags a `decayRates` or `options` key, or a
+`sleepRestoreNeed`, naming a need that isn't declared there.
+
 ## Clothing
 
 Worn clothing tracks wet, dirty and wear time. The `wearable_condition` effect changes it
@@ -290,7 +293,8 @@ evenly from a built-in pool. `weather.json` (every field optional) tunes it:
   `hot_sunny` Hygiene 2; `light_rain` Energy 0.5; `rainy` Energy 1; `snowy` Energy 2,
   Hunger 3; `freezing` Energy 3, Hunger 4; only `light_rain`, `rainy` and `snowy` wet
   clothing. `needEffects` replaces a built-in's drains (`{}` turns them off); added
-  conditions default to none and `false`.
+  conditions default to none and `false`. `sim check` flags a `needEffects` need not
+  declared in `needs.json`.
 
 The `weather` effect overrides the computed weather:
 

@@ -123,4 +123,33 @@ describe('need references', () => {
       ),
     ).toEqual([]);
   });
+
+  it('flags decayRates, sleepRestoreNeed and options keys naming an undeclared need', () => {
+    expect(
+      issues({
+        needs: {
+          needs: { Energy: 100, Hygiene: 100 },
+          decayRates: { Energy: 5, Hunger: 12 },
+          sleepRestoreNeed: 'Rest',
+          options: { Hygiene: { hideAtZero: true }, Stress: {} },
+        },
+      }),
+    ).toEqual([
+      "needs:decayRates: references unknown need 'Hunger'",
+      "needs:sleepRestoreNeed: references unknown need 'Rest'",
+      "needs:options: references unknown need 'Stress'",
+    ]);
+  });
+
+  it('accepts decayRates, sleepRestoreNeed and options for declared needs', () => {
+    expect(
+      issues({
+        needs: {
+          ...needs,
+          sleepRestoreNeed: 'Energy',
+          options: { Energy: { direction: 'normal' } },
+        },
+      }),
+    ).toEqual([]);
+  });
 });

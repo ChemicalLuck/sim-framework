@@ -3,6 +3,7 @@ import {
   type ContentRef,
   type IdSource,
   type NodeRefExtractor,
+  type RefRecord,
   type ReferenceProvider,
   type ReferenceRewriter,
   collectEffectRefs,
@@ -60,14 +61,43 @@ function thresholdsOf(data: unknown) {
   );
 }
 
+/**
+ * Needs named by `needs.json`'s per-need settings. Only the `needs` keys
+ * declare needs (the id source); `decayRates`, `options` and
+ * `sleepRestoreNeed` configure a declared need, and one naming an undeclared
+ * need is silently ignored at runtime — so they are references to it.
+ */
+function configuredNeeds(data: unknown): RefRecord[] {
+  const config = data as Partial<NeedsConfig<JsonEffect>>;
+  const refs = (field: string, needs: string[]): RefRecord[] =>
+    needs.map((id) => ({
+      namespace: NEED_NAMESPACE,
+      id,
+      source: `needs:${field}`,
+      section: 'needs',
+    }));
+  return [
+    ...refs('decayRates', Object.keys(config.decayRates ?? {})),
+    ...refs(
+      'sleepRestoreNeed',
+      typeof config.sleepRestoreNeed === 'string'
+        ? [config.sleepRestoreNeed]
+        : [],
+    ),
+    ...refs('options', Object.keys(config.options ?? {})),
+  ];
+}
+
 export const referenceProviders: ReferenceProvider[] = [
   {
     file: 'needs',
     section: 'needs',
-    collect: (data, extract) =>
-      thresholdsOf(data).flatMap(({ need, effects }) =>
+    collect: (data, extract) => [
+      ...configuredNeeds(data),
+      ...thresholdsOf(data).flatMap(({ need, effects }) =>
         collectEffectRefs(effects, `need:${need}`, 'needs', extract),
       ),
+    ],
   },
 ];
 
