@@ -29,7 +29,11 @@ export interface Quest {
   objectives: QuestObjective[];
 }
 
-/** Objective template — `name` and `onComplete` effect strings support {npc0.id}, {npc0.firstName}, {npc0.lastName} interpolation. */
+/**
+ * Objective template — `name`, and the strings of `trigger`, `condition` (other
+ * than a scene) and `onComplete`, support {npc0.id}, {npc0.firstName},
+ * {npc0.lastName} interpolation.
+ */
 export interface QuestObjectiveTemplate {
   state: ObjectiveState;
   name: string;

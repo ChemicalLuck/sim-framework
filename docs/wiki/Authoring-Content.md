@@ -465,9 +465,11 @@ available objective also completes according to its `condition`:
 complete.
 
 A `quest_create` effect instantiates a template from `quest-templates.json` for one NPC.
-Its `idTemplate`, `name`, objective names and `onComplete` effect strings are rendered with
+Its `idTemplate`, `name`, objective names and the strings of each objective's `trigger`,
+`condition` and `onComplete` (condition ids, action text and effects) are rendered with
 that NPC as `npc0`: `{npc0.id}` is the NPC's id, alongside `{npc0.firstName}` and the other
-`{npc0.*}` fields (e.g. `"idTemplate": "meet_{npc0.id}"`).
+`{npc0.*}` fields (e.g. `"idTemplate": "meet_{npc0.id}"`). A scene objective is kept as
+loaded: its scene is shared content, and its text is rendered when shown.
 
 ## Referential integrity
 

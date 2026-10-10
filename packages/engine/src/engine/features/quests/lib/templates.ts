@@ -5,6 +5,8 @@ import {
 } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import type {
+  ObjectiveCondition,
+  ObjectiveTrigger,
   Quest,
   QuestTemplate,
 } from '@chemicalluck/sim-engine/features/quests/types';
@@ -42,6 +44,20 @@ function resolveDeep<T>(value: T, ctx: TemplateContext): T {
   return value;
 }
 
+/**
+ * Render an objective's trigger or condition: the strings of a condition, or
+ * of an action (text, condition, effects). A scene objective is hydrated
+ * content too — a scenes.json scene shared with the rest of the game, or an
+ * inline one whose text is rendered against its own NPCs when shown — so it
+ * is kept as is.
+ */
+function resolvePart<T extends ObjectiveTrigger | ObjectiveCondition>(
+  part: T,
+  ctx: TemplateContext,
+): T {
+  return part.kind === 'scene' ? part : resolveDeep(part, ctx);
+}
+
 export function instantiateQuestTemplate(
   template: QuestTemplate,
   npc: NPC,
@@ -62,6 +78,8 @@ export function instantiateQuestTemplate(
     objectives: template.objectives.map((o) => ({
       ...o,
       name: renderText(o.name, ctx),
+      ...(o.trigger && { trigger: resolvePart(o.trigger, ctx) }),
+      condition: resolvePart(o.condition, ctx),
       ...(o.onComplete && { onComplete: resolveDeep(o.onComplete, ctx) }),
     })),
   };
