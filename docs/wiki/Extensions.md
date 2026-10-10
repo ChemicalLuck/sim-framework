@@ -64,7 +64,7 @@ declare module '@chemicalluck/sim-engine/data' {
   targeted by a `{ "kind": "view", "activeViewId": "..." }` effect.
 - **`template-vars.ts`** — `export default (state) => Record<string, string | number | boolean>`.
   Each key is exposed to text templates (location descriptions, scenes, scripts,
-  conversations, …) namespaced by folder name, so `education/template-vars.ts` returning
+  conversations, the player's appearance description, …) namespaced by folder name, so `education/template-vars.ts` returning
   `{ term: 'autumn', examWeek: true }` gives `{education.term}` and
   `{if education.term == 'autumn'}…{/if}`. `true` renders as `true`; `false` counts as
   unset, so `{if education.examWeek}` works as a flag. The provider runs on every state

@@ -4,10 +4,9 @@ import { resolvePronouns } from '@chemicalluck/sim-engine/features/npcs/lib/appe
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
-import { selectExtensionTemplateVars } from './extension-vars-selector';
+import { selectTemplateVars } from './extension-vars-selector';
 import { type EntityInput, buildTemplateContext } from './lib/context';
 import type { TemplateContext } from './lib/template';
-import { selectNarrativeVars } from './selectors';
 
 /**
  * Build a unified template context for the current player + the given NPCs
@@ -21,8 +20,7 @@ export function useTemplateContext(
 ): TemplateContext {
   const profile = useEngineSelector((s) => s.present.player.profile);
   const body = useEngineSelector((s) => s.present.player.body);
-  const narrativeVars = useEngineSelector(selectNarrativeVars);
-  const extensionVars = useEngineSelector(selectExtensionTemplateVars);
+  const narrativeVars = useEngineSelector(selectTemplateVars);
   const wordChoices = useEngineSelector(
     (s) => s.present.linguistics.wordChoices,
   );
@@ -46,19 +44,10 @@ export function useTemplateContext(
               }
             : undefined,
         ),
-        narrativeVars: { ...narrativeVars, ...extensionVars },
+        narrativeVars,
         wordChoices,
         seed,
       }),
-    [
-      profile,
-      body,
-      narrativeVars,
-      extensionVars,
-      wordChoices,
-      seed,
-      npcs,
-      known,
-    ],
+    [profile, body, narrativeVars, wordChoices, seed, npcs, known],
   );
 }

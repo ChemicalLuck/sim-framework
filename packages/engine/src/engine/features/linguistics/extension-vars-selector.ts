@@ -5,6 +5,7 @@ import { templateVarProviders } from 'virtual:game-extensions';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { collectExtensionVars } from './lib/extension-vars';
+import { selectNarrativeVars } from './selectors';
 
 /**
  * Template variables contributed by game extensions' `template-vars.ts`,
@@ -15,4 +16,17 @@ export const selectExtensionTemplateVars = createSelector(
   [(state: RootState) => state],
   (state) => collectExtensionVars(templateVarProviders, state),
   { memoizeOptions: { resultEqualityCheck: shallowEqual } },
+);
+
+/**
+ * Every global template variable: the built-in narrative ones plus the
+ * extension-provided `<extension>.<key>` ones. Use this wherever text is
+ * rendered outside `useTemplateContext` so both see the same variables.
+ */
+export const selectTemplateVars = createSelector(
+  [selectNarrativeVars, selectExtensionTemplateVars],
+  (narrativeVars, extensionVars): Record<string, string | number> => ({
+    ...narrativeVars,
+    ...extensionVars,
+  }),
 );
