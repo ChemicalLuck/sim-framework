@@ -8,16 +8,18 @@ import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
 import type { JsonSceneWithId } from '@chemicalluck/sim-engine/features/core/types';
 import {
   nodeRefExtractors as milestoneExtractors,
+  idSources as milestoneIdSources,
   nodeRefRewriters as milestoneRewriters,
 } from '@chemicalluck/sim-engine/features/milestones/references';
 import {
   makeExtract,
   makeRewrite,
+  rewriteReferences,
   validateReferences,
 } from '@chemicalluck/sim-engine/lib/validation';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
-import type { JsonQuest } from './authoring.types';
+import type { JsonQuest, JsonQuestTemplate } from './authoring.types';
 import {
   idSources,
   nodeRefExtractors,
@@ -237,6 +239,101 @@ describe('validating a game without quests.json', () => {
       section: 'scenes',
       source: 'scene:cafe',
       message: "references unknown quest 'coffee'",
+    });
+  });
+});
+
+describe('quest-templates references', () => {
+  const templates = (): JsonQuestTemplate[] => [
+    {
+      id: 'meet',
+      idTemplate: 'meet_{npc0.id}',
+      name: 'Meet {npc0.firstName}',
+      objectives: [
+        {
+          name: 'talk',
+          state: 'available',
+          trigger: { kind: 'milestone', milestoneId: 'met' },
+          condition: { kind: 'scene', sceneId: 'cafe' },
+          onComplete: [
+            {
+              kind: 'quest',
+              questId: 'meet_{npc0.id}',
+              objectiveName: 'talk',
+              objectiveState: 'complete',
+            },
+            {
+              kind: 'quest',
+              questId: 'missing',
+              objectiveName: '',
+              objectiveState: 'available',
+            },
+            {
+              kind: 'quest_create',
+              templateId: 'follow_{npc0.id}',
+              npcId: '{npc0.id}',
+            },
+          ],
+        },
+      ],
+    },
+  ];
+  const contributions = {
+    idSources: [...coreIdSources, ...milestoneIdSources, ...idSources],
+    referenceProviders: [...coreProviders, ...referenceProviders],
+    nodeRefExtractors: [...nodeRefExtractors, ...milestoneExtractors],
+    nodeRefRewriters: [...nodeRefRewriters, ...milestoneRewriters],
+    referenceRewriters,
+  };
+  const content = () => ({
+    scenes: [{ id: 'cafe', kind: 'scene', text: 'The café.', actions: [] }],
+    quests: [],
+    'quest-templates': templates(),
+    milestones: [{ id: 'met' }],
+  });
+  const unknownQuest = {
+    section: 'quest-templates',
+    source: 'questTemplate:meet',
+    message: "references unknown quest 'missing'",
+  };
+
+  it('flags a real unknown id in a template', () => {
+    expect(validateReferences(content(), contributions)).toContainEqual(
+      unknownQuest,
+    );
+  });
+
+  it('skips references whose id holds a placeholder', () => {
+    expect(validateReferences(content(), contributions)).toEqual([
+      unknownQuest,
+    ]);
+  });
+
+  it('rewrites template references when an id is renamed', () => {
+    const renamed = (ns: string, oldId: string, newId: string) => {
+      const { changed, count } = rewriteReferences(
+        content(),
+        contributions,
+        ns,
+        oldId,
+        newId,
+      );
+      expect(count).toBe(1);
+      return (changed['quest-templates'] as JsonQuestTemplate[])[0]
+        .objectives[0];
+    };
+
+    expect(renamed('scene', 'cafe', 'diner').condition).toEqual({
+      kind: 'scene',
+      sceneId: 'diner',
+    });
+    expect(renamed('quest', 'missing', 'found').onComplete?.[1]).toMatchObject({
+      kind: 'quest',
+      questId: 'found',
+    });
+    expect(renamed('milestone', 'met', 'introduced').trigger).toEqual({
+      kind: 'milestone',
+      milestoneId: 'introduced',
     });
   });
 });

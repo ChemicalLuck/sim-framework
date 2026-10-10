@@ -469,4 +469,6 @@ complete.
 References between files (an item id in a shop, a location id in a quest) are checked by
 `sim check`. Broken references are reported as
 `source: references unknown <namespace> '<id>'`. The check is contribution-driven — adding a
-feature or file participates automatically.
+feature or file participates automatically. In `quest-templates.json`, ids holding a
+placeholder (e.g. `meet_{npc0.id}`) are only known once the template is instantiated, so
+they are skipped.
