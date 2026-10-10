@@ -4,9 +4,11 @@ import { describe, expect, it } from 'vitest';
 
 import { loadContent } from '@chemicalluck/sim-engine/data';
 import type { JsonSceneWithId } from '@chemicalluck/sim-engine/features/core/types';
+import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 
-import type { JsonQuest } from './authoring.types';
-import { hydrateQuests } from './hydrate';
+import type { JsonQuest, JsonQuestTemplate } from './authoring.types';
+import { hydrateQuestTemplates, hydrateQuests } from './hydrate';
+import { instantiateQuestTemplate } from './lib/templates';
 
 const STARTER_DATA = path.resolve(
   import.meta.dirname,
@@ -106,5 +108,102 @@ describe('hydrateQuests', () => {
       fs.readFileSync(path.join(STARTER_DATA, 'quests.json'), 'utf8'),
     ) as unknown;
     expect(() => load(json)).not.toThrow();
+  });
+});
+
+describe('hydrateQuestTemplates', () => {
+  const templates: JsonQuestTemplate[] = [
+    {
+      id: 't',
+      idTemplate: 'help_{npc0.firstName}',
+      name: 'Help {npc0.firstName}',
+      objectives: [
+        {
+          name: 'Meet {npc0.firstName}',
+          state: 'available',
+          condition: { kind: 'action', text: 'Meet', effects: [toRoom] },
+          onComplete: [toRoom, { kind: 'money', amount: 5 }],
+        },
+        {
+          name: 'ask',
+          state: 'locked',
+          trigger: { kind: 'action', text: 'Ask', effects: [toRoom] },
+          condition: { kind: 'scene', sceneId: 'room' },
+        },
+      ],
+    },
+  ];
+
+  function loadTemplates(data: unknown) {
+    return loadContent({
+      items: [],
+      templates: [],
+      scenes: [room],
+      scripts: [],
+      extensions: [
+        {
+          key: 'questTemplates',
+          data,
+          hydrate: (d, ctx) =>
+            hydrateQuestTemplates(d as JsonQuestTemplate[], ctx),
+        },
+      ],
+    });
+  }
+
+  it('resolves shorthand effects and scene objectives in quest templates', () => {
+    const content = loadTemplates(templates);
+    const scene = content.scenes.get('room');
+    const resolved = {
+      kind: 'view',
+      activeViewId: 'SceneView',
+      props: { scene },
+    };
+    const [template] = content.extensions.questTemplates;
+    const [meet, ask] = template.objectives;
+
+    expect(template).toMatchObject({
+      id: 't',
+      idTemplate: 'help_{npc0.firstName}',
+      name: 'Help {npc0.firstName}',
+    });
+    expect(meet.onComplete).toEqual([resolved, { kind: 'money', amount: 5 }]);
+    expect(meet.condition).toMatchObject({
+      kind: 'action',
+      effects: [resolved],
+    });
+    expect(ask.trigger).toMatchObject({ kind: 'action', effects: [resolved] });
+    expect(ask.condition).toBe(scene);
+  });
+
+  it('instantiates a hydrated template without copying the content it shows', () => {
+    const content = loadTemplates(templates);
+    const scene = content.scenes.get('room');
+    const npc = {
+      profile: {
+        firstName: 'Ann',
+        lastName: 'Lee',
+        profession: 'Baker',
+        age: 30,
+        appearance: {},
+      },
+      pronouns: {},
+    } as unknown as NPC;
+    const quest = instantiateQuestTemplate(
+      content.extensions.questTemplates[0],
+      npc,
+    );
+
+    expect(quest.id).toBe('help_Ann');
+    expect(quest.objectives[0].name).toBe('Meet Ann');
+    const [view] = quest.objectives[0].onComplete ?? [];
+    expect((view as { props: { scene: unknown } }).props.scene).toBe(scene);
+  });
+
+  it('loads the starter quest-templates.json', () => {
+    const json = JSON.parse(
+      fs.readFileSync(path.join(STARTER_DATA, 'quest-templates.json'), 'utf8'),
+    ) as unknown;
+    expect(() => loadTemplates(json)).not.toThrow();
   });
 });

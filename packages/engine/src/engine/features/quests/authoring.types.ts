@@ -34,3 +34,11 @@ export interface JsonQuest {
   name: string;
   objectives: JsonQuestObjective[];
 }
+
+/** A quest template as authored in `quest-templates.json`. */
+export interface JsonQuestTemplate {
+  id: string;
+  idTemplate: string;
+  name: string;
+  objectives: JsonQuestObjective[];
+}

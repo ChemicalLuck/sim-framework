@@ -444,9 +444,11 @@ objective completes according to its `condition`:
 - a scene (`{ "kind": "scene", "sceneId": "cafe" }`, or an inline scene): when the player
   takes any choice while that scene is shown.
 
-`onComplete` effects run however the objective completes. Effects in quests accept the
-same id shorthand as elsewhere (e.g. `{ "kind": "view", "sceneId": "cafe" }`). A quest
-counts as completed once all of its objectives are complete.
+`onComplete` effects run however the objective completes. Effects in quests and in
+`quest-templates.json` accept the same id shorthand as elsewhere (e.g.
+`{ "kind": "view", "sceneId": "cafe" }`); ids are resolved at load, so they can't use
+`{npc0…}` placeholders. A quest counts as completed once all of its objectives are
+complete.
 
 ## Referential integrity
 

@@ -4,7 +4,10 @@ import {
   renderText,
 } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
-import type { Quest, QuestTemplate } from '@chemicalluck/sim-engine/features/quests/types';
+import type {
+  Quest,
+  QuestTemplate,
+} from '@chemicalluck/sim-engine/features/quests/types';
 
 let _templates: QuestTemplate[] = [];
 
@@ -18,6 +21,11 @@ export function getQuestTemplate(
   return _templates.find((t) => t.id === templateId);
 }
 
+// Hydrated content an effect points at (a view's scene/script/shop, an
+// inventory item) is shared with the rest of the game: keep it as is rather
+// than copying it and rendering its text against the template's NPC.
+const HYDRATED_KEYS = new Set(['props', 'item']);
+
 function resolveDeep<T>(value: T, ctx: TemplateContext): T {
   if (typeof value === 'string') return renderText(value, ctx) as T;
   if (Array.isArray(value))
@@ -26,7 +34,10 @@ function resolveDeep<T>(value: T, ctx: TemplateContext): T {
     ) as unknown as T;
   if (value && typeof value === 'object')
     return Object.fromEntries(
-      Object.entries(value).map(([k, v]) => [k, resolveDeep(v, ctx)]),
+      Object.entries(value).map(([k, v]) => [
+        k,
+        HYDRATED_KEYS.has(k) ? v : resolveDeep(v, ctx),
+      ]),
     ) as T;
   return value;
 }

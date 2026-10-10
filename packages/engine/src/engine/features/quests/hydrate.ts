@@ -10,12 +10,14 @@ import type {
   JsonObjectiveTrigger,
   JsonQuest,
   JsonQuestObjective,
+  JsonQuestTemplate,
 } from './authoring.types';
 import type {
   ObjectiveCondition,
   ObjectiveTrigger,
   Quest,
   QuestObjective,
+  QuestTemplate,
 } from './types';
 
 function hydrateTrigger(
@@ -64,5 +66,22 @@ export function hydrateQuests(
     id: quest.id,
     name: quest.name,
     objectives: quest.objectives.map((o) => hydrateObjective(o, ctx)),
+  }));
+}
+
+/**
+ * Resolve `quest-templates.json` shorthand the same way as {@link hydrateQuests}.
+ * Name and id templates are left as authored; they're rendered per NPC when a
+ * `quest_create` effect instantiates the template.
+ */
+export function hydrateQuestTemplates(
+  data: JsonQuestTemplate[],
+  ctx: HydrationContext,
+): QuestTemplate[] {
+  return data.map((template) => ({
+    id: template.id,
+    idTemplate: template.idTemplate,
+    name: template.name,
+    objectives: template.objectives.map((o) => hydrateObjective(o, ctx)),
   }));
 }

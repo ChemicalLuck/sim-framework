@@ -155,6 +155,23 @@ describe('virtual:game-setup quests hydration', () => {
       'key: "quests", data: quests_questsData, hydrate: (data, ctx) => quests_hydrateQuests(data, ctx)',
     );
   });
+
+  it('hydrates quest-templates.json and registers the hydrated templates', () => {
+    fs.writeFileSync(path.join(gameDir, 'data', 'quest-templates.json'), '[]');
+    const code = generateSetup(gameDir);
+    expect(code).toContain(
+      'key: "questTemplates", data: quests_questTemplatesData, hydrate: (data, ctx) => quests_hydrateQuestTemplates(data, ctx)',
+    );
+    expect(code).toContain(
+      'quests_initQuestTemplates(content.extensions.questTemplates);',
+    );
+  });
+
+  it('skips quest templates when quest-templates.json is absent', () => {
+    const code = generateSetup(gameDir);
+    expect(code).not.toContain('questTemplates');
+    expect(code).not.toContain('initQuestTemplates');
+  });
 });
 
 describe('generated identifiers for extension folder names', () => {
