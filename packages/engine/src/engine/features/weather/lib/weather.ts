@@ -2,6 +2,7 @@ import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import {
   addGameDays,
   gameDayOfYear,
+  gameHour,
   gameMonth,
   gameYear,
 } from '@chemicalluck/sim-engine/features/time/lib/game-time';
@@ -201,14 +202,14 @@ export function computeHourWeather(
 
 /** The clock hour (0–23) of a game time, as `selectHour` reports it. */
 export function hourOfDay(date: Date): number {
-  return date.getHours();
+  return gameHour(date.getTime());
 }
 
 /** Milliseconds from a game time to the start of the next clock hour. */
 export function msToNextHour(date: Date): number {
   return (
-    ((60 - date.getMinutes()) * 60 - date.getSeconds()) * 1000 -
-    date.getMilliseconds()
+    ((60 - date.getUTCMinutes()) * 60 - date.getUTCSeconds()) * 1000 -
+    date.getUTCMilliseconds()
   );
 }
 

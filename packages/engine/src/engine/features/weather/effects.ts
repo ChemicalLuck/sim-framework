@@ -2,6 +2,7 @@ import {
   type EffectContext,
   dispatchWithGroup,
 } from '@chemicalluck/sim-engine/features/core/types';
+import { parseGameDate } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import type { EngineThunk } from '@chemicalluck/sim-engine/state/store';
 
 import { setWeatherOverride } from './slice';
@@ -26,7 +27,7 @@ export function handleWeatherEffect(
       override.until =
         getState().present.time.timestamp + durationHours * HOUR_MS;
     } else if (until !== undefined) {
-      const ts = new Date(until).getTime();
+      const ts = parseGameDate(until);
       if (Number.isFinite(ts)) override.until = ts;
     }
     if (temperature !== undefined) override.temperature = temperature;
