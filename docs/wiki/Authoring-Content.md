@@ -193,6 +193,20 @@ declared in `needs.json` is ignored.
 }
 ```
 
+### Wearable attributes
+
+Wearable templates (and wearables in `items.json`) can carry `warmth` and a free-form
+`attributes` map; both are copied onto every wearable generated from a template:
+
+```json
+{ "id": "wool_coat", "name": "Wool Coat", "slot": "jacket", "value": 80, "options": {},
+  "warmth": 3, "attributes": { "formality": 2, "waterproof": true } }
+```
+
+`equipped.<attr>` in a condition sums a numeric attribute across equipped clothing
+(`warmth`, `coverage`, `value`, or any numeric key in `attributes`; other values count
+as 0).
+
 ## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each
@@ -270,9 +284,10 @@ identifiers include `money`, `need.<Name>`, `skill.<id>`, `location`, `gametime`
 `gamehour`, `gameweekday` (0 = Sunday … 6 = Saturday), `gameday` (1–31), `gamemonth`
 (1–12), `nearby` (number of NPCs at the current location), `relationship.<metric>` (the
 current NPC in a scene, script, NPC view or encounter), `relationship.<npcId>.<metric>`,
-`milestone.<id>`, `season == '<id>'` and `weather == '<id>'`. The game clock is read in
-UTC, so hours, weekdays and seasons are the same on every machine; ISO date literals
-without an offset (`gametime >= '2025-09-01T08:00'`) are game time too.
+`milestone.<id>`, `equipped.<attr>` (the total of a wearable attribute across equipped
+clothing, e.g. `equipped.warmth >= 3`), `season == '<id>'` and `weather == '<id>'`. The
+game clock is read in UTC, so hours, weekdays and seasons are the same on every machine;
+ISO date literals without an offset (`gametime >= '2025-09-01T08:00'`) are game time too.
 An unrecognised bare identifier is a parse error; quote string
 literals. `sim check` also flags stored conditions that compare a string with `<`/`>` or
 compare two literals, both signs of a mistyped identifier.

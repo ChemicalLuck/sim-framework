@@ -55,6 +55,7 @@ Built-in identifiers:
 | `need.<Name>`                                            | number    | needs         |
 | `npcNeed.<name>`                                         | number    | encounter     |
 | `skill.<id>`                                             | number    | player        |
+| `equipped.<attr>`                                        | number    | outfits       |
 | `location`                                               | string    | player        |
 | `gametime`, `gamehour`                                   | number    | time          |
 | `gameweekday` (0=Sun…6=Sat), `gameday`, `gamemonth`      | number    | time          |

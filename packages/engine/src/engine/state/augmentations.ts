@@ -38,6 +38,7 @@ import type {} from '../features/needs/types';
 import type {} from '../features/npcs/conditions';
 import type {} from '../features/npcs/slice';
 import type {} from '../features/npcs/types';
+import type {} from '../features/outfits/conditions';
 import type {} from '../features/outfits/slice';
 import type {} from '../features/outfits/types';
 import type {} from '../features/player/conditions';

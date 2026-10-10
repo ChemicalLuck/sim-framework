@@ -29,5 +29,32 @@ export function generateWearableFromTemplate(
     appearance: appearance,
     sizeSystem: template.sizeSystem,
     size: size,
+    ...(template.warmth != null && { warmth: template.warmth }),
+    ...(template.attributes && { attributes: { ...template.attributes } }),
   };
+}
+
+/** Numeric fields on Wearable itself; any other name is read from `attributes`. */
+const FIRST_CLASS_NUMERIC = new Set(['warmth', 'coverage', 'value']);
+
+/** A wearable's numeric value for `attribute`, or 0 when absent or non-numeric. */
+export function wearableAttributeValue(
+  wearable: Wearable,
+  attribute: string,
+): number {
+  const value: unknown = FIRST_CLASS_NUMERIC.has(attribute)
+    ? wearable[attribute as 'warmth' | 'coverage' | 'value']
+    : wearable.attributes?.[attribute];
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+/** Sum of `attribute` across the equipped wearables (e.g. total warmth). */
+export function equippedAttributeTotal(
+  equipment: Partial<Record<string, Wearable | null>>,
+  attribute: string,
+): number {
+  return Object.values(equipment).reduce(
+    (sum, w) => sum + (w ? wearableAttributeValue(w, attribute) : 0),
+    0,
+  );
 }
