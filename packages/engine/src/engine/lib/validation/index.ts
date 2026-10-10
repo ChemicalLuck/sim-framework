@@ -170,6 +170,8 @@ function conditionIssues(
     const data = dataByFile[provider.file];
     if (data === undefined) continue;
     for (const rec of provider.collect(data, extract)) {
+      // Providers may also return their own plain references; skip those.
+      if (rec.namespace !== CONDITION_PROBLEM) continue;
       issues.push({
         section: rec.section,
         source: rec.source,
