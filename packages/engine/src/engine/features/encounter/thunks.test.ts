@@ -4,10 +4,12 @@ import {
   DEFAULT_SKILL_MAX,
   configureSkillMax,
 } from '@chemicalluck/sim-engine/features/player/lib/skills';
+import { setView } from '@chemicalluck/sim-engine/features/view/slice';
+import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 
-import { startEncounter } from './slice';
+import { setPlayerAction, startEncounter } from './slice';
 import { createEncounterTestStore, makeTestNpc } from './test-store';
-import { npcActionWeight, processTurn } from './thunks';
+import { npcActionWeight, processTurn, stopEncounterThunk } from './thunks';
 import type { Encounter, EncounterAction } from './types';
 
 afterEach(() => {
@@ -86,5 +88,107 @@ describe('processTurn NPC skill weighting', () => {
     expect(low).toBeLessThan(0.6);
     expect(top).toBeGreaterThan(0.68);
     expect(top - low).toBeGreaterThan(0.15);
+  });
+});
+
+describe('encounter stops', () => {
+  const tire: EncounterAction = {
+    id: 'tire',
+    text: 'Tire them out',
+    bodyPart: 'hands',
+    effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -20 }],
+  };
+  const leave: EncounterAction = {
+    id: 'leave',
+    text: 'Leave',
+    bodyPart: 'feet',
+    npcStop: true,
+  };
+
+  function stoppable(
+    actions: EncounterAction[],
+    extra: Partial<Encounter> = {},
+  ): Encounter {
+    return {
+      ...encounterWith(actions),
+      npcNeeds: { Energy: 30 },
+      stopEffects: [{ kind: 'money', amount: 1 }],
+      stopEffectsByReason: {
+        player: [{ kind: 'money', amount: 10 }],
+        npc: [{ kind: 'money', amount: 100 }],
+        condition: [{ kind: 'money', amount: 1000 }],
+      },
+      ...extra,
+    };
+  }
+
+  function start(encounter: Encounter) {
+    const store = createEncounterTestStore([makeTestNpc('npc')]);
+    store.dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    store.dispatch(setView({ activeViewId: 'EncounterView', props: {} }));
+    return store;
+  }
+
+  it('ends without player input once the stop condition is met after a turn', () => {
+    // NPC never acts, so only the player's action drains the need.
+    const { dispatch, getState } = start(
+      stoppable([{ ...tire, condition: parseCondition('money < 0') }], {
+        npcDoNothingWeight: 1,
+        stopCondition: parseCondition('npcNeed.Energy <= 0'),
+      }),
+    );
+    dispatch(setPlayerAction({ bodyPart: 'hands', actionId: 'tire' }));
+
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.encounter.npcNeeds.Energy).toBe(10);
+
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 1000);
+  });
+
+  it('supports a stop condition on the current state', () => {
+    const encounter = stoppable([tire]);
+    const { dispatch, getState } = start({
+      ...encounter,
+      states: [
+        {
+          ...encounter.states[0],
+          stopCondition: parseCondition('npcNeed.Energy < 50'),
+        },
+      ],
+    });
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.money).toBe(1 + 1000);
+  });
+
+  it('ends when the NPC picks an npcStop action', () => {
+    const { dispatch, getState } = start(stoppable([leave]));
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 100);
+  });
+
+  it('applies player-specific stop effects when the player stops', () => {
+    const { dispatch, getState } = start(stoppable([tire]));
+    dispatch(stopEncounterThunk());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 10);
+  });
+
+  it('keeps going while no stop condition is met', () => {
+    const { dispatch, getState } = start(
+      stoppable([tire], {
+        stopCondition: parseCondition('npcNeed.Energy <= 0'),
+      }),
+    );
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.view.activeViewId).toBe('EncounterView');
   });
 });

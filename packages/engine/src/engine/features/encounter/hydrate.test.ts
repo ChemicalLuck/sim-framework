@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
 import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
 import type { MilestoneCondition } from '@chemicalluck/sim-engine/features/milestones/types';
@@ -57,11 +58,7 @@ function makeCtx(overrides: Partial<HydrationContext> = {}): HydrationContext {
   return {
     items: buildRegistry('item', [item], (i) => i.id),
     wearables: buildRegistry('wearable', [wearable], (w) => w.id),
-    templates: buildRegistry(
-      'template',
-      [templateWithId],
-      (t) => t.id,
-    ),
+    templates: buildRegistry('template', [templateWithId], (t) => t.id),
     scenes: buildRegistry(
       'scene',
       [{ ...baseScene, id: 'room' }] as (Scene & { id: string })[],
@@ -178,5 +175,41 @@ describe('hydrateEncounter', () => {
     const result = hydrateEncounter(json, ctx);
     expect(result.stopEffects).toHaveLength(1);
     expect(result.stopEffects?.[0]).toMatchObject({ kind: 'needs' });
+  });
+});
+
+describe('hydrate encounter stop fields', () => {
+  const ctx = makeCtx();
+
+  it('preserves npcStop, stopCondition and hydrates stopEffectsByReason', () => {
+    const result = hydrateEncounter(
+      {
+        id: 'enc2',
+        name: 'Chat',
+        initialStateId: 'start',
+        stopCondition: milestoneCondition,
+        stopEffectsByReason: {
+          npc: [{ kind: 'needs', need: 'Energy', delta: -5 }],
+        },
+        states: [
+          {
+            id: 'start',
+            name: 'Start',
+            text: '',
+            stopCondition: milestoneCondition,
+            actions: [
+              { id: 'go', text: 'Leave', bodyPart: 'feet', npcStop: true },
+            ],
+          },
+        ],
+      },
+      ctx,
+    );
+    expect(result.stopCondition).toEqual(milestoneCondition);
+    expect(result.states[0].stopCondition).toEqual(milestoneCondition);
+    expect(result.states[0].actions[0].npcStop).toBe(true);
+    expect(result.stopEffectsByReason?.npc?.[0]).toMatchObject({
+      kind: 'needs',
+    });
   });
 });

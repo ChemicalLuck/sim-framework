@@ -1,4 +1,5 @@
 import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
+import type { EncounterStopReason } from '@chemicalluck/sim-engine/features/encounter/types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export interface JsonViewEncounterEffect {
@@ -24,6 +25,7 @@ export interface JsonEncounterAction {
   npcWeight?: number;
   npcSkillWeights?: Record<string, number>;
   npcTraitWeights?: Record<string, number>;
+  npcStop?: boolean;
 }
 
 export interface JsonEncounterState {
@@ -33,6 +35,7 @@ export interface JsonEncounterState {
   actions: JsonEncounterAction[];
   condition?: Condition;
   transitionTo?: string;
+  stopCondition?: Condition;
 }
 
 export interface JsonEncounter {
@@ -43,4 +46,6 @@ export interface JsonEncounter {
   npcNeeds?: Record<string, number>;
   npcDoNothingWeight?: number;
   stopEffects?: JsonEffect[];
+  stopEffectsByReason?: Partial<Record<EncounterStopReason, JsonEffect[]>>;
+  stopCondition?: Condition;
 }

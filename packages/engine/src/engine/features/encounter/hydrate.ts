@@ -32,6 +32,7 @@ export function hydrateEncounterAction(
     npcWeight: json.npcWeight,
     npcSkillWeights: json.npcSkillWeights,
     npcTraitWeights: json.npcTraitWeights,
+    npcStop: json.npcStop,
   };
 }
 
@@ -46,6 +47,7 @@ export function hydrateEncounterState(
     actions: json.actions.map((a) => hydrateEncounterAction(a, ctx)),
     condition: json.condition,
     transitionTo: json.transitionTo,
+    stopCondition: json.stopCondition,
   };
 }
 
@@ -62,6 +64,15 @@ export function hydrateEncounter(
     npcNeeds: json.npcNeeds,
     npcDoNothingWeight: json.npcDoNothingWeight,
     stopEffects: json.stopEffects?.map((e) => hydrateEffect(e, ctx)),
+    stopEffectsByReason: json.stopEffectsByReason
+      ? Object.fromEntries(
+          Object.entries(json.stopEffectsByReason).map(([reason, effects]) => [
+            reason,
+            effects.map((e) => hydrateEffect(e, ctx)),
+          ]),
+        )
+      : undefined,
+    stopCondition: json.stopCondition,
   };
 }
 

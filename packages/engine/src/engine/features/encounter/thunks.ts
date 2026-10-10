@@ -12,7 +12,7 @@ import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
 import { setEncounterState, setNpcAction, stopEncounter } from './slice';
-import type { EncounterAction } from './types';
+import type { EncounterAction, EncounterStopReason } from './types';
 
 /**
  * An NPC's selection weight for an action. Skill multipliers scale with the
@@ -92,6 +92,10 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
 
   if (picked !== '__pass__') {
     const pickedAction = availableActions.find((a) => a.id === picked);
+    if (pickedAction?.npcStop) {
+      dispatch(stopEncounterThunk('npc', pickedAction.effects));
+      return;
+    }
     if (pickedAction) {
       dispatch(
         setNpcAction({ bodyPart: pickedAction.bodyPart, actionId: picked }),
@@ -99,12 +103,23 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
     }
   }
 
-  // Evaluate condition-based state transition on the current state
   const freshState = getState();
   const { currentStateId: freshStateId } = freshState.present.encounter;
   if (!freshStateId) return;
 
   const freshCurrentState = encounter.states.find((s) => s.id === freshStateId);
+
+  // Stop conditions (encounter-wide or on the current state) end the encounter
+  const stopConditions = [
+    encounter.stopCondition,
+    freshCurrentState?.stopCondition,
+  ].filter((c) => c !== undefined);
+  if (stopConditions.some((c) => isConditionMet(freshState, c))) {
+    dispatch(stopEncounterThunk('condition'));
+    return;
+  }
+
+  // Evaluate condition-based state transition on the current state
   if (
     freshCurrentState?.condition &&
     freshCurrentState.transitionTo &&
@@ -114,11 +129,26 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
   }
 };
 
-export const stopEncounterThunk = (): EngineThunk => (dispatch, getState) => {
-  const { encounter } = getState().present.encounter;
-  if (encounter?.stopEffects?.length) {
-    dispatch(processEffects(encounter.stopEffects));
-  }
-  dispatch(stopEncounter());
-  dispatch(setView({ activeViewId: 'DefaultView', props: {} }));
-};
+/**
+ * End the encounter: apply `leadingEffects` (e.g. the NPC's stop action), the
+ * encounter's `stopEffects` and the effects for `reason`, then return to the
+ * default view.
+ */
+export const stopEncounterThunk =
+  (
+    reason: EncounterStopReason = 'player',
+    leadingEffects: Effect[] = [],
+  ): EngineThunk =>
+  (dispatch, getState) => {
+    const { encounter } = getState().present.encounter;
+    const effects = [
+      ...leadingEffects,
+      ...(encounter?.stopEffects ?? []),
+      ...(encounter?.stopEffectsByReason?.[reason] ?? []),
+    ];
+    if (effects.length) {
+      dispatch(processEffects(effects));
+    }
+    dispatch(stopEncounter());
+    dispatch(setView({ activeViewId: 'DefaultView', props: {} }));
+  };

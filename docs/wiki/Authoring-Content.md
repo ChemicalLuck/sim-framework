@@ -331,6 +331,27 @@ Scenes and scripts can switch to each other (and to other scenes) with `view` ef
 any file order, but they can't form a loop that leads back to where it started: content
 is saved with the game, so a loop fails to load with the scenes/scripts involved named.
 
+## Encounters
+
+`encounters.json` holds turn-based encounters with an NPC: states with actions grouped by
+body part, which the player toggles and the NPC picks from by weight each turn. An
+encounter ends when:
+
+- the player presses Stop (reason `player`);
+- the NPC picks an action with `"npcStop": true` (reason `npc`; its effects apply first,
+  and the player is never offered it);
+- a `stopCondition` (on the encounter, or on the current state) is met after the NPC's
+  pick (reason `condition`).
+
+`stopEffects` apply for every reason; `stopEffectsByReason` adds effects for one reason:
+
+```json
+"stopEffects": [{ "kind": "needs", "need": "Energy", "delta": -5 }],
+"stopEffectsByReason": { "npc": [{ "kind": "money", "amount": -10 }] }
+```
+
+The game returns to the default view.
+
 ## Conditions
 
 Actions and objectives can be gated by **conditions**, an expression DSL with a `kind`:

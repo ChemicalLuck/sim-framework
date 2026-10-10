@@ -1,7 +1,12 @@
 import { Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import { Checkbox } from '@chemicalluck/sim-engine/components/ui/checkbox';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -44,6 +49,7 @@ import type {
   Encounter,
   EncounterAction,
   EncounterState,
+  EncounterStopReason,
 } from '@chemicalluck/sim-engine/features/encounter/types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
@@ -468,6 +474,23 @@ function EncounterActionRow({
           ))}
         </div>
 
+        {/* NPC stop */}
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id={`npcStop-${action.id}`}
+            checked={action.npcStop ?? false}
+            onCheckedChange={(v) => {
+              onChange({ ...action, npcStop: v ? true : undefined });
+            }}
+          />
+          <Label
+            htmlFor={`npcStop-${action.id}`}
+            className="text-xs text-zinc-500"
+          >
+            NPC stop (the NPC picking this ends the encounter)
+          </Label>
+        </div>
+
         {/* Condition */}
         <div className="border-t border-zinc-700/30 pt-1.5">
           <ConditionField
@@ -626,6 +649,19 @@ function StateEditor({
             </div>
           )}
 
+          {/* Stop condition */}
+          <div>
+            <Label className="text-xs text-zinc-500 mb-1 block">
+              Stop condition (ends the encounter after the NPC's turn)
+            </Label>
+            <ConditionField
+              condition={state.stopCondition}
+              onChange={(c) => {
+                onChange({ ...state, stopCondition: c });
+              }}
+            />
+          </div>
+
           {/* Actions */}
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -673,6 +709,65 @@ function StateEditor({
 
 // ── Encounter detail ──────────────────────────────────────────────
 
+const STOP_REASONS: EncounterStopReason[] = ['player', 'npc', 'condition'];
+
+interface StopEffectsFieldProps {
+  label: string;
+  effects: Effect[];
+  onChange: (effects: Effect[]) => void;
+  availableData: AvailableData;
+}
+
+function StopEffectsField({
+  label,
+  effects,
+  onChange,
+  availableData,
+}: StopEffectsFieldProps) {
+  const [showAdd, setShowAdd] = useState(false);
+  return (
+    <div>
+      <Label className="mb-2 block">{label}</Label>
+      <div className="flex flex-wrap gap-1 items-center min-h-[20px]">
+        {/* eslint-disable react-x/no-array-index-key */}
+        {effects.map((eff, i) => (
+          <EffectChip
+            key={i}
+            effect={eff}
+            onRemove={() => {
+              onChange(effects.filter((_, j) => j !== i));
+            }}
+          />
+        ))}
+        {/* eslint-enable react-x/no-array-index-key */}
+        {!showAdd && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              setShowAdd(true);
+            }}
+          >
+            <Plus size={12} /> effect
+          </Button>
+        )}
+      </div>
+      {showAdd && (
+        <AddEffectForm
+          onAdd={(effect) => {
+            onChange([...effects, effect]);
+            setShowAdd(false);
+          }}
+          onCancel={() => {
+            setShowAdd(false);
+          }}
+          availableData={availableData}
+        />
+      )}
+    </div>
+  );
+}
+
 interface EncounterDetailProps {
   encounter: RawEncounter;
   bodyParts: string[];
@@ -686,8 +781,6 @@ function EncounterDetail({
   onChange,
   availableData,
 }: EncounterDetailProps) {
-  const [showAddStopEffect, setShowAddStopEffect] = useState(false);
-  const stopEffects = encounter.stopEffects ?? [];
   const stateIds = encounter.states.map((s) => s.id);
 
   function addState() {
@@ -698,21 +791,6 @@ function EncounterDetail({
       actions: [],
     };
     onChange({ ...encounter, states: [...encounter.states, newState] });
-  }
-
-  function addStopEffect(effect: Effect) {
-    onChange({
-      ...encounter,
-      stopEffects: [...stopEffects, effect],
-    });
-    setShowAddStopEffect(false);
-  }
-
-  function removeStopEffect(idx: number) {
-    onChange({
-      ...encounter,
-      stopEffects: stopEffects.filter((_, i) => i !== idx),
-    });
   }
 
   return (
@@ -839,42 +917,52 @@ function EncounterDetail({
         </div>
       </div>
 
-      {/* Stop effects */}
-      <div>
-        <Label className="mb-2 block">Stop effects</Label>
-        <div className="flex flex-wrap gap-1 items-center min-h-[20px]">
-          {/* eslint-disable react-x/no-array-index-key */}
-          {stopEffects.map((eff, i) => (
-            <EffectChip
-              key={i}
-              effect={eff}
-              onRemove={() => {
-                removeStopEffect(i);
-              }}
-            />
-          ))}
-          {/* eslint-enable react-x/no-array-index-key */}
-          {!showAddStopEffect && (
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={() => {
-                setShowAddStopEffect(true);
-              }}
-            >
-              <Plus size={12} /> effect
-            </Button>
-          )}
+      {/* Stop */}
+      <div className="space-y-3">
+        <div>
+          <Label className="mb-2 block">
+            Stop condition (any state, checked after the NPC&apos;s turn)
+          </Label>
+          <ConditionField
+            condition={encounter.stopCondition}
+            onChange={(c) => {
+              onChange({ ...encounter, stopCondition: c });
+            }}
+          />
         </div>
-        {showAddStopEffect && (
-          <AddEffectForm
-            onAdd={addStopEffect}
-            onCancel={() => {
-              setShowAddStopEffect(false);
+        <StopEffectsField
+          label="Stop effects (any reason)"
+          effects={encounter.stopEffects ?? []}
+          onChange={(effects) => {
+            onChange({
+              ...encounter,
+              stopEffects: effects.length ? effects : undefined,
+            });
+          }}
+          availableData={availableData}
+        />
+        {STOP_REASONS.map((reason) => (
+          <StopEffectsField
+            key={reason}
+            label={`Stop effects when stopped by ${reason}`}
+            effects={encounter.stopEffectsByReason?.[reason] ?? []}
+            onChange={(effects) => {
+              const next = Object.fromEntries(
+                Object.entries({
+                  ...encounter.stopEffectsByReason,
+                  [reason]: effects,
+                }).filter(([, list]) => list.length),
+              );
+              onChange({
+                ...encounter,
+                stopEffectsByReason: Object.keys(next).length
+                  ? next
+                  : undefined,
+              });
             }}
             availableData={availableData}
           />
-        )}
+        ))}
       </div>
 
       {/* States */}
@@ -922,10 +1010,7 @@ function EncounterDetail({
         ))}
       </div>
 
-      <PreviewPane
-        kind="encounter"
-        encounter={encounter}
-      />
+      <PreviewPane kind="encounter" encounter={encounter} />
     </div>
   );
 }

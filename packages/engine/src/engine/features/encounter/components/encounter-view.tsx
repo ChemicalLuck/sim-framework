@@ -12,7 +12,10 @@ import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistic
 import { selectNpcById } from '@chemicalluck/sim-engine/features/npcs/selectors';
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions/evaluator';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineSelector,
+} from '@chemicalluck/sim-engine/state/store';
 
 function EncounterView() {
   const dispatch = useEngineDispatch();
@@ -36,9 +39,10 @@ function EncounterView() {
 
   const resolvedText = renderText(currentState.text, ctx);
 
-  // Filter actions whose condition is met, then group by body part
-  const availableActions = currentState.actions.filter((a) =>
-    isConditionMet(fullState, a.condition),
+  // Filter actions whose condition is met, then group by body part.
+  // NPC stop actions belong to the NPC alone.
+  const availableActions = currentState.actions.filter(
+    (a) => !a.npcStop && isConditionMet(fullState, a.condition),
   );
 
   const actionsByBodyPart: Record<string, typeof availableActions> = {};
