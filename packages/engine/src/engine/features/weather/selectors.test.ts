@@ -6,21 +6,80 @@ import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import evaluators from './conditions';
 import { computeDayWeather, computeHourWeather } from './lib/weather';
 import {
+  getWeatherAt,
   selectDayWeather,
   selectTemperature,
   selectWeather,
+  selectWeatherOverride,
 } from './selectors';
 
-function stateAt(timestamp: number, seed: number): RootState {
+function stateAt(
+  timestamp: number,
+  seed: number,
+  weather: object = { conditionOverride: null },
+): RootState {
   return {
     present: {
       time: { timestamp },
       rng: { seed },
-      weather: { conditionOverride: null },
+      weather,
       npcs: { characters: [], named: [], nearby: [] },
     },
   } as unknown as RootState;
 }
+
+describe('weather override', () => {
+  const start = new Date(2025, 0, 6, 8, 0).getTime();
+  const HOUR = 3_600_000;
+  const timed = {
+    conditionOverride: 'hot_sunny',
+    overrideUntil: start + 3 * HOUR,
+    temperatureOverride: 41,
+  };
+  const computed = (ts: number) => stateAt(ts, 4);
+
+  it('applies until the expiry game time', () => {
+    const before = stateAt(start + 3 * HOUR - 60_000, 4, timed);
+    expect(selectWeather(before).conditionId).toBe('hot_sunny');
+    expect(selectWeatherOverride(before)).toBe('hot_sunny');
+    expect(
+      evaluators.weather({ kind: 'weather', conditionId: 'hot_sunny' }, before),
+    ).toBe(true);
+  });
+
+  it('stops applying once game time reaches until', () => {
+    const after = stateAt(start + 3 * HOUR, 4, timed);
+    expect(selectWeather(after)).toEqual(
+      selectWeather(computed(start + 3 * HOUR)),
+    );
+    expect(selectWeatherOverride(after)).toBeNull();
+  });
+
+  it('overrides the temperature in selectors and template variables', () => {
+    const during = stateAt(start + HOUR, 4, timed);
+    expect(selectTemperature(during)).toBe(41);
+    expect(selectNarrativeVars(during)).toMatchObject({
+      weather: 'hot_sunny',
+      temperature: 41,
+    });
+  });
+
+  it('keeps the computed temperature without a temperature override', () => {
+    const plain = stateAt(start + HOUR, 4, { conditionOverride: 'rainy' });
+    expect(selectWeather(plain).conditionId).toBe('rainy');
+    expect(selectTemperature(plain)).toBe(
+      selectTemperature(computed(start + HOUR)),
+    );
+  });
+
+  it('getWeatherAt honours the expiry per timestamp', () => {
+    const state = stateAt(start, 4, timed);
+    expect(getWeatherAt(state, start + 2 * HOUR).conditionId).toBe('hot_sunny');
+    expect(getWeatherAt(state, start + 4 * HOUR)).toEqual(
+      selectWeather(computed(start + 4 * HOUR)),
+    );
+  });
+});
 
 /** A day (as midnight timestamp) whose weather changes between two hours. */
 function changingDay(seed: number): { start: number; a: number; b: number } {

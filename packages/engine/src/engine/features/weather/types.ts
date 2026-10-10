@@ -68,6 +68,20 @@ export interface WeatherConditionExpr {
 export interface WeatherEffect extends BaseEffect<'weather'> {
   /** Set a specific condition override, or null to clear and return to computed weather. */
   readonly conditionId: WeatherConditionId | null;
+  /** Game time (ISO string) the override expires at. Without it (or `durationHours`) it lasts until cleared. */
+  readonly until?: string;
+  /** Hours of game time the override lasts from when the effect applies. */
+  readonly durationHours?: number;
+  /** Temperature (°C) reported while the override is active. */
+  readonly temperature?: number;
+}
+
+/** An active weather override as stored in the weather slice. */
+export interface WeatherOverride {
+  conditionId: WeatherConditionId;
+  /** Game timestamp (ms) the override expires at; omitted = until cleared. */
+  until?: number;
+  temperature?: number;
 }
 
 declare module '@chemicalluck/sim-engine/types/effect.types' {

@@ -8,6 +8,7 @@ import type { Effect } from '@chemicalluck/sim-engine/types';
 
 import { msToNextHour } from './lib/weather';
 import { getWeatherAt } from './selectors';
+import { clearExpiredWeatherOverride } from './slice';
 import type { WeatherConditionId } from './types';
 
 const WEATHER_NEED_MODIFIERS: Partial<
@@ -97,4 +98,17 @@ const weatherPostEffect: PostEffectHandler = ({
   }
 };
 
-export default [weatherPostEffect];
+/** Clears a timed weather override once the clock has passed its expiry. */
+const weatherExpiryPostEffect: PostEffectHandler = ({
+  dispatch,
+  group,
+  newState,
+}: EffectContext) => {
+  if (!newState) return;
+  const { overrideUntil } = newState.present.weather;
+  const now = newState.present.time.timestamp;
+  if (overrideUntil === undefined || now < overrideUntil) return;
+  dispatchWithGroup(dispatch, clearExpiredWeatherOverride(now), group);
+};
+
+export default [weatherPostEffect, weatherExpiryPostEffect];

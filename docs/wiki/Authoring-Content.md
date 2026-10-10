@@ -276,6 +276,22 @@ evenly from a built-in pool. `weather.json` (every field optional) tunes it:
   `CloudRain`, `CloudSnow`, `Snowflake` or `Wind` — and `iconColor` optional). Added ids
   work in `weather == '<id>'` and the `weather` effect.
 
+The `weather` effect overrides the computed weather:
+
+```json
+{
+  "kind": "weather",
+  "conditionId": "snowy",
+  "durationHours": 6,
+  "temperature": -4
+}
+```
+
+Without `durationHours` or `until` (an ISO game time, e.g. `"2025-03-01T18:00:00"`) the
+override lasts until cleared; with either it clears itself once game time reaches the
+expiry. `temperature` (°C) replaces the computed temperature while the override is active.
+`"conditionId": null` clears the override immediately.
+
 ## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each
