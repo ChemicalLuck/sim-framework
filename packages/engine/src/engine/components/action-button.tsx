@@ -111,7 +111,8 @@ function ActionButton({
             className="text-primary/40 transition-transform duration-150 group-hover:translate-x-0.5 select-none"
             aria-hidden="true"
           >
-            {keybind} ›
+            {/* Number keys mean nothing on a touchscreen. */}
+            <span className="pointer-coarse:hidden">{keybind}</span> ›
           </span>
           {children}
         </Comp>
