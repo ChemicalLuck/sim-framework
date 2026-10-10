@@ -11,4 +11,6 @@ Make the game screens work on phones (below 768px):
 - The page drops its card frame and wide padding.
 - Actions are full-width rows at least 44px tall, without keyboard-number hints.
 
-Adds `useOptionalSidebar` and `useVerticalSwipe`.
+On phones the sheet shows actions only. Wrap stats in the new `DesktopOnly` to skip them there, since the top bar already shows them.
+
+Adds `DesktopOnly`, `useOptionalSidebar` and `useVerticalSwipe`.
