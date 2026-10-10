@@ -4,18 +4,28 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
+
 import { getNamedNpcs } from '@chemicalluck/sim-engine/features/npcs/lib/named-npcs';
 import { createNpc } from '@chemicalluck/sim-engine/features/npcs/lib/npcs';
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import { logTimed } from '@chemicalluck/sim-engine/features/time/lib/time';
 
-function generateNPCs(seed: number, count = 10000): NPC[] {
+/**
+ * Id of the procedural NPC at `index` in the generation from `seed`. Stable
+ * across reloads (NPCs are regenerated, not saved), so relationships and other
+ * state keyed by NPC id keep pointing at the same character.
+ */
+export function proceduralNpcId(seed: number, index: number): string {
+  return `npc-${seed.toString(36)}-${String(index)}`;
+}
+
+export function generateNPCs(seed: number, count = 10000): NPC[] {
   const npcs: NPC[] = [];
 
   for (let i = 0; i < count; i++) {
     const rng = new Mulberry32(seed + i * 97);
-    npcs.push(createNpc(rng));
+    npcs.push({ ...createNpc(rng), id: proceduralNpcId(seed, i) });
   }
 
   return npcs;
