@@ -8,6 +8,7 @@ import {
 } from '@chemicalluck/sim-engine/lib/validation';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
+import type { JsonSceneRef } from './authoring.types';
 import type { Quest } from './types';
 
 const objectiveId = (questId: string, name: string) => `${questId}::${name}`;
@@ -52,25 +53,40 @@ const questRef: NodeRefExtractor = (node) => {
 
 export const nodeRefExtractors: NodeRefExtractor[] = [questRef];
 
+/** The scene id of a `{ kind: 'scene', sceneId }` scene objective. */
+function sceneRefId(condition: unknown): string | undefined {
+  const c = condition as Partial<JsonSceneRef> | undefined;
+  return c?.kind === 'scene' && typeof c.sceneId === 'string'
+    ? c.sceneId
+    : undefined;
+}
+
 export const referenceProviders: ReferenceProvider[] = [
   {
     file: 'quests',
     section: 'quests',
     collect: (data, extract) =>
       (data as Quest[]).flatMap((quest) =>
-        quest.objectives.flatMap((objective) =>
-          [objective.condition, objective.trigger]
-            .filter((c): c is Condition => c != null)
-            .flatMap((cond) =>
-              flattenConditions(cond).flatMap((conditionNode) =>
-                extract(conditionNode).map((ref) => ({
-                  ...ref,
-                  source: `quest:${quest.id}`,
-                  section: 'quests',
-                })),
+        quest.objectives.flatMap((objective) => {
+          const source = `quest:${quest.id}`;
+          const sceneId = sceneRefId(objective.condition);
+          return [
+            ...(sceneId
+              ? [{ namespace: 'scene', id: sceneId, source, section: 'quests' }]
+              : []),
+            ...[objective.condition, objective.trigger]
+              .filter((c): c is Condition => c != null)
+              .flatMap((cond) =>
+                flattenConditions(cond).flatMap((conditionNode) =>
+                  extract(conditionNode).map((ref) => ({
+                    ...ref,
+                    source,
+                    section: 'quests',
+                  })),
+                ),
               ),
-            ),
-        ),
+          ];
+        }),
       ),
   },
 ];
@@ -105,10 +121,14 @@ export const nodeRefRewriters: NodeRefRewriter[] = [questRewrite];
 export const referenceRewriters: ReferenceRewriter[] = [
   {
     file: 'quests',
-    rewrite: (data, rewriteNode) => {
+    rewrite: (data, rewriteNode, ns, oldId, newId) => {
       let count = 0;
       for (const quest of data as Quest[]) {
         for (const objective of quest.objectives) {
+          if (ns === 'scene' && sceneRefId(objective.condition) === oldId) {
+            (objective.condition as unknown as JsonSceneRef).sceneId = newId;
+            count++;
+          }
           for (const cond of [objective.condition, objective.trigger].filter(
             (c): c is Condition => c != null,
           )) {

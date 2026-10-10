@@ -251,6 +251,22 @@ An unrecognised bare identifier is a parse error; quote string
 literals. `sim check` also flags stored conditions that compare a string with `<`/`>` or
 compare two literals, both signs of a mistyped identifier.
 
+## Quests
+
+Each quest in `quests.json` has objectives that go `locked` → `available` → `complete`.
+A locked objective becomes available when its `trigger` condition holds. An available
+objective completes according to its `condition`:
+
+- a condition: as soon as it holds;
+- an action (`{ "kind": "action", "text": …, "effects": [] }`): shown on the default view,
+  and taking it applies its effects and completes the objective;
+- a scene (`{ "kind": "scene", "sceneId": "cafe" }`, or an inline scene): when the player
+  takes any choice while that scene is shown.
+
+`onComplete` effects run however the objective completes. Effects in quests accept the
+same id shorthand as elsewhere (e.g. `{ "kind": "view", "sceneId": "cafe" }`). A quest
+counts as completed once all of its objectives are complete.
+
 ## Referential integrity
 
 References between files (an item id in a shop, a location id in a quest) are checked by

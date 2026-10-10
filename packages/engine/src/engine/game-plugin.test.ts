@@ -113,3 +113,24 @@ describe('virtual:game-extensions template-vars slot', () => {
     );
   });
 });
+
+describe('virtual:game-setup quests hydration', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  it('hydrates quests.json through the quests hydrator', () => {
+    fs.writeFileSync(path.join(gameDir, 'data', 'quests.json'), '[]');
+    const code = generateSetup(gameDir);
+    expect(code).toContain(
+      'key: "quests", data: quests_questsData, hydrate: (data, ctx) => quests_hydrateQuests(data, ctx)',
+    );
+  });
+});

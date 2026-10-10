@@ -10,7 +10,9 @@
   "contentExtensions": [
     {
       "jsonFile": "quests.json",
-      "contentKey": "quests"
+      "contentKey": "quests",
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateQuests"
     }
   ],
   "contentSetup": [
