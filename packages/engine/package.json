@@ -1,6 +1,6 @@
 {
   "name": "@chemicalluck/sim-engine",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "Game-agnostic life-sim engine, content editor, and Vite build plugins. Shipped as source.",
   "license": "MIT",

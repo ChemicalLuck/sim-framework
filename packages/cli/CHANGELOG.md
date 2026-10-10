@@ -1,5 +1,12 @@
 # @chemicalluck/sim-cli
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [11a777e]
+  - @chemicalluck/sim-engine@0.4.0
+
 ## 0.2.1
 
 ### Patch Changes
