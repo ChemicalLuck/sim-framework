@@ -1,4 +1,10 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
+import {
+  DEFAULT_SKILL_MAX,
+  configureSkillMax,
+  configureSkills,
+} from '@chemicalluck/sim-engine/features/player/lib/skills';
 import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types';
 
@@ -142,5 +148,39 @@ describe('NpcFactory body sampling', () => {
     // Female bustDifference distribution has min=1, so every woman gets > 0.
     expect(womenWithBust).toBe(women);
     expect(women).toBeGreaterThan(0);
+  });
+});
+
+describe('NpcFactory skill generation', () => {
+  afterEach(() => {
+    configureSkills([]);
+    configureSkillMax(DEFAULT_SKILL_MAX);
+  });
+
+  function rolledSkills(id: string): number[] {
+    return Array.from(
+      { length: 200 },
+      (_, i) => createNpc(new Mulberry32(i * 7 + 3)).skills[id],
+    );
+  }
+
+  it('defaults to the lower half of the configured skill scale', () => {
+    configureSkills([{ id: 'charm', name: 'Charm' }]);
+    configureSkillMax(20);
+    const values = rolledSkills('charm');
+    expect(Math.min(...values)).toBeGreaterThanOrEqual(0);
+    expect(Math.max(...values)).toBe(10);
+  });
+
+  it('keeps the historical 0–5 default with the default scale', () => {
+    configureSkills([{ id: 'charm', name: 'Charm' }]);
+    expect(Math.max(...rolledSkills('charm'))).toBe(5);
+  });
+
+  it('clamps an explicit npcRange to the scale', () => {
+    configureSkills([{ id: 'charm', name: 'Charm', npcRange: [8, 99] }]);
+    const values = rolledSkills('charm');
+    expect(Math.min(...values)).toBe(8);
+    expect(Math.max(...values)).toBe(10);
   });
 });

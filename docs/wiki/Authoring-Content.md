@@ -292,6 +292,13 @@ override lasts until cleared; with either it clears itself once game time reache
 expiry. `temperature` (°C) replaces the computed temperature while the override is active.
 `"conditionId": null` clears the override immediately.
 
+## Skills
+
+Skills use one scale, `0` to `skillMax` (`player.json`, default `10`). It caps the player
+`skill` effect, sets the default range generated NPCs roll in (`0` to `skillMax / 2`;
+override per skill with `npcRange` in `skills.json`, clamped to the scale) and scales
+encounter `npcSkillWeights`: an NPC at `skillMax` gets the full multiplier, at `0` none.
+
 ## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each

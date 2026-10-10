@@ -1,5 +1,11 @@
-import type { NPC, NpcRelationship } from '@chemicalluck/sim-engine/features/npcs/types';
-import { getSkills } from '@chemicalluck/sim-engine/features/player/lib/skills';
+import type {
+  NPC,
+  NpcRelationship,
+} from '@chemicalluck/sim-engine/features/npcs/types';
+import {
+  getNpcSkillRange,
+  getSkills,
+} from '@chemicalluck/sim-engine/features/player/lib/skills';
 import {
   type RNG,
   buildWeightedCDF,
@@ -74,9 +80,7 @@ export class NpcFactory {
 
     // Pick remaining features, merging dimension-specific weights
     for (const feat of config.features.filter((f) => !f.isDimension)) {
-      const weightMaps: Partial<Weights<string>>[] = [
-        feat.defaultWeights,
-      ];
+      const weightMaps: Partial<Weights<string>>[] = [feat.defaultWeights];
       for (const dimId of config.dimensionIds) {
         const dimVal = picked[dimId];
         if (
@@ -124,7 +128,7 @@ export class NpcFactory {
 
     const skills: Record<string, number> = {};
     for (const def of getSkills()) {
-      const [min, max] = def.npcRange ?? [0, 5];
+      const [min, max] = getNpcSkillRange(def);
       skills[def.id] = min + Math.floor(rng.next() * (max - min + 1));
     }
 

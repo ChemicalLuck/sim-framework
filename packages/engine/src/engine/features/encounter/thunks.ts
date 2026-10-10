@@ -1,3 +1,5 @@
+import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
+import { getSkillMax } from '@chemicalluck/sim-engine/features/player/lib/skills';
 import {
   forkRng,
   worldRng,
@@ -10,6 +12,32 @@ import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
 import { setEncounterState, setNpcAction, stopEncounter } from './slice';
+import type { EncounterAction } from './types';
+
+/**
+ * An NPC's selection weight for an action. Skill multipliers scale with the
+ * NPC's skill as a fraction of the configured skill scale: at the top level
+ * the full multiplier applies, at 0 none of it does.
+ */
+export function npcActionWeight(
+  action: EncounterAction,
+  npc: NPC | null | undefined,
+): number {
+  let weight = action.npcWeight ?? 1;
+  if (npc) {
+    const skillMax = getSkillMax();
+    for (const [skill, mult] of Object.entries(action.npcSkillWeights ?? {})) {
+      const skillValue = npc.skills[skill] ?? 0;
+      weight *= 1 + (skillValue / skillMax) * (mult - 1);
+    }
+    for (const [trait, mult] of Object.entries(action.npcTraitWeights ?? {})) {
+      if (npc.traits.includes(trait as 'Introverted' | 'Extroverted')) {
+        weight *= mult;
+      }
+    }
+  }
+  return Math.max(0, weight);
+}
 
 export const processTurn = (): EngineThunk => (dispatch, getState) => {
   const state = getState();
@@ -54,23 +82,7 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
   };
 
   for (const action of availableActions) {
-    let weight = action.npcWeight ?? 1;
-    if (npc) {
-      for (const [skill, mult] of Object.entries(
-        action.npcSkillWeights ?? {},
-      )) {
-        const skillValue = npc.skills[skill] ?? 0;
-        weight *= 1 + (skillValue / 100) * (mult - 1);
-      }
-      for (const [trait, mult] of Object.entries(
-        action.npcTraitWeights ?? {},
-      )) {
-        if (npc.traits.includes(trait as 'Introverted' | 'Extroverted')) {
-          weight *= mult;
-        }
-      }
-    }
-    weightMap[action.id] = Math.max(0, weight);
+    weightMap[action.id] = npcActionWeight(action, npc);
   }
 
   const picked = new WeightsBuilder<string>()
