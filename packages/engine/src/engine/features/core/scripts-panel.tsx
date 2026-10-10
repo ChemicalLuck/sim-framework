@@ -59,6 +59,7 @@ interface RawScriptScene {
   kind: 'scene';
   text: string;
   actions: ActionGroup[];
+  completionEffects?: Effect[];
 }
 
 interface RawScript {
@@ -224,6 +225,17 @@ function SceneEditor({ scene, index, onChange, onRemove }: SceneEditorProps) {
               availableData={availableData}
             />
           </Field>
+
+          <CompletionEffects
+            label="Scene completion effects"
+            effects={scene.completionEffects ?? []}
+            onChange={(effects) => {
+              onChange({
+                ...scene,
+                completionEffects: effects.length ? effects : undefined,
+              });
+            }}
+          />
         </div>
       )}
     </div>
@@ -360,6 +372,7 @@ interface ScriptDetailProps {
 
 function ScriptDetail({ script, onChange, refs }: ScriptDetailProps) {
   const isDuration = script.duration !== undefined;
+  const previewScript = script as unknown as JsonScript;
 
   function addScene() {
     onChange({
@@ -526,7 +539,7 @@ function ScriptDetail({ script, onChange, refs }: ScriptDetailProps) {
         </div>
       </Field>
 
-      <PreviewPane kind="script" script={script as unknown as JsonScript} />
+      <PreviewPane kind="script" script={previewScript} />
     </FieldGroup>
   );
 }
