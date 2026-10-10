@@ -45,7 +45,13 @@ function renderLayout() {
     </SidebarProvider>,
     {
       reducer: () => ({
-        present: { time: { timestamp: TIMESTAMP }, money: 42.5 },
+        present: {
+          time: { timestamp: TIMESTAMP },
+          money: 42.5,
+          needs: { Energy: 80, Hunger: 20 },
+          weather: {},
+          rng: { seed: 1 },
+        },
       }),
     },
   );
@@ -66,6 +72,20 @@ describe('WithSidebar on a phone', () => {
     expect(bar).toHaveTextContent('08:30');
     expect(bar).toHaveTextContent('Mon 15 Sept');
     expect(bar).toHaveTextContent('£42.50');
+  });
+
+  it('shows the weather and a bar per need in the top bar', () => {
+    renderLayout();
+    const bar = screen.getByRole('banner');
+    expect(bar).toHaveTextContent('°C');
+    expect(screen.getByRole('meter', { name: 'Energy' })).toHaveAttribute(
+      'aria-valuenow',
+      '80',
+    );
+    expect(screen.getByRole('meter', { name: 'Hunger' })).toHaveAttribute(
+      'aria-valuenow',
+      '20',
+    );
   });
 
   it('opens the sidebar from the menu button', () => {
