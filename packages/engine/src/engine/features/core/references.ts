@@ -89,14 +89,20 @@ export const referenceProviders: ReferenceProvider[] = [
           'scripts',
           extract,
         ),
-        ...script.scenes.flatMap((scene) =>
-          collectActionGroupRefs(
+        ...script.scenes.flatMap((scene) => [
+          ...collectActionGroupRefs(
             scene.actions,
             `script:${script.id}`,
             'scripts',
             extract,
           ),
-        ),
+          ...collectEffectRefs(
+            scene.completionEffects,
+            `script:${script.id}`,
+            'scripts',
+            extract,
+          ),
+        ]),
       ]),
   },
   {
@@ -154,6 +160,7 @@ export const referenceRewriters: ReferenceRewriter[] = [
             oldId,
             newId,
           );
+          count += rewriteEffectRefs(scene.completionEffects, rewriteNode);
         }
       }
       return count;
