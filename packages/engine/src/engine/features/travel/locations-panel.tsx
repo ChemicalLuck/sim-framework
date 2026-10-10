@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -44,6 +48,7 @@ interface RawLocation {
   description?: string;
   entryText?: string;
   condition?: Condition;
+  lockedText?: string;
   nearby?: unknown;
   actions?: ActionGroup[];
 }
@@ -267,6 +272,19 @@ function LocationDetail({
           }}
         />
       </Field>
+
+      {location.condition && (
+        <Field>
+          <Label>Locked text (shown when the condition fails)</Label>
+          <TemplateEditor
+            value={location.lockedText ?? ''}
+            onChange={(v) => {
+              onChange({ ...location, lockedText: v || undefined });
+            }}
+            context={editorTemplateContext()}
+          />
+        </Field>
+      )}
 
       {location.nearby !== undefined && (
         <Field>

@@ -13,6 +13,7 @@ import '@xyflow/react/dist/style.css';
 import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
+
 import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
@@ -643,6 +644,7 @@ function EditEdgePanel({
   const [weight, setWeight] = useState(String(edge.weight));
   const [cost, setCost] = useState(edge.cost != null ? String(edge.cost) : '');
   const [eventIds, setEventIds] = useState<string[]>(edge.eventIds ?? []);
+  const [lockedText, setLockedText] = useState(edge.lockedText ?? '');
 
   function save() {
     onUpdate(idx, {
@@ -651,6 +653,7 @@ function EditEdgePanel({
       weight: parseFloat(weight) || edge.weight,
       cost: cost !== '' ? parseFloat(cost) : undefined,
       eventIds: eventIds.length ? eventIds : undefined,
+      lockedText: lockedText || undefined,
     });
   }
 
@@ -731,6 +734,21 @@ function EditEdgePanel({
             className="h-8 text-sm bg-zinc-800 border-zinc-600"
           />
         </div>
+        {edge.condition && (
+          <div className="space-y-1">
+            <Label className="text-xs text-zinc-400">
+              Locked text (shown when the condition fails)
+            </Label>
+            <Input
+              value={lockedText}
+              onChange={(e) => {
+                setLockedText(e.target.value);
+              }}
+              placeholder="e.g. Buses run 6:00–23:00"
+              className="h-8 text-sm bg-zinc-800 border-zinc-600"
+            />
+          </div>
+        )}
         {availableEventIds.length > 0 && (
           <div className="space-y-1">
             <Label className="text-xs text-zinc-400">Events</Label>

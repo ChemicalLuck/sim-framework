@@ -32,6 +32,12 @@ export interface LocationNode {
   kind: LocationType;
   parent?: string;
   condition?: Condition;
+  /**
+   * Shown on a disabled travel button when `condition` fails (e.g. opening
+   * hours). Template text, rendered like `description`. Without it, a location
+   * whose condition fails is hidden from travel.
+   */
+  lockedText?: string;
   nearby?: NearbyConditions;
   description?: string;
   entryText?: string;
@@ -44,6 +50,11 @@ export interface Edge {
   kind: TravelType;
   cost?: number;
   condition?: Condition;
+  /**
+   * Shown on a disabled travel button when `condition` fails (e.g. service
+   * hours). Template text. Without it, the edge is hidden while unavailable.
+   */
+  lockedText?: string;
   eventIds?: string[];
 }
 

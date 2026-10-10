@@ -11,34 +11,34 @@ Run [[CLI|sim check]] after edits to catch broken references.
 Each engine feature declares which files it consumes. Files marked **optional** can be
 omitted or left as an empty `[]` / `{}`.
 
-| File | Purpose | Required |
-| --- | --- | --- |
-| `locations.json` | Places in the world | ✅ |
-| `edges.json` | Travel connections between locations | ✅ |
-| `minimap.json` | Minimap node positions & zones | ✅ |
-| `items.json` | Inventory items + their actions | ✅ |
-| `scenes.json` | Scripted scenes (text + actions) | ✅ |
-| `scripts.json` | Timed multi-step scripts | ✅ |
-| `wearable-templates.json` | Clothing templates | ✅ (may be `[]`) |
-| `wearables-config.json` | Slots, categories, sizing | ✅ |
-| `player.json` | Starting player state | ✅ |
-| `needs.json` | Needs & decay rates | ✅ |
-| `currency.json` / `initial-money.json` | Money setup | ✅ |
-| `time.json` | Game start timestamp (ISO string) | ✅ |
-| `names.json` | Random NPC name pools | ✅ |
-| `professions.json` | NPC professions | ✅ |
-| `quests.json` | Quests & objectives | ✅ (may be `[]`) |
-| `milestones.json` | Milestones | ✅ (may be `[]`) |
-| `shops.json` | Shops & stock | ✅ (may be `[]`) |
-| `appearance.json` | Body/appearance attributes | optional |
-| `skills.json` | Player skills | optional |
-| `conversations.json` | NPC conversation topics | optional |
-| `named-npcs.json` | Hand-authored NPCs | optional |
-| `encounters.json` | Random encounters | optional |
-| `events.json` | World events | optional |
-| `quest-templates.json` | Reusable quest templates | optional |
-| `linguistics.json` | Text macros & terms | optional |
-| `relationships.json` | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional |
+| File                                   | Purpose                                                                  | Required         |
+| -------------------------------------- | ------------------------------------------------------------------------ | ---------------- |
+| `locations.json`                       | Places in the world                                                      | ✅               |
+| `edges.json`                           | Travel connections between locations                                     | ✅               |
+| `minimap.json`                         | Minimap node positions & zones                                           | ✅               |
+| `items.json`                           | Inventory items + their actions                                          | ✅               |
+| `scenes.json`                          | Scripted scenes (text + actions)                                         | ✅               |
+| `scripts.json`                         | Timed multi-step scripts                                                 | ✅               |
+| `wearable-templates.json`              | Clothing templates                                                       | ✅ (may be `[]`) |
+| `wearables-config.json`                | Slots, categories, sizing                                                | ✅               |
+| `player.json`                          | Starting player state                                                    | ✅               |
+| `needs.json`                           | Needs & decay rates                                                      | ✅               |
+| `currency.json` / `initial-money.json` | Money setup                                                              | ✅               |
+| `time.json`                            | Game start timestamp (ISO string)                                        | ✅               |
+| `names.json`                           | Random NPC name pools                                                    | ✅               |
+| `professions.json`                     | NPC professions                                                          | ✅               |
+| `quests.json`                          | Quests & objectives                                                      | ✅ (may be `[]`) |
+| `milestones.json`                      | Milestones                                                               | ✅ (may be `[]`) |
+| `shops.json`                           | Shops & stock                                                            | ✅ (may be `[]`) |
+| `appearance.json`                      | Body/appearance attributes                                               | optional         |
+| `skills.json`                          | Player skills                                                            | optional         |
+| `conversations.json`                   | NPC conversation topics                                                  | optional         |
+| `named-npcs.json`                      | Hand-authored NPCs                                                       | optional         |
+| `encounters.json`                      | Random encounters                                                        | optional         |
+| `events.json`                          | World events                                                             | optional         |
+| `quest-templates.json`                 | Reusable quest templates                                                 | optional         |
+| `linguistics.json`                     | Text macros & terms                                                      | optional         |
+| `relationships.json`                   | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional         |
 
 ## Effects
 
@@ -63,12 +63,18 @@ An item that restores energy and is consumed:
   "value": 2,
   "description": "A hot cup of coffee.",
   "actions": [
-    { "actions": [
-      { "kind": "action", "text": "Drink the coffee", "effects": [
-        { "kind": "needs", "need": "Energy", "delta": 20 },
-        { "kind": "inventory", "operation": "remove", "id": "coffee" }
-      ] }
-    ] }
+    {
+      "actions": [
+        {
+          "kind": "action",
+          "text": "Drink the coffee",
+          "effects": [
+            { "kind": "needs", "need": "Energy", "delta": 20 },
+            { "kind": "inventory", "operation": "remove", "id": "coffee" }
+          ]
+        }
+      ]
+    }
   ]
 }
 ```
@@ -132,6 +138,27 @@ Actions and objectives can be gated by **conditions**, an expression DSL with a 
 An action whose condition isn't met is hidden, wherever it appears (locations, scenes,
 scripts, items, …). Set `"lockedText": "Requires Charm 3"` on the action to show it
 disabled with that text instead.
+
+Locations (`locations.json`) and edges (`edges.json`) work the same way for travel: a
+location or edge whose `condition` fails is hidden from travel, unless it sets
+`lockedText`, in which case the travel button is shown disabled with that reason. This
+applies to child, parent and edge destinations alike. `lockedText` is template text, so
+it can use variables such as `{hour}`:
+
+```json
+{
+  "id": "bakery",
+  "name": "Bakery",
+  "kind": "interior",
+  "parent": "high_street",
+  "condition": {
+    "kind": "gte",
+    "lhs": { "kind": "gamehour" },
+    "rhs": { "kind": "const", "value": 7 }
+  },
+  "lockedText": "Opens at 7:00 (it's {hour}:00)"
+}
+```
 
 Combine with `and` / `or` / `not`. Expression nodes (`location`, `string`, `time`, need
 levels, …) are contributed by features, so the available vocabulary grows with the engine.
