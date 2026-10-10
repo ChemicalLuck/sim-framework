@@ -9,6 +9,7 @@ what lets one engine power many games and keeps games upgradable.
 The `sim` CLI runs two Vite plugins from the engine:
 
 ### `gamePlugin`
+
 Scans the engine's `features/` and your `src/game/extensions/` by filename convention and
 generates virtual modules:
 
@@ -25,6 +26,7 @@ generates virtual modules:
   providers, rewriters) — powers `sim check` and the editor's integrity tools.
 
 ### `editorPlugin` (dev only)
+
 Generates `virtual:editor-extensions` from `effect-editor.*` / `editor.*` files and serves
 the [[Content Editor]] SPA plus its file-backed data API.
 

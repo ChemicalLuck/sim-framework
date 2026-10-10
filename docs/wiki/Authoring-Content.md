@@ -201,8 +201,15 @@ Wearable templates (and wearables in `items.json`) can carry `warmth` and a free
 `attributes` map; both are copied onto every wearable generated from a template:
 
 ```json
-{ "id": "wool_coat", "name": "Wool Coat", "slot": "jacket", "value": 80, "options": {},
-  "warmth": 3, "attributes": { "formality": 2, "waterproof": true } }
+{
+  "id": "wool_coat",
+  "name": "Wool Coat",
+  "slot": "jacket",
+  "value": 80,
+  "options": {},
+  "warmth": 3,
+  "attributes": { "formality": 2, "waterproof": true }
+}
 ```
 
 `equipped.<attr>` in a condition sums a numeric attribute across equipped clothing

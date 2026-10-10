@@ -39,13 +39,17 @@ augmentation, conventionally in `types.ts`:
 
 ```ts
 // A new effect kind
-declare module '@chemicalluck/sim-engine/types/effect.types' {
-  interface EffectMap { education: EducationEffect; }
+declare module "@chemicalluck/sim-engine/types/effect.types" {
+  interface EffectMap {
+    education: EducationEffect;
+  }
 }
 
 // Hydrated content available on the loaded Content object
-declare module '@chemicalluck/sim-engine/data' {
-  interface ContentExtensions { education: { courses: Course[] }; }
+declare module "@chemicalluck/sim-engine/data" {
+  interface ContentExtensions {
+    education: { courses: Course[] };
+  }
 }
 ```
 
@@ -72,7 +76,7 @@ declare module '@chemicalluck/sim-engine/data' {
   `@chemicalluck/sim-engine/features/linguistics/lib/extension-vars`:
 
   ```ts
-  import type { TemplateVarProvider } from '@chemicalluck/sim-engine/features/linguistics/lib/extension-vars';
+  import type { TemplateVarProvider } from "@chemicalluck/sim-engine/features/linguistics/lib/extension-vars";
 
   const templateVars: TemplateVarProvider = (state) => ({
     term: state.present.education.term,

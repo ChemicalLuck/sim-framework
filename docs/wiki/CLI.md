@@ -21,21 +21,26 @@ The `sim` binary wraps Vite and the engine's plugins. Your game defines these sc
 ## Commands
 
 ### `sim dev`
+
 Starts the Vite dev server with HMR. Serves the game at `/` and the [[Content Editor]] at
 `/editor`. The editor's data API (`/editor/api/*`) reads and writes your `data/*.json`.
 
 ### `sim build`
+
 Produces a single self-contained `dist/index.html` via `vite-plugin-singlefile` — all JS
 and CSS inlined, `console`/`debugger` stripped, CSS minified. No editor is included in the
 production build.
 
 ### `sim editor`
+
 Same as `sim dev`, but also prints the editor URL for convenience.
 
 ### `sim preview`
+
 Serves a production build locally to sanity-check the single-file output.
 
 ### `sim check`
+
 Validates content referential integrity — every reference in your data (item ids, location
 ids, scene ids, …) must resolve to something that exists. Prints each issue as
 `source: references unknown <kind> '<id>'` and exits non-zero if any are found. It also
@@ -44,6 +49,7 @@ compare a string with `<`/`>` or compare two literals (usually a mistyped identi
 it in CI.
 
 ### `sim test`
+
 Runs your `src/**/*.test.{ts,tsx}` files with vitest, using the same setup as `sim dev`
 (engine and `~` aliases, `virtual:*` modules, React dedupe) plus jsdom, vitest globals and
 the `@testing-library/jest-dom` matchers when installed. Runs once and exits non-zero on
@@ -53,7 +59,7 @@ jsdom come from your project (the starter installs them).
 For editor integrations that need a `vitest.config.ts`, the same config is exported:
 
 ```ts
-import { simVitestConfig } from '@chemicalluck/sim-cli/vitest';
+import { simVitestConfig } from "@chemicalluck/sim-cli/vitest";
 
 export default simVitestConfig();
 ```

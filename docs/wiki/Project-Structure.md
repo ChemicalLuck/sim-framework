@@ -25,8 +25,8 @@ The entry point renders the engine. The default sidebar and views are used unles
 override them:
 
 ```tsx
-import { GameEngine } from '@chemicalluck/sim-engine';
-import '~/game/index.css';
+import { GameEngine } from "@chemicalluck/sim-engine";
+import "~/game/index.css";
 
 createRoot(root).render(<GameEngine />);
 ```
@@ -35,12 +35,12 @@ createRoot(root).render(<GameEngine />);
 
 ```ts
 interface GameConfig {
-  sidebar?: React.ComponentType;              // replace the default sidebar
-  views?: ViewsRegistry;                      // register extra views
-  persistTransforms?: Transform<unknown, unknown>[];  // redux-persist transforms
-  undoLimit?: number;                         // Back-button undo steps (default 10, 0 disables)
-  ironman?: 'never' | 'optional' | 'always';  // ironman runs (default 'never')
-  autosave?: { rotate: number };              // rotating `autosave` snapshots kept (default 3)
+  sidebar?: React.ComponentType; // replace the default sidebar
+  views?: ViewsRegistry; // register extra views
+  persistTransforms?: Transform<unknown, unknown>[]; // redux-persist transforms
+  undoLimit?: number; // Back-button undo steps (default 10, 0 disables)
+  ironman?: "never" | "optional" | "always"; // ironman runs (default 'never')
+  autosave?: { rotate: number }; // rotating `autosave` snapshots kept (default 3)
 }
 ```
 
