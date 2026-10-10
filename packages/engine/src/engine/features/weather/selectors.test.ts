@@ -29,7 +29,7 @@ function stateAt(
 }
 
 describe('weather override', () => {
-  const start = new Date(2025, 0, 6, 8, 0).getTime();
+  const start = Date.UTC(2025, 0, 6, 8, 0);
   const HOUR = 3_600_000;
   const timed = {
     conditionOverride: 'hot_sunny',
@@ -84,14 +84,14 @@ describe('weather override', () => {
 /** A day (as midnight timestamp) whose weather changes between two hours. */
 function changingDay(seed: number): { start: number; a: number; b: number } {
   for (let day = 0; day < 365; day++) {
-    const date = new Date(2025, 0, 1 + day, 12);
+    const date = new Date(Date.UTC(2025, 0, 1 + day, 12));
     const hours = Array.from(
       { length: 24 },
       (_, h) => computeHourWeather(date, h, seed).conditionId,
     );
     const b = hours.findIndex((id) => id !== hours[0]);
     if (b > 0) {
-      return { start: new Date(2025, 0, 1 + day, 0).getTime(), a: 0, b };
+      return { start: Date.UTC(2025, 0, 1 + day, 0), a: 0, b };
     }
   }
   throw new Error('no changing day');

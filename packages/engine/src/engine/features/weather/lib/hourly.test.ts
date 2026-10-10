@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { computeDayWeather, computeHourWeather } from './weather';
 
 function dayAt(year: number, dayIndex: number): Date {
-  return new Date(year, 0, 1 + dayIndex, 12);
+  return new Date(Date.UTC(year, 0, 1 + dayIndex, 12));
 }
 
 function hoursOf(date: Date, seed: number) {
@@ -50,7 +50,7 @@ describe('computeHourWeather', () => {
   });
 
   it('reports the hour and season', () => {
-    const w = computeHourWeather(new Date(2025, 6, 4, 12), 9, 1);
+    const w = computeHourWeather(new Date(Date.UTC(2025, 6, 4, 12)), 9, 1);
     expect(w.hour).toBe(9);
     expect(w.seasonId).toBe('summer');
   });

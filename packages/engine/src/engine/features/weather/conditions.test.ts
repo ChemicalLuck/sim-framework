@@ -46,7 +46,7 @@ function stateAt(timestamp: number, seed: number): RootState {
 describe('weather condition evaluator', () => {
   it('uses the game seed when computing the current hour weather', () => {
     const seed = 12345;
-    const start = new Date('2025-01-01T12:00:00').getTime();
+    const start = new Date('2025-01-01T12:00:00Z').getTime();
     const day = 24 * 60 * 60 * 1000;
     // Find a day where the seeded and unseeded weather differ.
     let ts = start;

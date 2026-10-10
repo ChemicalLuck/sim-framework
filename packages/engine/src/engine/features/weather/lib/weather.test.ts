@@ -68,13 +68,13 @@ const ADJACENCY_FIX_DAYS: Record<number, string[]> = {
 };
 
 function noon(year: number, dayIndex: number): Date {
-  return new Date(year, 0, 1 + dayIndex, 12);
+  return new Date(Date.UTC(year, 0, 1 + dayIndex, 12));
 }
 
 function isoDay(d: Date): string {
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${String(d.getFullYear())}-${mm}-${dd}`;
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  return `${String(d.getUTCFullYear())}-${mm}-${dd}`;
 }
 
 afterEach(() => {
@@ -100,9 +100,9 @@ describe('computeDayWeather without weather.json', () => {
   it('only changes days where the season turned (adjacency fallback fix)', () => {
     for (const [seed, days] of Object.entries(ADJACENCY_FIX_DAYS)) {
       for (const day of days) {
-        const date = new Date(`${day}T12:00:00`);
+        const date = new Date(`${day}T12:00:00Z`);
         const prev = new Date(date);
-        prev.setDate(prev.getDate() - 1);
+        prev.setUTCDate(prev.getUTCDate() - 1);
         expect(getSeason(prev)).not.toBe(getSeason(date));
         const pinned = PINNED.find(
           (p) => p.seed === Number(seed) && p.year === date.getFullYear(),
@@ -120,7 +120,7 @@ describe('computeDayWeather without weather.json', () => {
     // Seed 12345's last winter day rolled a winter-only condition; the old code
     // fell back to 'sunny' (spring pool[0]), now it drifts to wet weather.
     expect(
-      computeDayWeather(new Date('2025-03-01T12:00:00'), 12345),
+      computeDayWeather(new Date('2025-03-01T12:00:00Z'), 12345),
     ).toMatchObject({
       conditionId: 'rainy',
       seasonId: 'spring',
@@ -163,7 +163,7 @@ describe('computeDayWeather with weather.json', () => {
 
   it('is deterministic for a seed', () => {
     configureWeather(hydrateWeather({ seasons: { winter: weights } }));
-    const date = new Date('2025-01-15T12:00:00');
+    const date = new Date('2025-01-15T12:00:00Z');
     expect(computeDayWeather(date, 9)).toEqual(computeDayWeather(date, 9));
   });
 
@@ -221,7 +221,7 @@ describe('computeDayWeather with weather.json', () => {
         },
       }),
     );
-    const w = computeDayWeather(new Date('2025-07-10T12:00:00'), 1);
+    const w = computeDayWeather(new Date('2025-07-10T12:00:00Z'), 1);
     expect(w.conditionId).toBe('heatwave');
     expect(w.condition.label).toBe('Heatwave');
     expect(w.temperature).toBeGreaterThanOrEqual(30);

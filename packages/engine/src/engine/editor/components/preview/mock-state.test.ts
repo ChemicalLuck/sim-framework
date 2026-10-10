@@ -42,7 +42,7 @@ describe('buildMockRootState', () => {
     };
 
     expect(state.money).toBe(42);
-    expect(new Date(state.time.timestamp).getHours()).toBe(9);
+    expect(new Date(state.time.timestamp).getUTCHours()).toBe(9);
     expect(state.player.locationId).toBe('cafe');
     expect(state.player.skills.athletics).toBe(5);
     expect(state.needs.energy).toBe(0.5);

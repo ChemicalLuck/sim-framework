@@ -16,7 +16,7 @@ const ENERGY_DRAIN: Partial<Record<string, number>> = {
   rainy: 1,
   light_rain: 0.5,
 };
-const START = new Date(2025, 0, 10, 22, 0).getTime();
+const START = Date.UTC(2025, 0, 10, 22, 0);
 
 function state(
   timestamp: number,
@@ -74,7 +74,7 @@ describe('weather override expiry', () => {
     for (let t = until; t < START + 6 * HOUR; t += HOUR) {
       const id = computeHourWeather(
         new Date(t),
-        new Date(t).getHours(),
+        new Date(t).getUTCHours(),
         1,
       ).conditionId;
       expected -= ENERGY_DRAIN[id] ?? 0;
@@ -159,7 +159,7 @@ describe('weather need-drain post-effect', () => {
       light_rain: 0.5,
     };
     for (let day = 0; day < 365; day++) {
-      const start = new Date(2025, 0, 1 + day, 0, 0).getTime();
+      const start = Date.UTC(2025, 0, 1 + day, 0, 0);
       const hourly = Array.from({ length: 24 }, (_, h) =>
         computeHourWeather(new Date(start + h * HOUR), h, seed),
       );

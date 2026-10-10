@@ -8,7 +8,7 @@ import { handleWeatherEffect } from './effects';
 import { setWeatherOverride } from './slice';
 import type { WeatherEffect } from './types';
 
-const NOW = new Date(2025, 2, 10, 9, 0).getTime();
+const NOW = Date.UTC(2025, 2, 10, 9, 0);
 const HOUR = 3_600_000;
 
 /** Runs the handler with the clock at `now` (e.g. after earlier effects in the batch). */
@@ -71,7 +71,7 @@ describe('weather effect', () => {
     ).toEqual([
       setWeatherOverride({
         conditionId: 'snowy',
-        until: new Date('2025-03-10T18:30:00').getTime(),
+        until: Date.UTC(2025, 2, 10, 18, 30),
       }),
     ]);
   });

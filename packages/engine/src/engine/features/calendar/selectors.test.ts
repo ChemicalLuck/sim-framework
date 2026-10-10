@@ -39,13 +39,13 @@ describe('calendar selectors', () => {
 
   it('selectUpcomingEvent returns null on weekends', () => {
     // 2026-01-03 is a Saturday (day 6).
-    const state = makeState([bio], '2026-01-03T09:00:00');
+    const state = makeState([bio], '2026-01-03T09:00:00Z');
     expect(selectUpcomingEvent(state)).toBeNull();
   });
 
   it('selectUpcomingEvent returns an event within 30 minutes', () => {
     // Monday 09:45 local — Biology is at 10:00, 15 minutes away.
-    const state = makeState([bio], '2026-01-05T09:45:00');
+    const state = makeState([bio], '2026-01-05T09:45:00Z');
     expect(selectUpcomingEvent(state)).toEqual({
       label: 'Biology',
       minutesUntil: 15,
@@ -54,7 +54,7 @@ describe('calendar selectors', () => {
 
   it('selectUpcomingEvent prefers the soonest event', () => {
     // 09:45 — Biology (10:00) at 15min, Chemistry (11:00) at 75min (outside window).
-    const state = makeState([chem, bio], '2026-01-05T09:45:00');
+    const state = makeState([chem, bio], '2026-01-05T09:45:00Z');
     expect(selectUpcomingEvent(state)?.label).toBe('Biology');
   });
 
@@ -99,7 +99,7 @@ describe('calendar selectors', () => {
   });
 
   it('selectUpcomingEvent returns null when no event is within 30 minutes', () => {
-    const state = makeState([bio], '2026-01-05T07:00:00');
+    const state = makeState([bio], '2026-01-05T07:00:00Z');
     expect(selectUpcomingEvent(state)).toBeNull();
   });
 });
