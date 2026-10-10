@@ -103,6 +103,24 @@ An item that restores energy and is consumed:
 }
 ```
 
+A `calendar` effect schedules a weekly event; `dayOfWeek` is 0 = Sunday, 1 = Monday …
+6 = Saturday (the same numbering as the `gameweekday` condition):
+
+```json
+{
+  "kind": "calendar",
+  "operation": "add",
+  "event": {
+    "id": "football",
+    "label": "Football practice",
+    "category": "social",
+    "dayOfWeek": 6,
+    "hour": 10,
+    "durationMinutes": 90
+  }
+}
+```
+
 Extensions can add their own effect kinds — see [[Extensions]].
 
 ### Autosaves
