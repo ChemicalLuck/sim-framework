@@ -1,8 +1,12 @@
 import { X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -20,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
+import { ConditionField } from '@chemicalluck/sim-engine/editor/components/condition-field';
 import {
   AddDialog,
   ConfirmDialog,
@@ -33,20 +38,50 @@ import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/templ
 import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
 import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
 
-type RawShopEntry =
-  | { kind: 'item'; itemId: string }
-  | { kind: 'wearable'; wearableId: string }
-  | { kind: 'template'; templateId: string };
+import type {
+  JsonShop as RawShop,
+  JsonShopEntry as RawShopEntry,
+  ShopGate,
+} from './authoring.types';
 
-interface RawShopTab {
-  title: string;
-  items: RawShopEntry[];
+/** Parse an optional number input: blank (or invalid) clears the field. */
+function optionalNumber(value: string): number | undefined {
+  const n = parseFloat(value);
+  return value.trim() === '' || !Number.isFinite(n) ? undefined : n;
 }
 
-interface RawShop {
-  id: string;
-  text: string;
-  tabs: RawShopTab[];
+/** Condition + locked text editor shared by tabs and entries. */
+function GateFields<T extends ShopGate>({
+  gate,
+  onChange,
+}: {
+  gate: T;
+  onChange: (updated: T) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1">
+      <ConditionField
+        condition={gate.condition}
+        onChange={(condition) => {
+          onChange({
+            ...gate,
+            condition,
+            lockedText: condition ? gate.lockedText : undefined,
+          });
+        }}
+      />
+      {gate.condition && (
+        <Input
+          value={gate.lockedText ?? ''}
+          onChange={(e) => {
+            onChange({ ...gate, lockedText: e.target.value || undefined });
+          }}
+          placeholder="locked text (blank hides)"
+          className="h-6 text-xs bg-zinc-800 border-zinc-600 flex-1"
+        />
+      )}
+    </div>
+  );
 }
 
 function entryId(entry: RawShopEntry): string {
@@ -126,35 +161,50 @@ function AddShopDialog({ onAdd }: AddShopDialogProps) {
 
 interface ShopEntryRowProps {
   entry: RawShopEntry;
+  onChange: (updated: RawShopEntry) => void;
   onRemove: () => void;
 }
 
-function ShopEntryRow({ entry, onRemove }: ShopEntryRowProps) {
+function ShopEntryRow({ entry, onChange, onRemove }: ShopEntryRowProps) {
   return (
-    <div className="flex items-center gap-2 px-3 py-2 bg-zinc-800 rounded-md">
-      <span
-        className={`text-xs px-1.5 py-0.5 rounded shrink-0 ${
-          entry.kind === 'item'
-            ? 'bg-zinc-700 text-zinc-300'
-            : entry.kind === 'wearable'
-              ? 'bg-purple-900 text-purple-300'
-              : 'bg-blue-900 text-blue-300'
-        }`}
-      >
-        {entry.kind}
-      </span>
-      <code className="flex-1 text-sm text-white truncate">
-        {entryId(entry)}
-      </code>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onRemove}
-        className="h-6 w-6 p-0 text-zinc-500 hover:text-red-400 shrink-0"
-        aria-label="Remove"
-      >
-        <X size={12} />
-      </Button>
+    <div className="px-3 py-2 bg-zinc-800 rounded-md space-y-1">
+      <div className="flex items-center gap-2">
+        <span
+          className={`text-xs px-1.5 py-0.5 rounded shrink-0 ${
+            entry.kind === 'item'
+              ? 'bg-zinc-700 text-zinc-300'
+              : entry.kind === 'wearable'
+                ? 'bg-purple-900 text-purple-300'
+                : 'bg-blue-900 text-blue-300'
+          }`}
+        >
+          {entry.kind}
+        </span>
+        <code className="flex-1 text-sm text-white truncate">
+          {entryId(entry)}
+        </code>
+        <Input
+          type="number"
+          min="0"
+          value={entry.price ?? ''}
+          onChange={(e) => {
+            onChange({ ...entry, price: optionalNumber(e.target.value) });
+          }}
+          placeholder="price"
+          title="Price override (blank uses the item value)"
+          className="h-6 w-20 text-xs bg-zinc-900 border-zinc-600 shrink-0"
+        />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="h-6 w-6 p-0 text-zinc-500 hover:text-red-400 shrink-0"
+          aria-label="Remove"
+        >
+          <X size={12} />
+        </Button>
+      </div>
+      <GateFields gate={entry} onChange={onChange} />
     </div>
   );
 }
@@ -247,6 +297,21 @@ function ShopDetail({ shop, onChange, refs }: ShopDetailProps) {
   const [addingTab, setAddingTab] = useState(false);
   const [newTabTitle, setNewTabTitle] = useState('');
 
+  function updateTab(tabIdx: number, tab: RawShop['tabs'][number]) {
+    onChange({
+      ...shop,
+      tabs: shop.tabs.map((t, ti) => (ti === tabIdx ? tab : t)),
+    });
+  }
+
+  function updateEntry(tabIdx: number, entryIdx: number, entry: RawShopEntry) {
+    const tab = shop.tabs[tabIdx];
+    updateTab(tabIdx, {
+      ...tab,
+      items: tab.items.map((e, ei) => (ei === entryIdx ? entry : e)),
+    });
+  }
+
   function removeEntry(tabIdx: number, entryIdx: number) {
     onChange({
       ...shop,
@@ -292,6 +357,24 @@ function ShopDetail({ shop, onChange, refs }: ShopDetailProps) {
         />
       </Field>
 
+      <Field>
+        <Label>Price multiplier</Label>
+        <Input
+          type="number"
+          min="0"
+          step="0.05"
+          value={shop.priceMultiplier ?? ''}
+          onChange={(e) => {
+            onChange({
+              ...shop,
+              priceMultiplier: optionalNumber(e.target.value),
+            });
+          }}
+          placeholder="1"
+          className="bg-zinc-800 border-zinc-600 w-32"
+        />
+      </Field>
+
       <ReferencedBy refs={refs} />
 
       {shop.tabs.map((tab, tabIdx) => (
@@ -312,6 +395,12 @@ function ShopDetail({ shop, onChange, refs }: ShopDetailProps) {
               <X size={12} />
             </Button>
           </div>
+          <GateFields
+            gate={tab}
+            onChange={(updated) => {
+              updateTab(tabIdx, updated);
+            }}
+          />
           <div className="space-y-1">
             {tab.items.length === 0 ? (
               <p className="text-xs text-zinc-500 italic px-2">No items</p>
@@ -320,6 +409,9 @@ function ShopDetail({ shop, onChange, refs }: ShopDetailProps) {
                 <ShopEntryRow
                   key={entryId(entry)}
                   entry={entry}
+                  onChange={(updated) => {
+                    updateEntry(tabIdx, ei, updated);
+                  }}
                   onRemove={() => {
                     removeEntry(tabIdx, ei);
                   }}

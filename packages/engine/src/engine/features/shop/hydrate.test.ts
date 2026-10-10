@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
 import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
@@ -102,5 +103,63 @@ describe('hydrateShop', () => {
     expect(result.text).toBe('Buy stuff');
     expect(result.tabs[0].title).toBe('Food');
     expect(result.tabs[0].items[0]).toEqual({ kind: 'item', data: item });
+  });
+
+  it('leaves existing shops without pricing or condition fields', () => {
+    const result = hydrateShop(
+      {
+        id: 'shop1',
+        text: 'Buy stuff',
+        tabs: [{ title: 'Food', items: [{ kind: 'item', itemId: 'apple' }] }],
+      },
+      ctx,
+    );
+    expect(Object.keys(result)).toEqual(['text', 'tabs']);
+    expect(Object.keys(result.tabs[0])).toEqual(['title', 'items']);
+    expect(Object.keys(result.tabs[0].items[0])).toEqual(['kind', 'data']);
+  });
+
+  it('carries the multiplier, entry price and conditions through', () => {
+    const condition = {
+      kind: 'gte' as const,
+      lhs: { kind: 'money' as const },
+      rhs: { kind: 'const' as const, value: 5 },
+    };
+    const result = hydrateShop(
+      {
+        id: 'shop1',
+        text: 'Buy stuff',
+        priceMultiplier: 1.25,
+        tabs: [
+          {
+            title: 'VIP',
+            condition,
+            lockedText: 'VIP only',
+            items: [
+              {
+                kind: 'template',
+                templateId: 'tpl',
+                price: 3,
+                condition,
+                lockedText: 'Locked',
+              },
+            ],
+          },
+        ],
+      },
+      ctx,
+    );
+    expect(result.priceMultiplier).toBe(1.25);
+    expect(result.tabs[0]).toMatchObject({
+      condition,
+      lockedText: 'VIP only',
+    });
+    expect(result.tabs[0].items[0]).toEqual({
+      kind: 'template',
+      data: templateWithId,
+      price: 3,
+      condition,
+      lockedText: 'Locked',
+    });
   });
 });

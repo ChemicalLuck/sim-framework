@@ -207,7 +207,32 @@ Wearable templates (and wearables in `items.json`) can carry `warmth` and a free
 (`warmth`, `coverage`, `value`, or any numeric key in `attributes`; other values count
 as 0).
 
-## Scripts
+## Shops
+
+A shop in `shops.json` lists tabs of `item`, `wearable` and `template` entries. By default
+an entry costs its item or template `value`. Optional fields:
+
+```json
+{
+  "id": "boutique",
+  "text": "A pricey boutique.",
+  "priceMultiplier": 1.5,
+  "tabs": [
+    {
+      "title": "Members",
+      "condition": { "kind": "milestone", "milestoneId": "member" },
+      "lockedText": "Members only",
+      "items": [{ "kind": "item", "itemId": "coffee", "price": 3 }]
+    }
+  ]
+}
+```
+
+- `priceMultiplier` scales every entry's value (rounded to cents).
+- `price` on an entry sets its exact price, ignoring the value and the multiplier.
+- `condition` on a tab or entry hides it while unmet; add `lockedText` to show it
+  disabled with that text instead, as with actions.
+
 
 A script plays its scenes in order (or randomly), one per action, advancing time each
 turn, then applies `completionEffects`. Add `leave` to let the player end it early:

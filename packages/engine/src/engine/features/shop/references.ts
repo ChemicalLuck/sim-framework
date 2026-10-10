@@ -4,9 +4,10 @@ import {
   type NodeRefRewriter,
   type ReferenceProvider,
   type ReferenceRewriter,
+  flattenConditions,
 } from '@chemicalluck/sim-engine/lib/validation';
 
-import type { JsonShop } from './authoring.types';
+import type { JsonShop, ShopGate } from './authoring.types';
 
 export const idSources: IdSource[] = [
   {
@@ -20,20 +21,26 @@ export const referenceProviders: ReferenceProvider[] = [
   {
     file: 'shops',
     section: 'shops',
-    collect: (data) =>
-      (data as JsonShop[]).flatMap((shop) =>
-        shop.tabs.flatMap((tab) =>
-          tab.items.map((entry) => {
+    collect: (data, extract) =>
+      (data as JsonShop[]).flatMap((shop) => {
+        const tag = { source: `shop:${shop.id}`, section: 'shops' };
+        const conditionRefs = (gate: ShopGate) =>
+          flattenConditions(gate.condition).flatMap((c) =>
+            extract(c).map((ref) => ({ ...ref, ...tag })),
+          );
+        return shop.tabs.flatMap((tab) => [
+          ...conditionRefs(tab),
+          ...tab.items.flatMap((entry) => {
             const ref =
               entry.kind === 'item'
                 ? { namespace: 'item', id: entry.itemId }
                 : entry.kind === 'wearable'
                   ? { namespace: 'wearable', id: entry.wearableId }
                   : { namespace: 'wearableTemplate', id: entry.templateId };
-            return { ...ref, source: `shop:${shop.id}`, section: 'shops' };
+            return [{ ...ref, ...tag }, ...conditionRefs(entry)];
           }),
-        ),
-      ),
+        ]);
+      }),
   },
 ];
 
@@ -65,11 +72,17 @@ export const nodeRefRewriters: NodeRefRewriter[] = [shopViewRewrite];
 export const referenceRewriters: ReferenceRewriter[] = [
   {
     file: 'shops',
-    rewrite: (data, _rewriteNode, ns, oldId, newId) => {
+    rewrite: (data, rewriteNode, ns, oldId, newId) => {
       let count = 0;
+      const rewriteGate = (gate: ShopGate) => {
+        for (const c of flattenConditions(gate.condition))
+          if (rewriteNode(c)) count++;
+      };
       for (const shop of data as JsonShop[]) {
         for (const tab of shop.tabs) {
+          rewriteGate(tab);
           for (const entry of tab.items) {
+            rewriteGate(entry);
             if (entry.kind === 'item') {
               if (ns === 'item' && entry.itemId === oldId) {
                 entry.itemId = newId;
