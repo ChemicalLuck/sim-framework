@@ -236,7 +236,11 @@ an entry costs its item or template `value`. Optional fields:
 
 ## Weather
 
-Weather is generated per day from the game seed. Without `weather.json` each season picks
+Weather is generated per day from the game seed, then varies hour by hour: spells of a
+similar condition (a shower on a cloudy day) and a temperature curve that peaks
+mid-afternoon. `weather == '<id>'`, the sidebar and the `weather`/`weatherLabel`/`temperature`
+template variables use the current hour. Bad weather drains needs for every hour the
+clock passes through, at half rate while asleep. Without `weather.json` each season picks
 evenly from a built-in pool. `weather.json` (every field optional) tunes it:
 
 ```json

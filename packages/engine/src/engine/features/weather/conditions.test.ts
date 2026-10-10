@@ -5,7 +5,7 @@ import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import evaluators, { comparisonParsers } from './conditions';
 import { hydrateWeather } from './hydrate';
 import { configureWeather } from './lib/config';
-import { computeDayWeather } from './lib/weather';
+import { computeHourWeather } from './lib/weather';
 
 describe('weather comparison parser', () => {
   const parse = comparisonParsers[0];
@@ -44,7 +44,7 @@ function stateAt(timestamp: number, seed: number): RootState {
 }
 
 describe('weather condition evaluator', () => {
-  it('uses the game seed when computing the day weather', () => {
+  it('uses the game seed when computing the current hour weather', () => {
     const seed = 12345;
     const start = new Date('2025-01-01T12:00:00').getTime();
     const day = 24 * 60 * 60 * 1000;
@@ -53,13 +53,15 @@ describe('weather condition evaluator', () => {
     for (let i = 0; i < 365; i++, ts += day) {
       const d = new Date(ts);
       if (
-        computeDayWeather(d, seed).conditionId !==
-        computeDayWeather(d, 0).conditionId
+        computeHourWeather(d, 12, seed).conditionId !==
+        computeHourWeather(d, 12, 0).conditionId
       )
         break;
     }
-    const expected = computeDayWeather(new Date(ts), seed).conditionId;
-    expect(expected).not.toBe(computeDayWeather(new Date(ts), 0).conditionId);
+    const expected = computeHourWeather(new Date(ts), 12, seed).conditionId;
+    expect(expected).not.toBe(
+      computeHourWeather(new Date(ts), 12, 0).conditionId,
+    );
 
     expect(
       evaluators.weather(

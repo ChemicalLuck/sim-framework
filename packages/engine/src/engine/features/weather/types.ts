@@ -50,6 +50,11 @@ export interface DailyWeather {
   seasonId: SeasonId;
 }
 
+/** The weather for one hour of a day: the daily condition plus intra-day variation. */
+export interface HourlyWeather extends DailyWeather {
+  hour: number;
+}
+
 export interface SeasonCondition {
   kind: 'season';
   seasonId: SeasonId;

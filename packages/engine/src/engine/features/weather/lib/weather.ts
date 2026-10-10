@@ -8,6 +8,7 @@ import {
 
 import type {
   DailyWeather,
+  HourlyWeather,
   SeasonId,
   WeatherConditionId,
   WeightedCondition,
@@ -136,6 +137,79 @@ export function computeDayWeather(date: Date, masterSeed = 0): DailyWeather {
     temperature: computeTemperature(date, conditionId, masterSeed),
     seasonId: getSeason(date),
   };
+}
+
+/**
+ * The day's condition for each hour: spells of 2–5 hours that either keep the
+ * daily condition or switch to one of its closest in-season neighbours (a
+ * shower on a cloudy day, a dry spell on a rainy one). Changeable conditions
+ * (mid precipitation chance) vary most; settled ones barely at all.
+ */
+function dayPattern(date: Date, masterSeed: number): WeatherConditionId[] {
+  const daily = pickCondition(date, masterSeed);
+  const rng = new Mulberry32((daySeed(date) ^ 0x9e3779b9 ^ masterSeed) >>> 0);
+  const p = getWeatherCondition(daily).precipitationChance;
+  const variability = Math.min(0.45, 1.6 * p * (1 - p));
+  const neighbours = seasonPool(getSeason(date))
+    .map((c) => c.id)
+    .filter((id) => id !== daily)
+    .sort((a, b) => conditionDistance(daily, a) - conditionDistance(daily, b))
+    .slice(0, 2);
+
+  const hours: WeatherConditionId[] = [];
+  while (hours.length < 24) {
+    const length = 2 + Math.floor(rng.next() * 4);
+    const id =
+      neighbours.length > 0 && rng.next() < variability
+        ? neighbours[Math.floor(rng.next() * neighbours.length)]
+        : daily;
+    for (let i = 0; i < length; i++) hours.push(id);
+  }
+  return hours.slice(0, 24);
+}
+
+/**
+ * The weather at `hour` (0–23) of `date`'s day. The temperature follows a
+ * daily curve around the day's temperature — warmest mid-afternoon, coldest
+ * before dawn, flatter under cloud and rain — shifted toward the hour's
+ * condition when it differs from the day's.
+ */
+export function computeHourWeather(
+  date: Date,
+  hour: number,
+  masterSeed = 0,
+): HourlyWeather {
+  const day = computeDayWeather(date, masterSeed);
+  const conditionId = dayPattern(date, masterSeed)[hour] ?? day.conditionId;
+  const condition = getWeatherCondition(conditionId);
+  const amplitude = 2 + 3 * (1 - condition.precipitationChance);
+  const curve = amplitude * Math.cos((2 * Math.PI * (hour - 15)) / 24);
+  const shift =
+    (condition.tempMin +
+      condition.tempMax -
+      day.condition.tempMin -
+      day.condition.tempMax) /
+    4;
+  return {
+    conditionId,
+    condition,
+    temperature: Math.round(day.temperature + curve + shift),
+    seasonId: day.seasonId,
+    hour,
+  };
+}
+
+/** The clock hour (0–23) of a game time, as `selectHour` reports it. */
+export function hourOfDay(date: Date): number {
+  return date.getHours();
+}
+
+/** Milliseconds from a game time to the start of the next clock hour. */
+export function msToNextHour(date: Date): number {
+  return (
+    ((60 - date.getMinutes()) * 60 - date.getSeconds()) * 1000 -
+    date.getMilliseconds()
+  );
 }
 
 export function getWeatherForDay(
