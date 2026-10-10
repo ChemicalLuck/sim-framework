@@ -1,7 +1,11 @@
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
+
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
-import { mockEditorDataHandle, renderEditorPanel } from '@chemicalluck/sim-engine/test-utils/render';
+import {
+  mockEditorDataHandle,
+  renderEditorPanel,
+} from '@chemicalluck/sim-engine/test-utils/render';
 
 import editor from './editor';
 

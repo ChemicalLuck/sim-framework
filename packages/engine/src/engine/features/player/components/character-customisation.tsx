@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
   Form,
@@ -43,9 +44,15 @@ import {
   setProfile,
   updateSkill,
 } from '@chemicalluck/sim-engine/features/player/slice';
-import { type ViewState, setView } from '@chemicalluck/sim-engine/features/view/slice';
+import {
+  type ViewState,
+  setView,
+} from '@chemicalluck/sim-engine/features/view/slice';
 import { appName } from '@chemicalluck/sim-engine/lib/core';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineSelector,
+} from '@chemicalluck/sim-engine/state/store';
 import type {
   BodyAttributes,
   CharacterProfileTemplate,

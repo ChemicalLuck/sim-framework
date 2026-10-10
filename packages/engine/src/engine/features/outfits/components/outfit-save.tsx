@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { addOutfit } from '@chemicalluck/sim-engine/features/outfits/slice';
 import { selectEquipment } from '@chemicalluck/sim-engine/features/player/selectors';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineSelector,
+} from '@chemicalluck/sim-engine/state/store';
 
 export default function OutfitSave() {
   const equipment = useEngineSelector(selectEquipment);

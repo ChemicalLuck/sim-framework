@@ -3,12 +3,16 @@ import { useMemo, useState } from 'react';
 import { Provider } from 'react-redux';
 import { views as gameViews } from 'virtual:game-extensions';
 import { content } from 'virtual:game-setup';
+
 import { GameSidebar } from '@chemicalluck/sim-engine/components/sidebar';
 import { SidebarComponentContext } from '@chemicalluck/sim-engine/components/sidebar/context';
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { SidebarProvider } from '@chemicalluck/sim-engine/components/ui/sidebar';
 import { ThemeProvider } from '@chemicalluck/sim-engine/components/ui/theme-provider';
-import { hydrateScene, hydrateScript } from '@chemicalluck/sim-engine/features/core/hydrate';
+import {
+  hydrateScene,
+  hydrateScript,
+} from '@chemicalluck/sim-engine/features/core/hydrate';
 import { hydrateEncounter } from '@chemicalluck/sim-engine/features/encounter/hydrate';
 import { startEncounter } from '@chemicalluck/sim-engine/features/encounter/slice';
 import { initConversationTopics } from '@chemicalluck/sim-engine/features/npcs/lib/conversation-topics';

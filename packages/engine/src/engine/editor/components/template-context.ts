@@ -1,5 +1,8 @@
 import { extensionTemplateLintVars } from '@chemicalluck/sim-engine/features/linguistics/extension-lint-vars';
-import { getMacros, getTerms } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
+import {
+  getMacros,
+  getTerms,
+} from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import type { TemplateLintContext } from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
 import { entityAwareVariableNames } from '@chemicalluck/sim-engine/features/linguistics/lib/variables';
 import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';

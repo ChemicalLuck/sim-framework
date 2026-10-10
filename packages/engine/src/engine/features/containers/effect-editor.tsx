@@ -18,7 +18,6 @@ import {
 } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
-
 const CONTAINER_OPS = [
   'deposit',
   'deposit_wearables',

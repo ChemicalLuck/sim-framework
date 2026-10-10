@@ -1,5 +1,8 @@
 import type { Character } from '@chemicalluck/sim-engine/types/character.types';
-import type { BaseEffect, Effect } from '@chemicalluck/sim-engine/types/effect.types';
+import type {
+  BaseEffect,
+  Effect,
+} from '@chemicalluck/sim-engine/types/effect.types';
 import type { NpcFilter } from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 export type JsonNpcSelection =

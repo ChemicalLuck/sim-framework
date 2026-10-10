@@ -1,5 +1,6 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Field } from '@chemicalluck/sim-engine/components/ui/field';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
@@ -11,7 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
-import type { NpcFilter, NpcSelection } from '@chemicalluck/sim-engine/types/npc-filter.types';
+import type {
+  NpcFilter,
+  NpcSelection,
+} from '@chemicalluck/sim-engine/types/npc-filter.types';
 
 import { NpcFiltersEditor } from './npc-filters-editor';
 

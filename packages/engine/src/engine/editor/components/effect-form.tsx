@@ -1,8 +1,12 @@
 import { X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+
 import { Badge } from '@chemicalluck/sim-engine/components/ui/badge';
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
   Select,

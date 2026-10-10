@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { configureLinguistics } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
-import type { BodyAttributes, CharacterProfile } from '@chemicalluck/sim-engine/types';
+import type {
+  BodyAttributes,
+  CharacterProfile,
+} from '@chemicalluck/sim-engine/types';
 
 import {
   type AppearanceJsonData,

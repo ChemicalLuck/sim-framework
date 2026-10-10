@@ -1,6 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import { selectNearbyNpcsCount } from '@chemicalluck/sim-engine/features/npcs/selectors';
-import { selectHour, selectTimeOfDay } from '@chemicalluck/sim-engine/features/time/selectors';
+import {
+  selectHour,
+  selectTimeOfDay,
+} from '@chemicalluck/sim-engine/features/time/selectors';
 import {
   selectSeason,
   selectTemperature,

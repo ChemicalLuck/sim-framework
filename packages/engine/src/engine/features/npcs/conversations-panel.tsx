@@ -1,7 +1,11 @@
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Checkbox } from '@chemicalluck/sim-engine/components/ui/checkbox';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,

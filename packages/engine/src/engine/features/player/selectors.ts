@@ -1,8 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
 import { addIndefiniteArticle } from '@chemicalluck/sim-engine/lib/linguistics';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
-import type { ActionGroup, BodyAttributes, Equipment } from '@chemicalluck/sim-engine/types';
+import type {
+  ActionGroup,
+  BodyAttributes,
+  Equipment,
+} from '@chemicalluck/sim-engine/types';
 import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
 import { selectTemplateVars } from '../linguistics/extension-vars-selector';

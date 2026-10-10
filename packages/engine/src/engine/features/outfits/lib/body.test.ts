@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
 
 import { estimateMetric, resolveMetric } from './body';

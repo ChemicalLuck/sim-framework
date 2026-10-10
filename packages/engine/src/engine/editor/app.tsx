@@ -10,6 +10,7 @@ import {
 } from 'react-router';
 import { Toaster } from 'sonner';
 import editorExtensions from 'virtual:editor-extensions';
+
 import {
   Sidebar,
   SidebarContent,

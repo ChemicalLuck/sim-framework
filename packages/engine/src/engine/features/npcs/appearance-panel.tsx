@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
@@ -6,7 +7,10 @@ import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-contex
 import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { extensionTemplateLintVars } from '@chemicalluck/sim-engine/features/linguistics/extension-lint-vars';
-import { getMacros, getTerms } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
+import {
+  getMacros,
+  getTerms,
+} from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import type { TemplateLintContext } from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
 import { baseTemplateVariableNames } from '@chemicalluck/sim-engine/features/linguistics/lib/variables';
 import type {

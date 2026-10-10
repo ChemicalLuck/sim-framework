@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+
 import { makeConfig } from '@chemicalluck/sim-engine/lib/core';
 
 const _money = makeConfig(0);

@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+
 import {
   CommandDialog,
   CommandEmpty,

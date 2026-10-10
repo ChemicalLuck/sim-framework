@@ -1,6 +1,9 @@
 import type { Action } from '@chemicalluck/sim-engine/types/action.types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
-import type { BaseEffect, Effect } from '@chemicalluck/sim-engine/types/effect.types';
+import type {
+  BaseEffect,
+  Effect,
+} from '@chemicalluck/sim-engine/types/effect.types';
 import type { Scene } from '@chemicalluck/sim-engine/types/scene.types';
 
 export type ObjectiveTrigger = Action | Condition;

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
 import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
 import type { MilestoneCondition } from '@chemicalluck/sim-engine/features/milestones/types';
@@ -47,11 +48,7 @@ function makeCtx(overrides: Partial<HydrationContext> = {}): HydrationContext {
   return {
     items: buildRegistry('item', [item], (i) => i.id),
     wearables: buildRegistry('wearable', [wearable], (w) => w.id),
-    templates: buildRegistry(
-      'template',
-      [templateWithId],
-      (t) => t.id,
-    ),
+    templates: buildRegistry('template', [templateWithId], (t) => t.id),
     scenes: buildRegistry(
       'scene',
       [{ ...baseScene, id: 'room' }] as (Scene & { id: string })[],

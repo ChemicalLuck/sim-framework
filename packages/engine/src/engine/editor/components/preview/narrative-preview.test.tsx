@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { JsonScene } from '@chemicalluck/sim-engine/features/core/types';
 import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 import { renderEditorPanel } from '@chemicalluck/sim-engine/test-utils/render';
