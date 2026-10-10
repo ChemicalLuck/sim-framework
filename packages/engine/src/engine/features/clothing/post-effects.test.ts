@@ -192,3 +192,106 @@ describe('clothing comfort post-effect', () => {
     expect(twoHours).toBeCloseTo(oneHour * 2);
   });
 });
+
+describe('clothing need drains', () => {
+  const baseConfig = {
+    slots: [],
+    categories: [],
+    slotCategoryMap: {},
+    styles: [],
+    appearanceKeys: [],
+    primaryBodyAttributes: ['height', 'weight', 'bodyFat'],
+    estimatedMetrics: {},
+    sizeSystems: {},
+  };
+
+  beforeEach(() => {
+    configureWorld({ locations: [park, home], edges: [] });
+    configureWearables(baseConfig);
+  });
+
+  function runNeeds(clothing: ClothingState, minutes = 60) {
+    const dispatch = vi.fn<(action: DispatchedAction) => void>();
+    const present = {
+      time: { timestamp: minutes * 60000 },
+      player: {
+        locationId: 'home',
+        equipment: { jacket },
+        body: { height: 170, weight: 70, bodyFat: 20 },
+        profile: { appearance: {} },
+      },
+      weather: { conditionOverride: null },
+      rng: { seed: 1 },
+      clothing,
+    };
+    const ctx = {
+      dispatch,
+      group: 'g',
+      prevState: { present: { time: { timestamp: 0 } } } as RootState,
+      newState: { present } as unknown as RootState,
+      effects: [],
+    } as unknown as EffectContext;
+    clothingPostEffect(ctx);
+    return dispatch.mock.calls
+      .map(
+        (c) =>
+          c[0] as DispatchedAction & {
+            payload?: { need?: string; amount?: number };
+          },
+      )
+      .filter((a) => a.type === 'needs/increaseNeedByAmount')
+      .map((a) => a.payload);
+  }
+
+  const dirty: ClothingState = {
+    'jacket-1': { isWet: false, isDirty: true, wearMinutes: 600 },
+  };
+
+  it('drains Hygiene and Comfort by default', () => {
+    const needs = runNeeds(dirty).map((p) => p?.need);
+    expect(needs).toContain('Hygiene');
+    expect(needs).toContain('Comfort');
+  });
+
+  it('counts items that become dirty during this update', () => {
+    // 470 + 60 minutes crosses the 480-minute dirty threshold.
+    const needs = runNeeds({
+      'jacket-1': { isWet: false, isDirty: false, wearMinutes: 470 },
+    });
+    expect(needs).toContainEqual({ need: 'Hygiene', amount: -1 });
+  });
+
+  it('does not drain Hygiene for clean clothing', () => {
+    const needs = runNeeds({
+      'jacket-1': { isWet: false, isDirty: false, wearMinutes: 0 },
+    });
+    expect(needs.map((p) => p?.need)).not.toContain('Hygiene');
+  });
+
+  it('uses configured need names and rates', () => {
+    configureWearables({
+      ...baseConfig,
+      clothingNeeds: {
+        hygiene: {
+          need: 'Cleanliness',
+          drainPerDirtyItemPerHour: 2,
+          maxDrainPerHour: 10,
+        },
+        comfort: { need: 'Ease', recoveryPerHour: 4 },
+      },
+    });
+    const needs = runNeeds(dirty);
+    expect(needs).toContainEqual({ need: 'Cleanliness', amount: -2 });
+    expect(needs).toContainEqual({ need: 'Ease', amount: 4 });
+    expect(needs.map((p) => p?.need)).not.toContain('Hygiene');
+    expect(needs.map((p) => p?.need)).not.toContain('Comfort');
+  });
+
+  it('disables a drain when its entry is null', () => {
+    configureWearables({
+      ...baseConfig,
+      clothingNeeds: { hygiene: null, comfort: null },
+    });
+    expect(runNeeds(dirty)).toEqual([]);
+  });
+});

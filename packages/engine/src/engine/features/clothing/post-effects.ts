@@ -5,6 +5,7 @@ import {
 import { increaseNeedByAmount } from '@chemicalluck/sim-engine/features/needs/slice';
 import { evaluateFit } from '@chemicalluck/sim-engine/features/outfits/lib/fit';
 import {
+  getClothingNeeds,
   getEstimatedMetrics,
   getSizeSystems,
 } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
@@ -14,16 +15,8 @@ import type { WeatherConditionId } from '@chemicalluck/sim-engine/features/weath
 import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
 
-import { addWearMinutes, ensureItems, setWet } from './slice';
+import clothingReducer, { addWearMinutes, ensureItems, setWet } from './slice';
 import { UMBRELLA_SLOT, WET_WEATHER_CONDITIONS } from './types';
-
-const MAX_HYGIENE_DRAIN_PER_HOUR = 3;
-const DIRTY_HYGIENE_DRAIN_PER_ITEM_PER_HOUR = 1;
-
-const COMFORT_NEED = 'Comfort';
-const COMFORT_DRAIN_PER_MISMATCH_PER_HOUR = 1.5;
-const MAX_COMFORT_DRAIN_PER_HOUR = 6;
-const COMFORT_RECOVERY_PER_HOUR = 5;
 
 const clothingPostEffect: PostEffectHandler = ({
   dispatch,
@@ -48,11 +41,15 @@ const clothingPostEffect: PostEffectHandler = ({
     .map((w) => w.instanceId)
     .filter((id): id is string => id != null);
 
-  dispatchWithGroup(dispatch, ensureItems(equippedIds), group);
-  dispatchWithGroup(
-    dispatch,
-    addWearMinutes({ ids: equippedIds, minutes: totalMinutes }),
-    group,
+  // newState predates the wear-time update below, so fold the same actions
+  // through the reducer to see which items are dirty after it.
+  const ensure = ensureItems(equippedIds);
+  const wear = addWearMinutes({ ids: equippedIds, minutes: totalMinutes });
+  dispatchWithGroup(dispatch, ensure, group);
+  dispatchWithGroup(dispatch, wear, group);
+  const clothing = clothingReducer(
+    clothingReducer(newState.present.clothing, ensure),
+    wear,
   );
 
   const effectiveId: WeatherConditionId = selectWeatherConditionId(newState);
@@ -61,7 +58,6 @@ const clothingPostEffect: PostEffectHandler = ({
   const isWetWeather = WET_WEATHER_CONDITIONS.has(effectiveId);
   const currentLocation = getLocationById(newState.present.player.locationId);
   const isOutdoors = currentLocation?.kind !== 'interior';
-  const clothing = newState.present.clothing;
 
   // Clothing only gets wet outdoors in wet weather (without an umbrella).
   // Anywhere else — indoors, or once the weather clears — it dries off.
@@ -74,27 +70,29 @@ const clothingPostEffect: PostEffectHandler = ({
     }
   }
 
+  const { hygiene, comfort } = getClothingNeeds();
+
   const dirtyCount = equippedIds.filter(
     (id) => clothing[id]?.isDirty ?? false,
   ).length;
 
-  if (dirtyCount > 0) {
+  if (hygiene && dirtyCount > 0) {
     const drainPerHour = Math.min(
-      dirtyCount * DIRTY_HYGIENE_DRAIN_PER_ITEM_PER_HOUR,
-      MAX_HYGIENE_DRAIN_PER_HOUR,
+      dirtyCount * hygiene.drainPerDirtyItemPerHour,
+      hygiene.maxDrainPerHour,
     );
     const amount = -(drainPerHour * (totalMinutes / 60));
     dispatchWithGroup(
       dispatch,
-      increaseNeedByAmount({ need: 'Hygiene', amount }),
+      increaseNeedByAmount({ need: hygiene.need, amount }),
       group,
     );
   }
 
   // Wrong-size clothing is uncomfortable: each mismatched size step drains the
-  // Comfort need; a well-fitted outfit lets Comfort recover toward full.
+  // comfort need; a well-fitted outfit lets it recover toward full.
   const body = newState.present.player.body as BodyAttributes | undefined;
-  if (body) {
+  if (comfort && body) {
     const gender = newState.present.player.profile.appearance.gender;
     const fitConfig = {
       sizeSystems: getSizeSystems(),
@@ -108,14 +106,14 @@ const clothingPostEffect: PostEffectHandler = ({
     const ratePerHour =
       totalMismatch > 0
         ? -Math.min(
-            totalMismatch * COMFORT_DRAIN_PER_MISMATCH_PER_HOUR,
-            MAX_COMFORT_DRAIN_PER_HOUR,
+            totalMismatch * comfort.drainPerMismatchPerHour,
+            comfort.maxDrainPerHour,
           )
-        : COMFORT_RECOVERY_PER_HOUR;
+        : comfort.recoveryPerHour;
     dispatchWithGroup(
       dispatch,
       increaseNeedByAmount({
-        need: COMFORT_NEED,
+        need: comfort.need,
         amount: ratePerHour * (totalMinutes / 60),
       }),
       group,

@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import {
@@ -23,6 +24,7 @@ interface WearablesCfg {
   primaryBodyAttributes?: string[];
   estimatedMetrics?: Record<string, unknown>;
   sizeSystems?: Record<string, unknown>;
+  clothingNeeds?: Record<string, unknown>;
 }
 
 interface JsonEditorProps {
@@ -237,6 +239,9 @@ function WearablesConfigPanel() {
   const [sizeSystems, setSizeSystems] = useState<Record<string, unknown>>(
     cfg.sizeSystems ?? {},
   );
+  const [clothingNeeds, setClothingNeeds] = useState<Record<string, unknown>>(
+    cfg.clothingNeeds ?? {},
+  );
   const [newSlot, setNewSlot] = useState('');
 
   const dirty = useMemo(
@@ -251,6 +256,7 @@ function WearablesConfigPanel() {
         primaryBodyAttributes,
         estimatedMetrics,
         sizeSystems,
+        clothingNeeds,
       }) !==
       JSON.stringify({
         slots: cfg.slots,
@@ -262,6 +268,7 @@ function WearablesConfigPanel() {
         primaryBodyAttributes: cfg.primaryBodyAttributes ?? [],
         estimatedMetrics: cfg.estimatedMetrics ?? {},
         sizeSystems: cfg.sizeSystems ?? {},
+        clothingNeeds: cfg.clothingNeeds ?? {},
       }),
     [
       slots,
@@ -273,6 +280,7 @@ function WearablesConfigPanel() {
       primaryBodyAttributes,
       estimatedMetrics,
       sizeSystems,
+      clothingNeeds,
       cfg,
     ],
   );
@@ -287,6 +295,7 @@ function WearablesConfigPanel() {
     setPrimaryBodyAttributes(cfg.primaryBodyAttributes ?? []);
     setEstimatedMetrics(cfg.estimatedMetrics ?? {});
     setSizeSystems(cfg.sizeSystems ?? {});
+    setClothingNeeds(cfg.clothingNeeds ?? {});
   }
 
   function handleAddSlot(slot: string) {
@@ -330,6 +339,7 @@ function WearablesConfigPanel() {
         primaryBodyAttributes,
         estimatedMetrics,
         sizeSystems,
+        ...(Object.keys(clothingNeeds).length > 0 && { clothingNeeds }),
       },
       'Wearable config saved',
     );
@@ -502,6 +512,18 @@ function WearablesConfigPanel() {
           trousers waist/length and bras band/cup) and a labelFormat.
         </p>
         <JsonEditor value={sizeSystems} onChange={setSizeSystems} />
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
+          Clothing Needs
+        </h3>
+        <p className="text-xs text-zinc-500">
+          Needs drained by dirty (hygiene) and ill-fitting (comfort) clothing,
+          e.g. {'{ "hygiene": { "need": "Hygiene" }, "comfort": null }'}.
+          Omitted entries use the defaults; null disables a drain.
+        </p>
+        <JsonEditor value={clothingNeeds} onChange={setClothingNeeds} />
       </div>
     </div>
   );

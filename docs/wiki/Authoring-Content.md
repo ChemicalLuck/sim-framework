@@ -167,6 +167,32 @@ Optional per-need `options`:
 - `thresholds`: effects applied when the need crosses `at` toward its bad end (or the
   direction given by `"when": "rising" | "falling"`), including reaching 0 or 100.
 
+## Clothing
+
+Worn clothing tracks wet, dirty and wear time. The `wearable_condition` effect changes it
+for a wearable id (or `"*"` for every wearable the player owns):
+
+```json
+{ "kind": "wearable_condition", "target": "*" }
+{ "kind": "wearable_condition", "target": "shirt", "set": { "wet": true }, "silent": true }
+```
+
+Without `set` the items are laundered (clean, dry, 0 wear minutes). `set` overrides only
+the given fields: `wet`, `dirty`, `wearMinutes` (when `dirty` is omitted it follows the
+wear-time threshold). `silent` suppresses the toast.
+
+Dirty clothing drains `Hygiene` and badly-fitting clothing drains `Comfort` (which recovers
+when the outfit fits). Change the needs and rates (points per hour) with `clothingNeeds` in
+`wearables-config.json`; set an entry to `null` to turn that drain off. A need that isn't
+declared in `needs.json` is ignored.
+
+```json
+"clothingNeeds": {
+  "hygiene": { "need": "Cleanliness", "drainPerDirtyItemPerHour": 1, "maxDrainPerHour": 3 },
+  "comfort": { "need": "Comfort", "drainPerMismatchPerHour": 1.5, "maxDrainPerHour": 6, "recoveryPerHour": 5 }
+}
+```
+
 ## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each
