@@ -11,7 +11,7 @@ import {
   renderEditorPanel,
 } from '@chemicalluck/sim-engine/test-utils/render';
 
-import type { JsonQuest } from './authoring.types';
+import type { JsonQuest, JsonQuestTemplate } from './authoring.types';
 import editor from './editor';
 
 vi.mock('@chemicalluck/sim-engine/editor/lib/use-editor-data', () => ({
@@ -38,6 +38,7 @@ vi.mock('@chemicalluck/sim-engine/editor/components/template-editor', () => ({
 }));
 
 const QuestsPanel = editor.panels.quests.component;
+const QuestTemplatesPanel = editor.panels['quest-templates'].component;
 
 const quests: JsonQuest[] = [
   {
@@ -57,6 +58,61 @@ const quests: JsonQuest[] = [
       },
     ],
   },
+  {
+    id: 'bakery',
+    name: 'Work at the bakery',
+    objectives: [
+      {
+        name: 'bake',
+        state: 'available',
+        condition: {
+          kind: 'action',
+          text: 'Bake a cake',
+          effects: [{ kind: 'money', amount: -5 }],
+        },
+      },
+      {
+        name: 'apply',
+        state: 'available',
+        condition: { kind: 'scene', sceneId: 'interview' },
+      },
+      {
+        name: 'shift',
+        state: 'available',
+        condition: {
+          kind: 'scene',
+          text: 'You work a shift.',
+          actions: [
+            { actions: [{ kind: 'action', text: 'Leave', effects: [] }] },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+const templates: JsonQuestTemplate[] = [
+  {
+    id: 'meet',
+    idTemplate: 'meet_{npc0.id}',
+    name: 'Meet {npc0.firstName}',
+    objectives: [
+      {
+        name: 'greet',
+        state: 'available',
+        condition: {
+          kind: 'action',
+          text: 'Greet {npc0.firstName}',
+          effects: [],
+        },
+      },
+      {
+        name: 'go_out',
+        state: 'locked',
+        condition: { kind: 'scene', sceneId: 'date' },
+      },
+    ],
+  },
 ];
 
 function SaveButton() {
@@ -64,7 +120,7 @@ function SaveButton() {
   return <button onClick={saveAll}>save all</button>;
 }
 
-function renderQuests() {
+function renderQuests(entryId = 'job') {
   const handle = mockEditorDataHandle(structuredClone(quests));
   (useEditorData as Mock).mockImplementation((url: string) =>
     url === '/editor/api/data/quests' ? handle : mockEditorDataHandle([]),
@@ -83,7 +139,33 @@ function renderQuests() {
         />
       </Routes>
     </PanelFileProvider>,
-    { initialEntries: ['/quests/job'] },
+    { initialEntries: [`/quests/${entryId}`] },
+  );
+  return { ...result, handle };
+}
+
+function renderTemplates() {
+  const handle = mockEditorDataHandle(structuredClone(templates));
+  (useEditorData as Mock).mockImplementation((url: string) =>
+    url === '/editor/api/data/quest-templates'
+      ? handle
+      : mockEditorDataHandle([]),
+  );
+  const result = renderEditorPanel(
+    <PanelFileProvider file="quest-templates">
+      <Routes>
+        <Route
+          path="/quest-templates/:entryId?"
+          element={
+            <>
+              <QuestTemplatesPanel />
+              <SaveButton />
+            </>
+          }
+        />
+      </Routes>
+    </PanelFileProvider>,
+    { initialEntries: ['/quest-templates/meet'] },
   );
   return { ...result, handle };
 }
@@ -118,5 +200,76 @@ describe('quests editor panel', () => {
       text: '',
       effects: [],
     });
+  });
+
+  it('shows action and scene objectives as what they are', () => {
+    const { getByText, getByLabelText, getByDisplayValue, queryByTitle } =
+      renderQuests('bakery');
+
+    expect(getByText('condition: action')).toBeInTheDocument();
+    expect(getByLabelText('Action text')).toHaveValue('Bake a cake');
+    expect(getByText('condition: scene')).toBeInTheDocument();
+    expect(getByDisplayValue('interview')).toBeInTheDocument();
+    expect(getByText('condition: inline scene')).toBeInTheDocument();
+    expect(getByText('You work a shift.')).toBeInTheDocument();
+    // None is offered as a condition to edit, which would replace it.
+    expect(queryByTitle('Edit condition')).toBeNull();
+  });
+
+  it('preserves action and scene objectives on save', () => {
+    const { getByText, handle } = renderQuests('bakery');
+    fireEvent.click(getByText('save all'));
+    expect(handle.save).toHaveBeenCalledWith(quests, 'Quests saved');
+  });
+
+  it('edits a scene objective by scene id, keeping the others', () => {
+    const { getByText, getByDisplayValue, handle } = renderQuests('bakery');
+
+    fireEvent.change(getByDisplayValue('interview'), {
+      target: { value: 'nap' },
+    });
+    fireEvent.click(getByText('save all'));
+
+    const [[saved]] = (handle.save as Mock).mock.calls as [[JsonQuest[]]];
+    const expected = structuredClone(quests);
+    expected[1].objectives[1].condition = { kind: 'scene', sceneId: 'nap' };
+    expect(saved).toEqual(expected);
+  });
+});
+
+describe('quest templates editor panel', () => {
+  it('shows action and scene objectives as what they are', () => {
+    const { getByText, getByLabelText, getByDisplayValue, queryByTitle } =
+      renderTemplates();
+
+    expect(getByText('condition: action')).toBeInTheDocument();
+    expect(getByLabelText('Action text')).toHaveValue('Greet {npc0.firstName}');
+    expect(getByText('condition: scene')).toBeInTheDocument();
+    expect(getByDisplayValue('date')).toBeInTheDocument();
+    expect(queryByTitle('Edit condition')).toBeNull();
+  });
+
+  it('preserves action and scene objectives on save', () => {
+    const { getByText, handle } = renderTemplates();
+    fireEvent.click(getByText('save all'));
+    expect(handle.save).toHaveBeenCalledWith(templates, 'Templates saved');
+  });
+
+  it('lets the author choose an action objective', () => {
+    const { getAllByTitle, getByText, handle } = renderTemplates();
+
+    // The scene objective becomes an action.
+    fireEvent.click(getAllByTitle('Set an action objective')[0]);
+    fireEvent.click(getByText('save all'));
+
+    const [[saved]] = (handle.save as Mock).mock.calls as [
+      [JsonQuestTemplate[]],
+    ];
+    expect(saved[0].objectives[1].condition).toEqual({
+      kind: 'action',
+      text: '',
+      effects: [],
+    });
+    expect(saved[0].objectives[0]).toEqual(templates[0].objectives[0]);
   });
 });

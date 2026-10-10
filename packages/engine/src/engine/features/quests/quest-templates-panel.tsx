@@ -1,4 +1,4 @@
-import { Pencil, Plus, X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -24,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
-import { ConditionEditor } from '@chemicalluck/sim-engine/editor/components/condition-form';
 import {
   AddEffectForm,
   EffectChip,
@@ -38,20 +37,22 @@ import {
 } from '@chemicalluck/sim-engine/editor/components/panel-layout';
 import { PreviewPane } from '@chemicalluck/sim-engine/editor/components/preview/preview-pane';
 import { ReferencedBy } from '@chemicalluck/sim-engine/editor/components/referenced-by';
-import { conditionToString } from '@chemicalluck/sim-engine/editor/lib/condition-utils';
 import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
 import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
 import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
 import {
+  type ObjectiveCondition,
   type ObjectiveState,
   type ObjectiveTrigger,
   type QuestObjectiveTemplate,
   type QuestTemplate,
 } from '@chemicalluck/sim-engine/features/quests/types';
-import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
-import { ObjectiveTriggerField } from './objective-trigger-field';
+import {
+  ObjectiveConditionField,
+  ObjectiveTriggerField,
+} from './objective-field';
 
 // ── State cycling ────────────────────────────────────────────────
 
@@ -72,7 +73,6 @@ interface ObjectiveRowProps {
 }
 
 function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
-  const [editingCond, setEditingCond] = useState(false);
   const [addingEffect, setAddingEffect] = useState(false);
   const availableData = useAvailableData();
 
@@ -81,13 +81,6 @@ function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
     const next = STATE_ORDER[(idx + 1) % STATE_ORDER.length];
     onChange({ ...objective, state: next });
   }
-
-  const condText =
-    'kind' in objective.condition
-      ? conditionToString(objective.condition as Condition)
-      : typeof objective.condition === 'object'
-        ? JSON.stringify(objective.condition)
-        : '';
 
   const showTriggerSection =
     objective.state === 'locked' || !!objective.trigger;
@@ -123,40 +116,13 @@ function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
       </div>
 
       <div className="px-3 py-2 border-t border-zinc-700/50 bg-zinc-900 space-y-2">
-        {!editingCond && (
-          <div className="flex items-center gap-2">
-            <p className="flex-1 text-xs text-zinc-400 truncate">
-              {condText || '—'}
-            </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setEditingCond(true);
-              }}
-              className="h-6 text-xs text-zinc-600 hover:text-zinc-300 shrink-0"
-              title="Edit condition"
-            >
-              <Pencil size={12} /> condition
-            </Button>
-          </div>
-        )}
-        {editingCond && (
-          <ConditionEditor
-            initial={
-              'kind' in objective.condition
-                ? (objective.condition as Condition)
-                : undefined
-            }
-            onSave={(c) => {
-              onChange({ ...objective, condition: c });
-              setEditingCond(false);
-            }}
-            onCancel={() => {
-              setEditingCond(false);
-            }}
-          />
-        )}
+        <ObjectiveConditionField
+          condition={objective.condition}
+          onChange={(condition) => {
+            onChange({ ...objective, condition });
+          }}
+          availableData={availableData}
+        />
 
         {showTriggerSection && (
           <div className="pt-1 border-t border-zinc-800">
@@ -234,8 +200,7 @@ function AddObjectiveForm({ onAdd, onCancel }: AddObjectiveFormProps) {
   const form = useForm<{ name: string; state: ObjectiveState }>({
     defaultValues: { name: '', state: 'available' },
   });
-  const [condition, setCondition] = useState<Condition | null>(null);
-  const [showCondForm, setShowCondForm] = useState(false);
+  const [condition, setCondition] = useState<ObjectiveCondition | undefined>();
   const [trigger, setTrigger] = useState<ObjectiveTrigger | undefined>();
   const availableData = useAvailableData();
 
@@ -315,46 +280,12 @@ function AddObjectiveForm({ onAdd, onCancel }: AddObjectiveFormProps) {
         </div>
 
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Label className="text-xs text-zinc-500">Condition</Label>
-            {condition && (
-              <span className="text-xs text-zinc-400 truncate flex-1 font-mono">
-                {conditionToString(condition)}
-              </span>
-            )}
-            {!showCondForm && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setShowCondForm(true);
-                }}
-                className="h-6 text-xs text-zinc-500 hover:text-zinc-300 ml-auto"
-              >
-                {condition ? (
-                  <>
-                    <Pencil size={12} /> edit
-                  </>
-                ) : (
-                  <>
-                    <Plus size={12} /> set condition
-                  </>
-                )}
-              </Button>
-            )}
-          </div>
-          {showCondForm && (
-            <ConditionEditor
-              initial={condition ?? undefined}
-              onSave={(c) => {
-                setCondition(c);
-                setShowCondForm(false);
-              }}
-              onCancel={() => {
-                setShowCondForm(false);
-              }}
-            />
-          )}
+          <Label className="text-xs text-zinc-500">Condition</Label>
+          <ObjectiveConditionField
+            condition={condition}
+            onChange={setCondition}
+            availableData={availableData}
+          />
         </div>
 
         {watchedState === 'locked' && (
