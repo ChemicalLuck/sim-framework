@@ -21,6 +21,7 @@ import WeatherDisplay from '@chemicalluck/sim-engine/features/weather/components
 import { appName, version } from '@chemicalluck/sim-engine/lib/core';
 
 import BackButton from './back';
+import { DesktopOnly } from './desktop-only';
 import EditorButton from './editor-button';
 import WaitButton from './wait-button';
 
@@ -31,37 +32,41 @@ export function GameSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="flex flex-row items-center justify-center py-3">
-        <span className="font-bold tracking-tight" hidden={!open}>
-          {appName}
-        </span>
-      </SidebarHeader>
+      <DesktopOnly>
+        <SidebarHeader className="flex flex-row items-center justify-center py-3">
+          <span className="font-bold tracking-tight" hidden={!open}>
+            {appName}
+          </span>
+        </SidebarHeader>
+      </DesktopOnly>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <TimeDisplay />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <WeatherDisplay />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <AppearanceDisplay />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <MoneyDisplay />
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <NeedsDisplay />
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <DesktopOnly>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <TimeDisplay />
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <WeatherDisplay />
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <AppearanceDisplay />
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <MoneyDisplay />
+            </SidebarGroupContent>
+          </SidebarGroup>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <NeedsDisplay />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </DesktopOnly>
         <SidebarGroup>
           <SidebarGroupContent>
             <div className="grid gap-2 grid-cols-2">

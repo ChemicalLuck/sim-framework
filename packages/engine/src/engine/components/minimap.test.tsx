@@ -1,5 +1,5 @@
-import { act } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { act, fireEvent, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   type MinimapConfig,
@@ -136,5 +136,50 @@ describe('Minimap', () => {
     expect(svg()?.getAttribute('viewBox')).toBe('0 0 100 50');
     // Only the harbour–pier edge lies within the coast map.
     expect(svg()?.querySelectorAll('line')).toHaveLength(1);
+  });
+
+  describe('on a phone', () => {
+    beforeEach(() => {
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
+        value: 390,
+      });
+      vi.stubGlobal(
+        'matchMedia',
+        vi.fn((query: string) => ({
+          matches: false,
+          media: query,
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        })),
+      );
+      configureWorld({ locations, edges: [] });
+      configureMinimap({
+        nodes: { home: { x: 40, y: 60, label: 'Home' } },
+      });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      Object.defineProperty(window, 'innerWidth', {
+        configurable: true,
+        value: 1024,
+      });
+    });
+
+    it('keeps the map collapsed until it is opened', () => {
+      const { container } = renderWithStore(<Minimap />, {
+        reducer: playerReducer('home'),
+      });
+      expect(
+        container.querySelector('svg[aria-label="World map"]'),
+      ).not.toBeInTheDocument();
+      act(() => {
+        fireEvent.click(screen.getByRole('button', { name: /show map/i }));
+      });
+      expect(
+        container.querySelector('svg[aria-label="World map"]'),
+      ).toBeInTheDocument();
+    });
   });
 });

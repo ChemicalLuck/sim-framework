@@ -23,12 +23,12 @@ import {
   TooltipTrigger,
 } from '@chemicalluck/sim-engine/components/ui/tooltip';
 import { useIsMobile } from '@chemicalluck/sim-engine/hooks/use-mobile';
+import { useVerticalSwipe } from '@chemicalluck/sim-engine/hooks/use-swipe';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = '16rem';
-const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 
@@ -51,6 +51,11 @@ function useSidebar() {
   }
 
   return context;
+}
+
+/** Like useSidebar, but null outside a SidebarProvider. */
+function useOptionalSidebar() {
+  return React.use(SidebarContext);
 }
 
 function SidebarProvider({
@@ -187,25 +192,28 @@ function Sidebar({
   }
 
   if (isMobile) {
+    // On phones the sidebar is a bottom sheet: swipe its handle down to close.
     return (
       <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
         <SheetContent
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
-          style={
-            {
-              '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
-            } as React.CSSProperties
-          }
-          side={side}
+          className="bg-sidebar text-sidebar-foreground max-h-[85svh] gap-0 rounded-t-2xl p-0 pb-[env(safe-area-inset-bottom)] [&>button]:hidden"
+          side="bottom"
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>Menu</SheetTitle>
+            <SheetDescription>Your stats and game menu.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <MobileSheetGrabber
+            onClose={() => {
+              setOpenMobile(false);
+            }}
+          />
+          <div className="flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-contain">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -255,6 +263,24 @@ function Sidebar({
           {children}
         </div>
       </div>
+    </div>
+  );
+}
+
+function MobileSheetGrabber({ onClose }: { onClose: () => void }) {
+  const swipe = useVerticalSwipe({ onDown: onClose });
+  // Wrapped: SheetContent hides its direct button children (its own close).
+  return (
+    <div className="shrink-0">
+      <button
+        type="button"
+        aria-label="Close menu"
+        onClick={onClose}
+        {...swipe}
+        className="flex w-full touch-none justify-center pt-3 pb-2"
+      >
+        <span className="bg-muted-foreground/40 h-1 w-10 rounded-full" />
+      </button>
     </div>
   );
 }
@@ -729,5 +755,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  useOptionalSidebar,
   useSidebar,
 };
