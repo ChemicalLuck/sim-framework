@@ -16,6 +16,7 @@ import {
   referenceProviders,
   referenceRewriters,
 } from 'virtual:references';
+
 import {
   type DataByFile,
   type ReferenceContributions,
@@ -124,6 +125,7 @@ const PREFIX_TO_PATH: Record<string, string> = {
   edges: '/world',
   minimap: '/world',
   player: '/world',
+  'wearables-config': '/wearables-config',
 };
 
 /** Editor route a reference source (`prefix:id`) links to. */

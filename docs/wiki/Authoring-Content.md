@@ -185,7 +185,8 @@ wear-time threshold). `silent` suppresses the toast.
 Dirty clothing drains `Hygiene` and badly-fitting clothing drains `Comfort` (which recovers
 when the outfit fits). Change the needs and rates (points per hour) with `clothingNeeds` in
 `wearables-config.json`; set an entry to `null` to turn that drain off. A need that isn't
-declared in `needs.json` is ignored.
+declared in `needs.json` is ignored; `sim check` flags one named in `clothingNeeds` (the
+defaults are not checked), in a `needs` effect or in a `need.<Name>` condition.
 
 ```json
 "clothingNeeds": {
