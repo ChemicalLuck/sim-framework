@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
+import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type {
   Item,
@@ -354,5 +355,31 @@ describe('hydrateScript', () => {
       scenes: [minimalScene],
     };
     expect(hydrateScript(json, ctx).hideProgress).toBeUndefined();
+  });
+
+  it('preserves increment (the per-beat time)', () => {
+    const json: JsonScript = {
+      id: 's',
+      order: 'sequential',
+      duration: 60,
+      increment: 15,
+      scenes: [minimalScene],
+    };
+    expect(hydrateScript(json, ctx).increment).toBe(15);
+  });
+
+  it('preserves endCondition and endWith', () => {
+    const endCondition = parseCondition('money >= 10');
+    const json: JsonScript = {
+      id: 's',
+      order: 'sequential',
+      endTime: 500,
+      scenes: [minimalScene],
+      endCondition,
+      endWith: 'leave',
+    };
+    const result = hydrateScript(json, ctx);
+    expect(result.endCondition).toEqual(endCondition);
+    expect(result.endWith).toBe('leave');
   });
 });

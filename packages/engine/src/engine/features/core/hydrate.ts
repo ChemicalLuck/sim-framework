@@ -88,25 +88,26 @@ export function hydrateScript(
     ...scriptJson.leave,
     effects: scriptJson.leave.effects?.map((e) => hydrateEffect(e, ctx)),
   };
-
-  if (scriptJson.duration !== undefined) {
-    return {
-      order: scriptJson.order,
-      duration: scriptJson.duration,
-      scenes,
-      completionEffects,
-      leave,
-      npcSelection: scriptJson.npcSelection,
-      hideProgress: scriptJson.hideProgress,
-    };
-  }
-  return {
+  const shared = {
     order: scriptJson.order,
-    endTime: scriptJson.endTime ?? 0,
+    increment: scriptJson.increment,
     scenes,
     completionEffects,
     leave,
     npcSelection: scriptJson.npcSelection,
     hideProgress: scriptJson.hideProgress,
+    endCondition: scriptJson.endCondition,
+    endWith: scriptJson.endWith,
+  };
+
+  if (scriptJson.duration !== undefined) {
+    return {
+      ...shared,
+      duration: scriptJson.duration,
+    };
+  }
+  return {
+    ...shared,
+    endTime: scriptJson.endTime ?? 0,
   };
 }

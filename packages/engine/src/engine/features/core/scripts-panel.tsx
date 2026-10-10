@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
 import { ActionGroupsEditor } from '@chemicalluck/sim-engine/editor/components/action-groups-editor';
+import { ConditionField } from '@chemicalluck/sim-engine/editor/components/condition-field';
 import {
   AddEffectForm,
   EffectChip,
@@ -46,9 +47,13 @@ import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-e
 import type { JsonScript } from '@chemicalluck/sim-engine/features/core/types';
 import { NpcSelectionEditor } from '@chemicalluck/sim-engine/features/npcs/npc-selection-editor';
 import type { ActionGroup } from '@chemicalluck/sim-engine/types/action-group.types';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 import type { NpcSelection } from '@chemicalluck/sim-engine/types/npc-filter.types';
-import type { ScriptLeave } from '@chemicalluck/sim-engine/types/script.types';
+import type {
+  ScriptEndWith,
+  ScriptLeave,
+} from '@chemicalluck/sim-engine/types/script.types';
 
 interface RawScriptScene {
   kind: 'scene';
@@ -66,6 +71,8 @@ interface RawScript {
   npcSelection?: NpcSelection;
   completionEffects?: Effect[];
   leave?: ScriptLeave;
+  endCondition?: Condition;
+  endWith?: ScriptEndWith;
   scenes: RawScriptScene[];
 }
 
@@ -449,6 +456,39 @@ function ScriptDetail({ script, onChange, refs }: ScriptDetailProps) {
           onChange({ ...script, leave });
         }}
       />
+
+      <Field>
+        <Label>End condition (checked after each scene)</Label>
+        <ConditionField
+          condition={script.endCondition}
+          onChange={(endCondition) => {
+            onChange({
+              ...script,
+              endCondition,
+              endWith: endCondition ? script.endWith : undefined,
+            });
+          }}
+        />
+        {script.endCondition && (
+          <Select
+            value={script.endWith ?? 'completion'}
+            onValueChange={(v) => {
+              onChange({
+                ...script,
+                endWith: v === 'leave' ? 'leave' : undefined,
+              });
+            }}
+          >
+            <SelectTrigger className="bg-zinc-800 border-zinc-600">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="completion">Run completion effects</SelectItem>
+              <SelectItem value="leave">Run leave effects</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+      </Field>
 
       <Field>
         <div className="flex items-center gap-2">

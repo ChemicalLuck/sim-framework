@@ -181,6 +181,24 @@ The leave action appears on every scene. It applies `leave.effects` and, with
 by the fraction of scenes completed. It returns to the default view unless one of those
 effects changes the view. Time already spent stays spent; leaving adds none.
 
+Each turn advances the clock by `increment` minutes when set, otherwise by the script's
+`duration` (or time until `endTime`) split evenly across its scenes. A scene's own
+`completionEffects` apply after the action taken in it.
+
+Add `endCondition` to end a script as soon as a condition holds; it is checked after each
+turn. `endWith` picks what then runs: `"completion"` (the default) applies
+`completionEffects`, `"leave"` applies the leave effects exactly as the leave action would
+at that point:
+
+```json
+"endCondition": { "kind": "gte", "lhs": { "kind": "money" }, "rhs": { "kind": "const", "value": 100 } },
+"endWith": "leave"
+```
+
+Scenes and scripts can switch to each other (and to other scenes) with `view` effects in
+any file order, but they can't form a loop that leads back to where it started: content
+is saved with the game, so a loop fails to load with the scenes/scripts involved named.
+
 ## Conditions
 
 Actions and objectives can be gated by **conditions**, an expression DSL with a `kind`:
