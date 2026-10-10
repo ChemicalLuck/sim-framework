@@ -112,6 +112,15 @@ const DEFAULT_SLOTS: FeatureSlotSpec[] = [
     virtualModule: VIRTUAL_EXTENSIONS_ID,
     exportName: 'actionGroupProviders',
   },
+  {
+    filename: 'template-vars.ts',
+    aliasPrefix: 'TemplateVars',
+    importStyle: 'default',
+    aggregation: 'keyed-by-name',
+    appliesTo: 'game',
+    virtualModule: VIRTUAL_EXTENSIONS_ID,
+    exportName: 'templateVarProviders',
+  },
 ];
 
 function containerFromAggregation(

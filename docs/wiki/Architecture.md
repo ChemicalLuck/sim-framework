@@ -13,9 +13,9 @@ Scans the engine's `features/` and your `src/game/extensions/` by filename conve
 generates virtual modules:
 
 - **`virtual:game-extensions`** — aggregates `slice.ts`, `effects.ts`, `post-effects.ts`,
-  `effect-hydrators.ts`, `initializer.ts`, `views.tsx`, and (game-only) `actions.ts` into
-  `slices`, `effectHandlers`, `postEffectHandlers`, `views`, `storeInitializers`,
-  `actionGroupProviders`.
+  `effect-hydrators.ts`, `initializer.ts`, `views.tsx`, and (game-only) `actions.ts` and
+  `template-vars.ts` into `slices`, `effectHandlers`, `postEffectHandlers`, `views`,
+  `storeInitializers`, `actionGroupProviders`, `templateVarProviders`.
 - **`virtual:game-setup`** — generates the `loadContent(...)` call that wires each
   `data/*.json` into the engine, driven by every feature's `feature.json` manifest
   (`content`, `contextSlots`, `contentExtensions`, `setup`, `contentSetup`).

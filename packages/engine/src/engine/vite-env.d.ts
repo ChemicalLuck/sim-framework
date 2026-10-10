@@ -2,6 +2,7 @@ declare module 'virtual:game-extensions' {
   import type { ComponentType } from 'react';
   import type { Reducer } from '@reduxjs/toolkit';
   import type { EffectHydrator } from '@chemicalluck/sim-engine/data/effect-hydrators';
+  import type { TemplateVarProvider } from '@chemicalluck/sim-engine/features/linguistics/lib/extension-vars';
   import type {
     EffectHandler,
     PostEffectHandler,
@@ -22,6 +23,7 @@ declare module 'virtual:game-extensions' {
   export const views: Record<string, ComponentType<never>>;
   export const effectHydrators: EffectHydrator[];
   export const storeInitializers: ((store: EngineStore) => void)[];
+  export const templateVarProviders: Record<string, TemplateVarProvider>;
 }
 
 declare module 'virtual:game-setup' {

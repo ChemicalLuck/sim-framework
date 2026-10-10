@@ -67,3 +67,49 @@ describe('virtual:game-setup data imports', () => {
     );
   });
 });
+
+describe('virtual:game-extensions template-vars slot', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+    fs.mkdirSync(path.join(gameDir, 'extensions', 'university'), {
+      recursive: true,
+    });
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function generateExtensions(): string {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const load = plugin.load as (id: string) => string | null;
+    const resolved = resolveId('virtual:game-extensions');
+    if (!resolved) throw new Error('virtual:game-extensions did not resolve');
+    return load(resolved) ?? '';
+  }
+
+  it('exports an empty provider map when no extension supplies one', () => {
+    expect(generateExtensions()).toContain('export const templateVarProviders');
+  });
+
+  it("keys an extension's template-vars.ts default export by its name", () => {
+    const file = path.join(
+      gameDir,
+      'extensions',
+      'university',
+      'template-vars.ts',
+    );
+    fs.writeFileSync(file, 'export default () => ({ term: "autumn" });');
+    const code = generateExtensions();
+    expect(code).toContain(
+      `import universityTemplateVars from ${JSON.stringify(file)};`,
+    );
+    expect(code).toMatch(
+      /export const templateVarProviders = \{\s*"university": universityTemplateVars\s*\};/,
+    );
+  });
+});

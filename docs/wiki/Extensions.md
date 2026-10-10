@@ -14,6 +14,7 @@ extensions/<name>/
   selectors.ts    # derived state
   effects.ts      # default export: { <kind>: handler } → merged into effect handlers
   actions.ts      # default export: [(locationId, state) => ActionGroup[]] providers
+  template-vars.ts # default export: (state) => { key: value } template variables
   post-effects.ts # optional side-effects (toasts, analytics)
   data.ts         # registers content (exports `${name}Data`)
   data.json       # extension content
@@ -57,6 +58,23 @@ declare module '@chemicalluck/sim-engine/data' {
   The plugin imports it as `${name}Data` and wires it into content loading.
 - **`views.tsx`** — export view components; they merge into the view registry and can be
   targeted by a `{ "kind": "view", "activeViewId": "..." }` effect.
+- **`template-vars.ts`** — `export default (state) => Record<string, string | number | boolean>`.
+  Each key is exposed to text templates (location descriptions, scenes, scripts,
+  conversations, …) namespaced by folder name, so `education/template-vars.ts` returning
+  `{ term: 'autumn', examWeek: true }` gives `{education.term}` and
+  `{if education.term == 'autumn'}…{/if}`. `true` renders as `true`; `false` counts as
+  unset, so `{if education.examWeek}` works as a flag. The provider runs on every state
+  change, so keep it cheap. Type it with `TemplateVarProvider` from
+  `@chemicalluck/sim-engine/features/linguistics/lib/extension-vars`:
+
+  ```ts
+  import type { TemplateVarProvider } from '@chemicalluck/sim-engine/features/linguistics/lib/extension-vars';
+
+  const templateVars: TemplateVarProvider = (state) => ({
+    term: state.present.education.term,
+  });
+  export default templateVars;
+  ```
 
 ## Registering extra views without an extension
 
