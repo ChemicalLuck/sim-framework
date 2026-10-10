@@ -5,6 +5,7 @@ import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/templ
 import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
 import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
+import { extensionTemplateLintVars } from '@chemicalluck/sim-engine/features/linguistics/extension-lint-vars';
 import { getMacros, getTerms } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import type { TemplateLintContext } from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
 import { baseTemplateVariableNames } from '@chemicalluck/sim-engine/features/linguistics/lib/variables';
@@ -1277,11 +1278,14 @@ export function AppearancePanel() {
         );
 
       case 'description': {
+        const extensionVars = extensionTemplateLintVars();
         const descriptionContext: TemplateLintContext = {
           variables: [
             ...baseTemplateVariableNames(),
             ...data.features.map((f) => f.id),
+            ...extensionVars.variables,
           ],
+          extensionNamespaces: extensionVars.extensionNamespaces,
           macros: [...getMacros().entries()].map(([name, { params }]) => ({
             name,
             params,

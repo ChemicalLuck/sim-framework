@@ -112,6 +112,26 @@ describe('virtual:game-extensions template-vars slot', () => {
       /export const templateVarProviders = \{\s*"university": universityTemplateVars\s*\};/,
     );
   });
+
+  it('exposes each template-vars.ts module so the linter can read its declared keys', () => {
+    const file = path.join(
+      gameDir,
+      'extensions',
+      'university',
+      'template-vars.ts',
+    );
+    fs.writeFileSync(
+      file,
+      'export const keys = ["term"];\nexport default () => ({ term: "autumn" });',
+    );
+    const code = generateExtensions();
+    expect(code).toContain(
+      `import * as universityTemplateVarsModule from ${JSON.stringify(file)};`,
+    );
+    expect(code).toMatch(
+      /export const templateVarDeclarations = \{\s*"university": universityTemplateVarsModule\s*\};/,
+    );
+  });
 });
 
 describe('virtual:game-setup quests hydration', () => {

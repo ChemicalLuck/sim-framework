@@ -28,6 +28,9 @@ export interface TemplateLintContext {
    * (transitive pass-through), and disables the "bare attribute" footgun
    * warning's player-fallback semantics. */
   localParams?: LinguisticsMacroParam[];
+  /** Extensions that supply template variables without declaring their
+   * `keys`: any `{<extension>.<key>}` of theirs is accepted. */
+  extensionNamespaces?: string[];
 }
 
 export interface TemplateIssue {
@@ -58,6 +61,7 @@ export function lintTemplate(
   const terms = new Set(ctx.terms);
   const localParamNames = new Set((ctx.localParams ?? []).map((p) => p.name));
   const entityPrefixes = new Set(ENTITY_PREFIXES);
+  const extensionNamespaces = new Set(ctx.extensionNamespaces);
   const characterFields = new Set([
     ...ENTITY_FIELD_NAMES,
     ...(ctx.appearanceFeatures ?? []),
@@ -79,11 +83,19 @@ export function lintTemplate(
 
   const isKnownVar = (name: string) => {
     if (variables.has(name) || pronouns.has(name)) return true;
+    // An extension that declares no `keys` may return any key at runtime.
+    const dot = name.indexOf('.');
+    if (
+      dot > 0 &&
+      dot < name.length - 1 &&
+      extensionNamespaces.has(name.slice(0, dot))
+    ) {
+      return true;
+    }
     // Inside a parametered macro body, dotted lookups whose prefix is a local
     // param (`c.bodyFat`) are valid — at runtime the prefix is rewritten to a
     // concrete namespace.
     if (inParameteredBody) {
-      const dot = name.indexOf('.');
       if (dot > 0 && localParamNames.has(name.slice(0, dot))) {
         const field = name.slice(dot + 1);
         return characterFields.has(field) || pronouns.has(field);

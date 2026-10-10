@@ -3,7 +3,10 @@ import { describe, expect, it } from 'vitest';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { buildTemplateContext } from './context';
-import { collectExtensionVars } from './extension-vars';
+import {
+  collectExtensionVars,
+  extensionTemplateVarNames,
+} from './extension-vars';
 import { renderText } from './template';
 
 const state = { present: { term: 'autumn' } } as unknown as RootState;
@@ -29,6 +32,27 @@ describe('collectExtensionVars', () => {
 
   it('returns nothing without providers', () => {
     expect(collectExtensionVars({}, state)).toEqual({});
+  });
+});
+
+describe('extensionTemplateVarNames', () => {
+  it('lists declared keys and the namespaces of undeclared extensions', () => {
+    expect(
+      extensionTemplateVarNames({
+        university: { keys: ['term', 'week'] },
+        club: {},
+      }),
+    ).toEqual({
+      variables: ['university.term', 'university.week'],
+      namespaces: ['club'],
+    });
+  });
+
+  it('returns nothing without declarations', () => {
+    expect(extensionTemplateVarNames({})).toEqual({
+      variables: [],
+      namespaces: [],
+    });
   });
 });
 

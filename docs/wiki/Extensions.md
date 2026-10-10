@@ -14,7 +14,7 @@ extensions/<name>/
   selectors.ts    # derived state
   effects.ts      # default export: { <kind>: handler } → merged into effect handlers
   actions.ts      # default export: [(locationId, state) => ActionGroup[]] providers
-  template-vars.ts # default export: (state) => { key: value } template variables
+  template-vars.ts # default export: (state) => { key: value }; optional `keys` list
   post-effects.ts # optional side-effects (toasts, analytics)
   data.ts         # registers content (exports `${name}Data`)
   data.json       # extension content
@@ -75,6 +75,11 @@ declare module '@chemicalluck/sim-engine/data' {
   });
   export default templateVars;
   ```
+
+  The editor's template linter cannot run the provider, so also export the keys it
+  returns: `export const keys = ['term', 'examWeek'];`. The linter then accepts
+  `{education.term}` and still flags `{education.typo}`. Without `keys` it accepts any
+  `{education.<key>}`.
 
 ## Registering extra views without an extension
 

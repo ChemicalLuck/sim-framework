@@ -211,6 +211,42 @@ describe('lintTemplate with entity-aware variables', () => {
   });
 });
 
+describe('lintTemplate with extension template variables', () => {
+  const extCtx: TemplateLintContext = {
+    variables: [...baseTemplateVariableNames(), 'university.term'],
+    macros: [],
+    terms: [],
+    extensionNamespaces: ['club'],
+  };
+  const extMessages = (t: string) =>
+    lintTemplate(t, extCtx).map((i) => i.message);
+
+  it('accepts declared extension variables', () => {
+    expect(
+      extMessages(
+        "{university.term} {cap:university.term} {if university.term == 'autumn'}x{/if}",
+      ),
+    ).toEqual([]);
+  });
+
+  it('accepts any key of an extension that declares no keys', () => {
+    expect(
+      extMessages('{club.meetingDay} {if club.members > 3}busy{/if}'),
+    ).toEqual([]);
+  });
+
+  it('still warns on unknown keys and unknown extensions', () => {
+    expect(extMessages('{university.week}')).toEqual([
+      'Unknown variable "university.week"',
+    ]);
+    expect(extMessages('{if sports.score > 1}x{/if}')).toEqual([
+      'Unknown variable "sports.score" in condition',
+    ]);
+    expect(extMessages('{club}')).toEqual(['Unknown variable "club"']);
+    expect(extMessages('{club.}')).toEqual(['Unknown variable "club."']);
+  });
+});
+
 function template_slice(t: string, from: number, to: number): string {
   return t.slice(from, to);
 }

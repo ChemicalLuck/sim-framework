@@ -121,6 +121,16 @@ const DEFAULT_SLOTS: FeatureSlotSpec[] = [
     virtualModule: VIRTUAL_EXTENSIONS_ID,
     exportName: 'templateVarProviders',
   },
+  {
+    // The whole module, so the editor linter can read its optional `keys`.
+    filename: 'template-vars.ts',
+    aliasPrefix: 'TemplateVarsModule',
+    importStyle: 'namespace',
+    aggregation: 'keyed-by-name',
+    appliesTo: 'game',
+    virtualModule: VIRTUAL_EXTENSIONS_ID,
+    exportName: 'templateVarDeclarations',
+  },
 ];
 
 function containerFromAggregation(

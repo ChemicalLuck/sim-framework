@@ -8,6 +8,7 @@ import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-chan
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 
+import { extensionTemplateLintVars } from './extension-lint-vars';
 import type { TemplateLintContext } from './lib/lint';
 import { NARRATIVE_VAR_NAMES, PRONOUN_FIELDS } from './lib/variables';
 import type {
@@ -296,6 +297,7 @@ function LinguisticsPanel() {
 
   const context: TemplateLintContext = useMemo(() => {
     const appearanceFeatures = getAppearanceLists().map((f) => f.id);
+    const extensionVars = extensionTemplateLintVars();
     return {
       // Macros operate on their Character param, so player-resolving references
       // aren't offered bare — use the param instead (`{c.subject}`,
@@ -306,7 +308,9 @@ function LinguisticsPanel() {
           (f) => !['subject', 'possessive', 'reflexive'].includes(f),
         ),
         ...NARRATIVE_VAR_NAMES,
+        ...extensionVars.variables,
       ],
+      extensionNamespaces: extensionVars.extensionNamespaces,
       appearanceFeatures,
       macros: data.macros
         .filter((m) => m.name)
