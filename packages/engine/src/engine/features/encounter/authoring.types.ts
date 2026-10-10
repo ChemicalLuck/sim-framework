@@ -1,5 +1,8 @@
 import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
-import type { EncounterStopReason } from '@chemicalluck/sim-engine/features/encounter/types';
+import type {
+  EncounterActionActor,
+  EncounterStopReason,
+} from '@chemicalluck/sim-engine/features/encounter/types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export interface JsonViewEncounterEffect {
@@ -26,6 +29,7 @@ export interface JsonEncounterAction {
   npcSkillWeights?: Record<string, number>;
   npcTraitWeights?: Record<string, number>;
   npcStop?: boolean;
+  actor?: EncounterActionActor;
 }
 
 export interface JsonEncounterState {

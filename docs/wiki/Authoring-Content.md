@@ -352,6 +352,12 @@ encounter ends when:
 
 The game returns to the default view.
 
+Actions are offered to both sides unless `"actor": "player"` or `"actor": "npc"` limits
+them. In encounter conditions, `self.skill.<id>` and `self.need.<id>` read whoever the
+action is being checked for: the NPC while it picks, otherwise the player.
+`npc.skill.<id>`, `npc.need.<id>` and `npc.relationship.<metric>` always read the
+encounter NPC (`npcNeed.<name>` still works).
+
 ## Conditions
 
 Actions and objectives can be gated by **conditions**, an expression DSL with a `kind`:

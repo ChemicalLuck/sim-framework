@@ -1,4 +1,5 @@
 import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
+import { playerActions } from '@chemicalluck/sim-engine/features/encounter/lib/actions';
 import {
   setEncounterState,
   setPlayerAction,
@@ -10,7 +11,6 @@ import {
 import { renderText } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
 import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistics/use-template-context';
 import { selectNpcById } from '@chemicalluck/sim-engine/features/npcs/selectors';
-import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions/evaluator';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 import {
   useEngineDispatch,
@@ -39,11 +39,8 @@ function EncounterView() {
 
   const resolvedText = renderText(currentState.text, ctx);
 
-  // Filter actions whose condition is met, then group by body part.
-  // NPC stop actions belong to the NPC alone.
-  const availableActions = currentState.actions.filter(
-    (a) => !a.npcStop && isConditionMet(fullState, a.condition),
-  );
+  // Player-takeable actions whose condition is met, grouped by body part
+  const availableActions = playerActions(fullState, currentState);
 
   const actionsByBodyPart: Record<string, typeof availableActions> = {};
   for (const action of availableActions) {

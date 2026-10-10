@@ -7,6 +7,7 @@ import {
 import { setView } from '@chemicalluck/sim-engine/features/view/slice';
 import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 
+import { npcActions, playerActions } from './lib/actions';
 import { setPlayerAction, startEncounter } from './slice';
 import { createEncounterTestStore, makeTestNpc } from './test-store';
 import { npcActionWeight, processTurn, stopEncounterThunk } from './thunks';
@@ -190,5 +191,97 @@ describe('encounter stops', () => {
     dispatch(processTurn());
     expect(getState().present.encounter.encounter).not.toBeNull();
     expect(getState().present.view.activeViewId).toBe('EncounterView');
+  });
+});
+
+describe('encounter action actors', () => {
+  const playerOnly: EncounterAction = {
+    id: 'player_only',
+    text: 'Hold',
+    bodyPart: 'hands',
+    actor: 'player',
+  };
+  const npcOnly: EncounterAction = {
+    id: 'npc_only',
+    text: 'Grab',
+    bodyPart: 'hands',
+    actor: 'npc',
+  };
+  const shared: EncounterAction = {
+    id: 'shared',
+    text: 'Look',
+    bodyPart: 'eyes',
+  };
+
+  it('keeps player-only actions out of the NPC pool and vice versa', () => {
+    const { dispatch, getState } = createEncounterTestStore([
+      makeTestNpc('npc'),
+    ]);
+    const encounter = encounterWith([playerOnly, npcOnly, shared]);
+    dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    const state = encounter.states[0];
+
+    expect(npcActions(getState(), state, 'npc').map((a) => a.id)).toEqual([
+      'npc_only',
+      'shared',
+    ]);
+    expect(playerActions(getState(), state).map((a) => a.id)).toEqual([
+      'player_only',
+      'shared',
+    ]);
+
+    for (let i = 0; i < 200; i++) dispatch(processTurn());
+    const picked = getState().present.encounter.npcActiveActions;
+    expect(picked.hands).toBe('npc_only');
+    expect(Object.values(picked)).not.toContain('player_only');
+  });
+
+  it('never offers npcStop actions to the player', () => {
+    const { getState } = createEncounterTestStore();
+    const state = encounterWith([
+      { id: 'leave', text: 'Leave', bodyPart: 'feet', npcStop: true },
+    ]).states[0];
+    expect(playerActions(getState(), state)).toEqual([]);
+  });
+
+  it('resolves self.* to the NPC and npc.* to its skills and relationship during the pick', () => {
+    const npc = makeTestNpc('npc', { skills: { charm: 9 } });
+    const { dispatch, getState } = createEncounterTestStore([npc]);
+    const flirt: EncounterAction = {
+      id: 'flirt',
+      text: 'Flirt',
+      bodyPart: 'mouth',
+      condition: parseCondition('self.skill.charm >= 5'),
+    };
+    const bond: EncounterAction = {
+      id: 'bond',
+      text: 'Bond',
+      bodyPart: 'hands',
+      condition: parseCondition(
+        'npc.skill.charm >= 5 && npc.relationship.Friendship < 50',
+      ),
+    };
+    const encounter = encounterWith([flirt, bond]);
+    dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    const state = encounter.states[0];
+
+    // The NPC (charm 9) can flirt; the player (charm 0) cannot.
+    expect(npcActions(getState(), state, 'npc').map((a) => a.id)).toEqual([
+      'flirt',
+      'bond',
+    ]);
+    expect(playerActions(getState(), state).map((a) => a.id)).toEqual(['bond']);
+
+    for (let i = 0; i < 50; i++) dispatch(processTurn());
+    const picked = getState().present.encounter.npcActiveActions;
+    expect(picked.mouth).toBe('flirt');
+    expect(picked.hands).toBe('bond');
+  });
+
+  it('offers actions without an actor to both sides, as before', () => {
+    const { getState } = createEncounterTestStore([makeTestNpc('npc')]);
+    const state = encounterWith([shared, plain]).states[0];
+    expect(playerActions(getState(), state)).toHaveLength(2);
+    expect(npcActions(getState(), state, 'npc')).toHaveLength(2);
   });
 });

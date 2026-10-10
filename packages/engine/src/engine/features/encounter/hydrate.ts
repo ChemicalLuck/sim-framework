@@ -33,6 +33,7 @@ export function hydrateEncounterAction(
     npcSkillWeights: json.npcSkillWeights,
     npcTraitWeights: json.npcTraitWeights,
     npcStop: json.npcStop,
+    actor: json.actor,
   };
 }
 

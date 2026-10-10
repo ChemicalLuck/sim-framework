@@ -23,7 +23,11 @@ export interface EncounterAction {
    * Its effects apply before the stop effects. Never offered to the player.
    */
   npcStop?: boolean;
+  /** Who may take this action (default `both`). `npcStop` actions are NPC-only. */
+  actor?: EncounterActionActor;
 }
+
+export type EncounterActionActor = 'player' | 'npc' | 'both';
 
 /** Who or what ended an encounter. */
 export type EncounterStopReason = 'player' | 'npc' | 'condition';

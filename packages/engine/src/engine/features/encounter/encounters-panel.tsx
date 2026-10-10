@@ -48,6 +48,7 @@ import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-e
 import type {
   Encounter,
   EncounterAction,
+  EncounterActionActor,
   EncounterState,
   EncounterStopReason,
 } from '@chemicalluck/sim-engine/features/encounter/types';
@@ -472,6 +473,32 @@ function EncounterActionRow({
               </Button>
             </div>
           ))}
+        </div>
+
+        {/* Actor */}
+        <div className="flex items-center gap-2">
+          <Label className="text-xs text-zinc-500">Taken by</Label>
+          <Select
+            value={action.actor ?? 'both'}
+            onValueChange={(v) => {
+              onChange({
+                ...action,
+                actor: v === 'both' ? undefined : (v as EncounterActionActor),
+              });
+            }}
+          >
+            <SelectTrigger
+              size="sm"
+              className="h-7 w-32 text-xs bg-zinc-800 border-zinc-600"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="both">player + NPC</SelectItem>
+              <SelectItem value="player">player only</SelectItem>
+              <SelectItem value="npc">NPC only</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* NPC stop */}

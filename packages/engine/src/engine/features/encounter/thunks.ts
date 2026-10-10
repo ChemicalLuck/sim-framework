@@ -11,6 +11,8 @@ import type { EngineThunk } from '@chemicalluck/sim-engine/state/store';
 import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
+import { npcActions } from './lib/actions';
+import { findNpc } from './lib/actor';
 import { setEncounterState, setNpcAction, stopEncounter } from './slice';
 import type { EncounterAction, EncounterStopReason } from './types';
 
@@ -69,13 +71,10 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
 
   // NPC picks one action (or passes) from available actions in current state
   const npcId = state.present.encounter.npcId;
-  const npc = npcId
-    ? state.present.npcs.characters.find((n) => n.id === npcId)
-    : null;
+  const npc = findNpc(state, npcId);
 
-  const availableActions = currentState.actions.filter((a) =>
-    isConditionMet(state, a.condition),
-  );
+  // The NPC's pool: actions it may take, with `self.*` resolving to the NPC
+  const availableActions = npcActions(state, currentState, npcId ?? '');
 
   const weightMap: Record<string, number> = {
     __pass__: encounter.npcDoNothingWeight ?? 1,

@@ -213,3 +213,13 @@ describe('hydrate encounter stop fields', () => {
     });
   });
 });
+
+describe('hydrate encounter action actor', () => {
+  it('preserves actor', () => {
+    const result = hydrateEncounterAction(
+      { id: 'a', text: 'A', bodyPart: 'hands', actor: 'npc' },
+      makeCtx(),
+    );
+    expect(result.actor).toBe('npc');
+  });
+});
