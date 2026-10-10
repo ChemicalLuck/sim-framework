@@ -337,3 +337,125 @@ describe('quest-templates references', () => {
     });
   });
 });
+
+describe('quest ids instantiated from templates', () => {
+  const met: Condition = { kind: 'milestone', milestoneId: 'met' };
+  const contributions = {
+    idSources: [...coreIdSources, ...idSources],
+    referenceProviders: [...coreProviders, ...referenceProviders],
+    nodeRefExtractors,
+    nodeRefRewriters: [],
+    referenceRewriters: [],
+  };
+  const templates: JsonQuestTemplate[] = [
+    {
+      id: 'meet',
+      idTemplate: 'meet_{npc0.id}',
+      name: 'Meet {npc0.firstName}',
+      objectives: [
+        {
+          name: 'talk_{npc0.firstName}',
+          state: 'available',
+          condition: met,
+        },
+        {
+          name: 'wave',
+          state: 'available',
+          condition: met,
+        },
+      ],
+    },
+  ];
+  const questEffect = (questId: string, objectiveName = ''): JsonEffect => ({
+    kind: 'quest',
+    questId,
+    objectiveName,
+    objectiveState: 'complete',
+  });
+  const quests = (...effects: JsonEffect[]): JsonQuest[] => [
+    {
+      id: 'intro',
+      name: 'Intro',
+      objectives: [
+        {
+          name: 'start',
+          state: 'available',
+          condition: met,
+          onComplete: effects,
+        },
+      ],
+    },
+  ];
+  const messages = (data: Record<string, unknown>) =>
+    validateReferences(data, contributions).map((i) => i.message);
+
+  it('accepts a quest id a template produces', () => {
+    expect(
+      messages({
+        quests: quests(questEffect('meet_ann'), questEffect('intro')),
+        'quest-templates': templates,
+      }),
+    ).toEqual([]);
+  });
+
+  it('accepts objectives of a quest a template produces', () => {
+    expect(
+      messages({
+        quests: quests(
+          questEffect('meet_ann', 'wave'),
+          questEffect('meet_ann', 'talk_Ann'),
+        ),
+        'quest-templates': templates,
+      }),
+    ).toEqual([]);
+  });
+
+  it('still flags unknown quest ids and objectives', () => {
+    expect(
+      messages({
+        quests: quests(
+          questEffect('ghost'),
+          questEffect('greet_ann'),
+          questEffect('meet_'),
+          questEffect('meet_ann', 'dance'),
+        ),
+        'quest-templates': templates,
+      }),
+    ).toEqual([
+      "references unknown quest 'ghost'",
+      "references unknown quest 'greet_ann'",
+      "references unknown quest 'meet_'",
+      "references unknown questObjective 'meet_ann::dance'",
+    ]);
+  });
+
+  it('matches the id template literally outside its placeholders', () => {
+    const dotted: JsonQuestTemplate[] = [
+      { ...templates[0], idTemplate: 'meet.{npc0.id}' },
+    ];
+    expect(
+      messages({
+        quests: quests(questEffect('meet.ann'), questEffect('meetXann')),
+        'quest-templates': dotted,
+      }),
+    ).toEqual(["references unknown quest 'meetXann'"]);
+  });
+
+  it('does not let an id template of only placeholders accept every id', () => {
+    const bare: JsonQuestTemplate[] = [
+      { ...templates[0], idTemplate: '{npc0.id}' },
+    ];
+    expect(
+      messages({
+        quests: quests(questEffect('ghost')),
+        'quest-templates': bare,
+      }),
+    ).toEqual(["references unknown quest 'ghost'"]);
+  });
+
+  it('flags template-made ids when quest-templates.json is absent', () => {
+    expect(messages({ quests: quests(questEffect('meet_ann')) })).toEqual([
+      "references unknown quest 'meet_ann'",
+    ]);
+  });
+});

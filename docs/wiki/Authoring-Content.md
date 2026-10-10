@@ -478,4 +478,5 @@ References between files (an item id in a shop, a location id in a quest) are ch
 `source: references unknown <namespace> '<id>'`. The check is contribution-driven — adding a
 feature or file participates automatically. In `quest-templates.json`, ids holding a
 placeholder (e.g. `meet_{npc0.id}`) are only known once the template is instantiated, so
-they are skipped.
+they are skipped. Elsewhere, a quest id matching a template's `idTemplate` (e.g. `meet_ann`,
+with each placeholder standing for any text) counts as known, as do that quest's objectives.

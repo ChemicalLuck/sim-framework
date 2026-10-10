@@ -1,6 +1,7 @@
 import type {
   ContentRef,
   IdSource,
+  KnownIds,
   NodeRefExtractor,
   NodeRefRewriter,
   RefNode,
@@ -16,23 +17,29 @@ export * from './walk';
 /** Map of data-file base name → its parsed JSON contents. */
 export type DataByFile = Record<string, unknown>;
 
-/** Build namespace → set-of-ids registries from the available id sources. */
+/** Build namespace → known-ids registries from the available id sources. */
 export function buildRegistries(
   idSources: IdSource[],
   dataByFile: DataByFile,
-): Map<string, Set<string>> {
-  const registries = new Map<string, Set<string>>();
+): Map<string, KnownIds> {
+  const registries = new Map<string, KnownIds>();
   for (const src of idSources) {
     const data = dataByFile[src.file];
     if (data === undefined) continue;
-    let set = registries.get(src.namespace);
-    if (!set) {
-      set = new Set<string>();
-      registries.set(src.namespace, set);
+    let known = registries.get(src.namespace);
+    if (!known) {
+      known = { ids: new Set<string>(), patterns: [] };
+      registries.set(src.namespace, known);
     }
-    for (const id of src.select(data)) set.add(id);
+    for (const id of src.select(data)) known.ids.add(id);
+    if (src.selectPatterns) known.patterns.push(...src.selectPatterns(data));
   }
   return registries;
+}
+
+/** Whether a namespace's registry knows an id, listed or by pattern. */
+export function isKnownId(known: KnownIds, id: string): boolean {
+  return known.ids.has(id) || known.patterns.some((p) => p.test(id));
 }
 
 /** Compose the node extractors into a single reference-extracting function. */
@@ -112,7 +119,7 @@ export function validateReferences(
   );
   for (const rec of records) {
     const registry = registries.get(rec.namespace);
-    if (registry && !registry.has(rec.id)) {
+    if (registry && !isKnownId(registry, rec.id)) {
       issues.push({
         section: rec.section,
         source: rec.source,

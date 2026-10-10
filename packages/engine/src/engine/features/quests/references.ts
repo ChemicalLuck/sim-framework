@@ -30,6 +30,26 @@ import type {
 
 const objectiveId = (questId: string, name: string) => `${questId}::${name}`;
 
+const PLACEHOLDER = /\{[^}]*\}/g;
+
+/**
+ * Whether an id holds a `{npc0…}`-style template placeholder. Such ids are only
+ * filled when a template is instantiated, so they can't be checked statically.
+ */
+const hasPlaceholder = (id: string) => /\{[^}]*\}/.test(id);
+
+/**
+ * The ids a quest template id (or `id::objective` name) produces: its text,
+ * with each placeholder standing for any non-empty value. One that is only
+ * placeholders would accept every id, so it yields no pattern.
+ */
+function templatePattern(template: string): RegExp[] {
+  const literals = template.split(PLACEHOLDER);
+  if (literals.every((l) => l === '')) return [];
+  const escaped = literals.map((l) => l.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  return [new RegExp(`^${escaped.join('.+')}$`)];
+}
+
 export const idSources: IdSource[] = [
   {
     namespace: 'quest',
@@ -48,6 +68,27 @@ export const idSources: IdSource[] = [
     namespace: 'questTemplate',
     file: 'quest-templates',
     select: (data) => (data as { id: string }[]).map((t) => t.id),
+  },
+  // Quests a `quest_create` effect instantiates from a template.
+  {
+    namespace: 'quest',
+    file: 'quest-templates',
+    select: () => [],
+    selectPatterns: (data) =>
+      (data as JsonQuestTemplate[]).flatMap((t) =>
+        templatePattern(t.idTemplate),
+      ),
+  },
+  {
+    namespace: 'questObjective',
+    file: 'quest-templates',
+    select: () => [],
+    selectPatterns: (data) =>
+      (data as JsonQuestTemplate[]).flatMap((t) =>
+        t.objectives.flatMap((o) =>
+          templatePattern(objectiveId(t.idTemplate, o.name)),
+        ),
+      ),
   },
 ];
 
@@ -131,12 +172,6 @@ function collectObjectiveRefs(
     ...collectEffectRefs(objective.onComplete, source, section, extract),
   ];
 }
-
-/**
- * Whether an id holds a `{npc0…}`-style template placeholder. Such ids are only
- * filled when a template is instantiated, so they can't be checked statically.
- */
-const hasPlaceholder = (id: string) => /\{[^}]*\}/.test(id);
 
 function rewritePartRefs(
   part: JsonObjectiveTrigger | JsonObjectiveCondition | undefined,
