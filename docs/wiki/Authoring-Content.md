@@ -40,6 +40,30 @@ omitted or left as an empty `[]` / `{}`.
 | `linguistics.json`                     | Text macros & terms                                                      | optional         |
 | `relationships.json`                   | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional         |
 
+## Minimap
+
+`minimap.json` holds one map (top-level `nodes`, `zones`, optional `viewBox`, default
+`"0 0 640 200"`) or several under `maps`. The minimap shows the map containing the
+player's nearest ancestor location placed as a node, so it switches as the player
+travels between regions. `locationMaps` pins a location (and its children) that has no
+node to a map. Edges whose endpoints are not both on the shown map are not drawn.
+
+```json
+{
+  "maps": {
+    "town": { "nodes": { "home": { "x": 40, "y": 60, "label": "Home" } } },
+    "coast": {
+      "nodes": { "harbour": { "x": 20, "y": 20, "label": "Harbour" } },
+      "zones": [
+        { "label": "DOCKS", "x": 0, "y": 0, "width": 100, "height": 50 }
+      ],
+      "viewBox": "0 0 100 50"
+    }
+  },
+  "locationMaps": { "ferry": "coast" }
+}
+```
+
 ## Effects
 
 Actions apply **effects** — the only way player actions change state. Each effect has a
