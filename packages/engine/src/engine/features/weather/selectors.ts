@@ -3,7 +3,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { selectDate } from '@chemicalluck/sim-engine/features/time/selectors';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
-import { WEATHER_CONDITIONS } from './lib/conditions';
+import { getWeatherCondition } from './lib/config';
 import { computeDayWeather, getSeason } from './lib/weather';
 import type { DailyWeather } from './types';
 
@@ -21,7 +21,7 @@ export const selectWeather = createSelector(
   (date, override, gameSeed): DailyWeather => {
     const base = computeDayWeather(date, gameSeed);
     if (override) {
-      const cond = WEATHER_CONDITIONS[override];
+      const cond = getWeatherCondition(override);
       return { ...base, conditionId: override, condition: cond };
     }
     return base;

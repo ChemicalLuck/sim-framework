@@ -65,5 +65,6 @@ import type {} from '../features/view/authoring.types';
 import type {} from '../features/view/slice';
 import type {} from '../features/view/types';
 import type {} from '../features/weather/conditions';
+import type {} from '../features/weather/hydrate';
 import type {} from '../features/weather/slice';
 import type {} from '../features/weather/types';

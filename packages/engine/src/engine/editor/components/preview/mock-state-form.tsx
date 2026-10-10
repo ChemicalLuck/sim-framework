@@ -1,4 +1,7 @@
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import {
@@ -8,11 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
-import { WEATHER_CONDITIONS } from '@chemicalluck/sim-engine/features/weather/lib/conditions';
+import { getWeatherConditions } from '@chemicalluck/sim-engine/features/weather/lib/config';
 
 import { usePreviewState } from './mock-state';
-
-const WEATHER_IDS = Object.keys(WEATHER_CONDITIONS);
 
 function parseRecord(text: string): Record<string, number> {
   const out: Record<string, number> = {};
@@ -107,7 +108,7 @@ export function MockStateForm() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="__computed__">— computed —</SelectItem>
-            {WEATHER_IDS.map((id) => (
+            {Object.keys(getWeatherConditions()).map((id) => (
               <SelectItem key={id} value={id}>
                 {id}
               </SelectItem>

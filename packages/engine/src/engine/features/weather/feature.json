@@ -1,0 +1,18 @@
+{
+  "contentExtensions": [
+    {
+      "jsonFile": "weather.json",
+      "contentKey": "weather",
+      "optional": true,
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateWeather"
+    }
+  ],
+  "contentSetup": [
+    {
+      "contentKey": "weather",
+      "from": "./lib/config",
+      "call": "configureWeather"
+    }
+  ]
+}

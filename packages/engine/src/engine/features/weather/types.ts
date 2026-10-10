@@ -2,7 +2,8 @@ import type { BaseEffect } from '@chemicalluck/sim-engine/types';
 
 export type SeasonId = 'spring' | 'summer' | 'autumn' | 'winter';
 
-export type WeatherConditionId =
+/** The conditions the engine ships with. */
+export type BuiltinWeatherConditionId =
   | 'sunny'
   | 'hot_sunny'
   | 'partly_cloudy'
@@ -14,6 +15,9 @@ export type WeatherConditionId =
   | 'snowy'
   | 'freezing';
 
+/** A built-in condition id, or one added by the game's `weather.json`. */
+export type WeatherConditionId = BuiltinWeatherConditionId | (string & {});
+
 export interface WeatherCondition {
   id: WeatherConditionId;
   label: string;
@@ -22,6 +26,21 @@ export interface WeatherCondition {
   iconName: string;
   iconColor: string;
   precipitationChance: number;
+}
+
+export interface WeightedCondition {
+  id: WeatherConditionId;
+  weight: number;
+}
+
+/** Hydrated `weather.json`: per-season weights, persistence and condition definitions. */
+export interface WeatherConfig {
+  /** Weighted condition pools per season; a season left out uses the built-in pool. */
+  seasons: Partial<Record<SeasonId, WeightedCondition[]>>;
+  /** Chance a day keeps the previous day's condition (0–1). */
+  persistence: number;
+  /** All known conditions: the built-ins merged with the game's overrides/additions. */
+  conditions: Record<WeatherConditionId, WeatherCondition>;
 }
 
 export interface DailyWeather {

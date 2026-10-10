@@ -39,6 +39,7 @@ omitted or left as an empty `[]` / `{}`.
 | `quest-templates.json`                 | Reusable quest templates                                                 | optional         |
 | `linguistics.json`                     | Text macros & terms                                                      | optional         |
 | `relationships.json`                   | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional         |
+| `weather.json`                         | Weather frequencies, persistence & conditions — see [Weather](#weather)  | optional         |
 
 ## Minimap
 
@@ -233,6 +234,45 @@ an entry costs its item or template `value`. Optional fields:
 - `condition` on a tab or entry hides it while unmet; add `lockedText` to show it
   disabled with that text instead, as with actions.
 
+## Weather
+
+Weather is generated per day from the game seed. Without `weather.json` each season picks
+evenly from a built-in pool. `weather.json` (every field optional) tunes it:
+
+```json
+{
+  "seasons": {
+    "winter": {
+      "snowy": 0.03,
+      "freezing": 0.04,
+      "rainy": 0.3,
+      "overcast": 0.35,
+      "cloudy": 0.28
+    }
+  },
+  "persistence": 0.65,
+  "conditions": {
+    "rainy": { "label": "Pouring" },
+    "drizzle": {
+      "label": "Drizzle",
+      "tempMin": 7,
+      "tempMax": 13,
+      "precipitationChance": 0.6,
+      "iconName": "CloudRain"
+    }
+  }
+}
+```
+
+- `seasons`: relative weights per condition id (normalised, so they need not sum to 1);
+  a season left out keeps its built-in pool.
+- `persistence`: chance (0–1) a day keeps the previous day's condition (default 0.65).
+- `conditions`: override fields of a built-in condition, or add a new one (`label`,
+  `tempMin` and `tempMax` required; `precipitationChance`, `iconName` — `Sun`, `Cloud`,
+  `CloudRain`, `CloudSnow`, `Snowflake` or `Wind` — and `iconColor` optional). Added ids
+  work in `weather == '<id>'` and the `weather` effect.
+
+## Scripts
 
 A script plays its scenes in order (or randomly), one per action, advancing time each
 turn, then applies `completionEffects`. Add `leave` to let the player end it early:

@@ -9,22 +9,10 @@ import {
 } from '@chemicalluck/sim-engine/components/ui/select';
 import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
+import { getWeatherConditions } from './lib/config';
 import type { WeatherConditionId } from './types';
 
 const CLEAR = '__clear__';
-
-const WEATHER_CONDITIONS: WeatherConditionId[] = [
-  'sunny',
-  'hot_sunny',
-  'partly_cloudy',
-  'cloudy',
-  'overcast',
-  'light_rain',
-  'rainy',
-  'windy',
-  'snowy',
-  'freezing',
-];
 
 interface WeatherFormState {
   conditionId: WeatherConditionId | null;
@@ -49,7 +37,7 @@ const weather = defineEffectEditor<WeatherFormState>({
         value={value.conditionId ?? CLEAR}
         onValueChange={(v) => {
           onChange({
-            conditionId: v === CLEAR ? null : (v as WeatherConditionId),
+            conditionId: v === CLEAR ? null : v,
           });
         }}
       >
@@ -58,7 +46,7 @@ const weather = defineEffectEditor<WeatherFormState>({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={CLEAR}>— clear override —</SelectItem>
-          {WEATHER_CONDITIONS.map((c) => (
+          {Object.keys(getWeatherConditions()).map((c) => (
             <SelectItem key={c} value={c}>
               {c}
             </SelectItem>

@@ -6,8 +6,13 @@ import {
   gameYear,
 } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 
-import type { DailyWeather, SeasonId, WeatherConditionId } from '../types';
-import { WEATHER_CONDITIONS } from './conditions';
+import type {
+  DailyWeather,
+  SeasonId,
+  WeatherConditionId,
+  WeightedCondition,
+} from '../types';
+import { getWeatherCondition, getWeatherConfig } from './config';
 
 // Dates are read in game (UTC) time via time/lib/game-time, so the day's
 // weather and season don't depend on the host's timezone.
@@ -42,36 +47,68 @@ const SEASON_POOLS: Record<SeasonId, WeatherConditionId[]> = {
   ],
 };
 
+/** The season's weighted pool: `weather.json` weights, or the built-in pool weighted evenly. */
+function seasonPool(season: SeasonId): WeightedCondition[] {
+  return (
+    getWeatherConfig().seasons[season] ??
+    SEASON_POOLS[season].map((id) => ({ id, weight: 1 }))
+  );
+}
+
+/** Pick from a weighted pool with a uniform roll in [0, 1). */
+function weightedPick(
+  pool: WeightedCondition[],
+  roll: number,
+): WeatherConditionId {
+  const total = pool.reduce((sum, c) => sum + c.weight, 0);
+  let x = roll * total;
+  for (const c of pool) {
+    if (x < c.weight) return c.id;
+    x -= c.weight;
+  }
+  return pool[pool.length - 1].id;
+}
+
+/** How far apart two conditions are in precipitation and mid temperature. */
+function conditionDistance(a: WeatherConditionId, b: WeatherConditionId) {
+  const ca = getWeatherCondition(a);
+  const cb = getWeatherCondition(b);
+  const midA = (ca.tempMin + ca.tempMax) / 2;
+  const midB = (cb.tempMin + cb.tempMax) / 2;
+  return (
+    Math.abs(ca.precipitationChance - cb.precipitationChance) +
+    Math.abs(midA - midB) / 10
+  );
+}
+
 function pickCondition(date: Date, masterSeed = 0): WeatherConditionId {
-  const season = getSeason(date);
-  const pool = SEASON_POOLS[season];
+  const pool = seasonPool(getSeason(date));
   const rng = new Mulberry32((daySeed(date) ^ masterSeed) >>> 0);
 
   const prevDate = new Date(addGameDays(date.getTime(), -1));
   const prevRng = new Mulberry32((daySeed(prevDate) ^ masterSeed) >>> 0);
 
   // Run prev day's RNG to get its condition
-  const prevPoolForPrev = SEASON_POOLS[getSeason(prevDate)];
-  const prevIndex = Math.floor(prevRng.next() * prevPoolForPrev.length);
-  const prevCondition = prevPoolForPrev[prevIndex];
+  const prevCondition = weightedPick(
+    seasonPool(getSeason(prevDate)),
+    prevRng.next(),
+  );
 
   const persistence = rng.next();
 
-  // 65% chance: try to pick same or adjacent condition
-  if (persistence < 0.65) {
-    const sameIdx = pool.indexOf(prevCondition);
-    if (sameIdx !== -1) return prevCondition;
-    // Adjacent in pool
-    const adjacent = [sameIdx - 1, sameIdx + 1]
-      .filter((i) => i >= 0 && i < pool.length)
-      .map((i) => pool[i]);
-    if (adjacent.length > 0) {
-      return adjacent[Math.floor(rng.next() * adjacent.length)];
-    }
+  // Persist: keep yesterday's condition, or drift to the closest one
+  if (persistence < getWeatherConfig().persistence) {
+    if (pool.some((c) => c.id === prevCondition)) return prevCondition;
+    // Yesterday's condition is out of season (the season just turned):
+    // drift to the most similar condition in today's pool.
+    const distances = pool.map((c) => conditionDistance(prevCondition, c.id));
+    const nearest = Math.min(...distances);
+    const closest = pool.filter((_, i) => distances[i] === nearest);
+    return closest[Math.floor(rng.next() * closest.length)].id;
   }
 
   // Otherwise pick freely from pool
-  return pool[Math.floor(rng.next() * pool.length)];
+  return weightedPick(pool, rng.next());
 }
 
 function computeTemperature(
@@ -82,7 +119,7 @@ function computeTemperature(
   const doy = dayOfYear(date);
   // UK seasonal sine: peaks ~late July (doy ~210), troughs ~late Jan (doy ~30)
   const base = 14 + 11 * Math.sin(((doy - 80) * 2 * Math.PI) / 365);
-  const cond = WEATHER_CONDITIONS[conditionId];
+  const cond = getWeatherCondition(conditionId);
   const rng = new Mulberry32((daySeed(date) ^ 0xdeadbeef ^ masterSeed) >>> 0);
   const range = cond.tempMax - cond.tempMin;
   const noise = rng.next() * range;
@@ -95,7 +132,7 @@ export function computeDayWeather(date: Date, masterSeed = 0): DailyWeather {
   const conditionId = pickCondition(date, masterSeed);
   return {
     conditionId,
-    condition: WEATHER_CONDITIONS[conditionId],
+    condition: getWeatherCondition(conditionId),
     temperature: computeTemperature(date, conditionId, masterSeed),
     seasonId: getSeason(date),
   };
