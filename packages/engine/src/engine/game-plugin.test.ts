@@ -154,6 +154,16 @@ describe('virtual:game-setup quests hydration', () => {
     expect(code).toContain(
       'key: "quests", data: quests_questsData, hydrate: (data, ctx) => quests_hydrateQuests(data, ctx)',
     );
+    expect(code).toContain(
+      'quests_registerInitialQuests(content.extensions.quests);',
+    );
+  });
+
+  it('loads a game without quests.json', () => {
+    const code = generateSetup(gameDir);
+    expect(code).not.toContain('quests.json');
+    expect(code).not.toContain('quests_questsData');
+    expect(code).not.toContain('registerInitialQuests');
   });
 
   it('hydrates quest-templates.json and registers the hydrated templates', () => {

@@ -3,6 +3,7 @@
     {
       "jsonFile": "quests.json",
       "contentKey": "quests",
+      "optional": true,
       "hydratorFrom": "./hydrate",
       "hydratorCall": "hydrateQuests"
     },

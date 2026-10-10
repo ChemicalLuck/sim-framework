@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
+import {
+  idSources as coreIdSources,
+  referenceProviders as coreProviders,
+} from '@chemicalluck/sim-engine/features/core/references';
 import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
+import type { JsonSceneWithId } from '@chemicalluck/sim-engine/features/core/types';
 import {
   nodeRefExtractors as milestoneExtractors,
   nodeRefRewriters as milestoneRewriters,
@@ -8,11 +13,13 @@ import {
 import {
   makeExtract,
   makeRewrite,
+  validateReferences,
 } from '@chemicalluck/sim-engine/lib/validation';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 import type { JsonQuest } from './authoring.types';
 import {
+  idSources,
   nodeRefExtractors,
   nodeRefRewriters,
   referenceProviders,
@@ -182,5 +189,54 @@ describe('quests references in objective actions, scenes and onComplete', () => 
       ).toBe(1);
       expect(JSON.stringify(quests)).not.toContain(`"${id}"`);
     }
+  });
+});
+
+describe('validating a game without quests.json', () => {
+  const contributions = {
+    idSources: [...coreIdSources, ...idSources],
+    referenceProviders: [...coreProviders, ...referenceProviders],
+    nodeRefExtractors,
+    nodeRefRewriters: [],
+    referenceRewriters: [],
+  };
+  const scenes: JsonSceneWithId[] = [
+    {
+      id: 'cafe',
+      kind: 'scene',
+      text: 'The café.',
+      actions: [
+        {
+          actions: [
+            {
+              kind: 'action',
+              text: 'Order',
+              effects: [
+                {
+                  kind: 'quest',
+                  questId: 'coffee',
+                  objectiveName: 'order',
+                  objectiveState: 'complete',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ];
+
+  it('reports no issues when quests.json is absent', () => {
+    expect(validateReferences({ scenes }, contributions)).toEqual([]);
+  });
+
+  it('still checks quest references once quests.json exists', () => {
+    expect(
+      validateReferences({ scenes, quests: [] }, contributions),
+    ).toContainEqual({
+      section: 'scenes',
+      source: 'scene:cafe',
+      message: "references unknown quest 'coffee'",
+    });
   });
 });

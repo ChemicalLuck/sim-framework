@@ -27,7 +27,6 @@ omitted or left as an empty `[]` / `{}`.
 | `time.json`                            | Game start timestamp (ISO string; without an offset it is read as UTC)   | ✅               |
 | `names.json`                           | Random NPC name pools                                                    | ✅               |
 | `professions.json`                     | NPC professions                                                          | ✅               |
-| `quests.json`                          | Quests & objectives                                                      | ✅ (may be `[]`) |
 | `milestones.json`                      | Milestones                                                               | ✅ (may be `[]`) |
 | `shops.json`                           | Shops & stock                                                            | ✅ (may be `[]`) |
 | `appearance.json`                      | Body/appearance attributes                                               | optional         |
@@ -36,6 +35,7 @@ omitted or left as an empty `[]` / `{}`.
 | `named-npcs.json`                      | Hand-authored NPCs                                                       | optional         |
 | `encounters.json`                      | Random encounters                                                        | optional         |
 | `events.json`                          | World events                                                             | optional         |
+| `quests.json`                          | Quests & objectives                                                      | optional         |
 | `quest-templates.json`                 | Reusable quest templates                                                 | optional         |
 | `linguistics.json`                     | Text macros & terms                                                      | optional         |
 | `relationships.json`                   | Relationship metric range, e.g. `{ "min": 0, "max": 100 }` (the default) | optional         |
