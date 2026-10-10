@@ -12,6 +12,11 @@ import type {
   FeatureSlotSpec,
   SetupBinding,
 } from './feature-slot';
+import {
+  createIdentifierAllocator,
+  moduleExportName,
+  toIdentifier,
+} from './module-identifiers';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ENGINE_DIR = __dirname;
@@ -281,6 +286,7 @@ function scanFeatureDir(
   specs: FeatureSlotSpec[],
   imports: string[],
   contributions: Map<string, string[]>,
+  allocate: (base: string) => string,
 ): void {
   for (const spec of specs) {
     if (spec.appliesTo !== 'both' && spec.appliesTo !== scope) continue;
@@ -288,7 +294,7 @@ function scanFeatureDir(
     const file = path.join(featureDir, spec.filename);
     if (!fs.existsSync(file)) continue;
 
-    const alias = `${featureName}${spec.aliasPrefix}`;
+    const alias = allocate(`${featureName}${spec.aliasPrefix}`);
 
     if (spec.importStyle === 'namespace') {
       imports.push(`import * as ${alias} from ${JSON.stringify(file)};`);
@@ -333,6 +339,7 @@ function generateExtensionsModule(
   const imports: string[] = [];
   const contributions = new Map<string, string[]>();
   const exportMeta = new Map<string, 'object' | 'array'>();
+  const allocate = createIdentifierAllocator();
 
   for (const spec of allSpecs) {
     if (!exportMeta.has(spec.exportName)) {
@@ -358,6 +365,7 @@ function generateExtensionsModule(
         allSpecs,
         imports,
         contributions,
+        allocate,
       );
     }
   }
@@ -371,6 +379,7 @@ function generateExtensionsModule(
         allSpecs,
         imports,
         contributions,
+        allocate,
       );
     }
   }
@@ -400,7 +409,7 @@ function generateContributionModule(
   return entries
     .map(
       ({ featureName, filePath }) =>
-        `export { default as ${featureName} } from ${JSON.stringify(filePath)};`,
+        `export { default as ${moduleExportName(featureName)} } from ${JSON.stringify(filePath)};`,
     )
     .join('\n');
 }
@@ -409,48 +418,12 @@ function collectConditionsAliases(
   engineFeaturesDir: string,
   extensionsDir: string,
 ): { imports: string[]; aliases: string[] } {
-  const imports: string[] = [];
-  const aliases: string[] = [];
-
-  if (fs.existsSync(engineFeaturesDir)) {
-    const featureDirs = fs
-      .readdirSync(engineFeaturesDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name);
-    for (const name of featureDirs) {
-      const conditionsFile = path.join(
-        engineFeaturesDir,
-        name,
-        CONDITIONS_FILE,
-      );
-      if (fs.existsSync(conditionsFile)) {
-        const alias = `${name}Conditions`;
-        imports.push(
-          `import * as ${alias} from ${JSON.stringify(conditionsFile)};`,
-        );
-        aliases.push(alias);
-      }
-    }
-  }
-
-  if (fs.existsSync(extensionsDir)) {
-    const extDirs = fs
-      .readdirSync(extensionsDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory())
-      .map((d) => d.name);
-    for (const name of extDirs) {
-      const conditionsFile = path.join(extensionsDir, name, CONDITIONS_FILE);
-      if (fs.existsSync(conditionsFile)) {
-        const alias = `${name}Conditions`;
-        imports.push(
-          `import * as ${alias} from ${JSON.stringify(conditionsFile)};`,
-        );
-        aliases.push(alias);
-      }
-    }
-  }
-
-  return { imports, aliases };
+  return collectFeatureFileAliases(
+    engineFeaturesDir,
+    extensionsDir,
+    CONDITIONS_FILE,
+    'Conditions',
+  );
 }
 
 function generateConditionsBundle(
@@ -504,6 +477,7 @@ function collectFeatureFileAliases(
 ): { imports: string[]; aliases: string[] } {
   const imports: string[] = [];
   const aliases: string[] = [];
+  const allocate = createIdentifierAllocator();
 
   const scan = (dir: string) => {
     if (!fs.existsSync(dir)) return;
@@ -511,7 +485,7 @@ function collectFeatureFileAliases(
       if (!entry.isDirectory()) continue;
       const file = path.join(dir, entry.name, filename);
       if (!fs.existsSync(file)) continue;
-      const alias = `${entry.name}${aliasSuffix}`;
+      const alias = allocate(`${entry.name}${aliasSuffix}`);
       imports.push(`import * as ${alias} from ${JSON.stringify(file)};`);
       aliases.push(alias);
     }
@@ -556,10 +530,6 @@ ${arr('referenceRewriters').join(',\n')}
 `.trim();
 }
 
-function toCamelCase(s: string): string {
-  return s.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase());
-}
-
 function generateSetupModule(
   gameDir: string,
   engineRoot: string,
@@ -577,7 +547,50 @@ function generateSetupModule(
     contextSlots,
   } = manifestData;
 
-  // ---- Extension data (convention: each data.ts exports `${name}Data`) ----
+  const allocate = createIdentifierAllocator();
+  allocate('loadContent');
+  allocate('content');
+  // Content keys are passed to loadContent as shorthand properties, so they
+  // keep their own names.
+  const activeContentSlots = contentSlots.filter(
+    (slot) =>
+      !slot.optional || fs.existsSync(path.join(dataDir, slot.jsonFile)),
+  );
+  for (const slot of activeContentSlots) allocate(slot.contentKey);
+
+  // One import per JSON file, shared by every binding that reads it.
+  const jsonVars = new Map<string, string>();
+  const importJson = (
+    featureName: string,
+    jsonFile: string,
+    imports: string[],
+  ): string => {
+    const jsonFilePath = path.join(dataDir, jsonFile);
+    let dataVar = jsonVars.get(jsonFilePath);
+    if (!dataVar) {
+      dataVar = allocate(
+        `${featureName}_${toIdentifier(path.basename(jsonFile, '.json'))}Data`,
+      );
+      jsonVars.set(jsonFilePath, dataVar);
+      imports.push(`import ${dataVar} from ${JSON.stringify(jsonFilePath)};`);
+    }
+    return dataVar;
+  };
+  const importNamed = (
+    featureName: string,
+    call: string,
+    from: string,
+    imports: string[],
+  ): string => {
+    const alias = allocate(`${featureName}_${call}`);
+    imports.push(
+      `import { ${call} as ${alias} } from ${JSON.stringify(from)};`,
+    );
+    return alias;
+  };
+
+  // ---- Extension data (convention: each data.ts exports `${name}Data`,
+  // with a non-identifier name camel-cased: `my-ext` → `myExtData`) ----
   const extDataImports: string[] = [];
   const extDataEntries: string[] = [];
   if (fs.existsSync(extensionsDir)) {
@@ -591,9 +604,12 @@ function generateSetupModule(
         EXTENSION_DATA_FILE,
       );
       if (!fs.existsSync(dataFile)) continue;
-      const varName = `${entry.name}Data`;
+      const exportName = toIdentifier(`${entry.name}Data`);
+      const varName = allocate(exportName);
+      const specifier =
+        varName === exportName ? varName : `${exportName} as ${varName}`;
       extDataImports.push(
-        `import { ${varName} } from ${JSON.stringify(dataFile)};`,
+        `import { ${specifier} } from ${JSON.stringify(dataFile)};`,
       );
       extDataEntries.push(`  ${varName}`);
     }
@@ -602,31 +618,24 @@ function generateSetupModule(
   // ---- Setup bindings (optional JSON → function) ----
   const setupImports: string[] = [];
   const setupCalls: string[] = [];
-  const importedDataVars = new Set<string>();
   for (const { featureName, featureDir, binding } of setupBindings) {
     const jsonFilePath = path.join(dataDir, binding.jsonFile);
     if (binding.optional && !fs.existsSync(jsonFilePath)) continue;
-    const callAlias = `${featureName}_${binding.call}`;
-    const dataVar = `${featureName}_${toCamelCase(path.basename(binding.jsonFile, '.json'))}Data`;
-    const absFrom = path.resolve(featureDir, binding.from);
-    setupImports.push(
-      `import { ${binding.call} as ${callAlias} } from ${JSON.stringify(absFrom)};`,
+    const callAlias = importNamed(
+      featureName,
+      binding.call,
+      path.resolve(featureDir, binding.from),
+      setupImports,
     );
-    if (!importedDataVars.has(dataVar)) {
-      setupImports.push(
-        `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
-      );
-      importedDataVars.add(dataVar);
-    }
+    const dataVar = importJson(featureName, binding.jsonFile, setupImports);
     setupCalls.push(`${callAlias}(${dataVar});`);
   }
 
   // ---- Content slots (JSON → RawContent key for loadContent) ----
   const contentImports: string[] = [];
   const activeContentKeys: string[] = [];
-  for (const slot of contentSlots) {
+  for (const slot of activeContentSlots) {
     const jsonFilePath = path.join(dataDir, slot.jsonFile);
-    if (slot.optional && !fs.existsSync(jsonFilePath)) continue;
     activeContentKeys.push(slot.contentKey);
     contentImports.push(
       `import ${slot.contentKey} from ${JSON.stringify(jsonFilePath)};`,
@@ -639,14 +648,12 @@ function generateSetupModule(
   for (const { featureName, featureDir, slot } of contextSlots) {
     const jsonFilePath = path.join(dataDir, slot.jsonFile);
     if (slot.optional && !fs.existsSync(jsonFilePath)) continue;
-    const dataVar = `${featureName}_${toCamelCase(path.basename(slot.jsonFile, '.json'))}Data`;
-    const hydratorAlias = `${featureName}_${slot.hydratorCall}`;
-    const absFrom = path.resolve(featureDir, slot.hydratorFrom);
-    ctxSlotImports.push(
-      `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
-    );
-    ctxSlotImports.push(
-      `import { ${slot.hydratorCall} as ${hydratorAlias} } from ${JSON.stringify(absFrom)};`,
+    const dataVar = importJson(featureName, slot.jsonFile, ctxSlotImports);
+    const hydratorAlias = importNamed(
+      featureName,
+      slot.hydratorCall,
+      path.resolve(featureDir, slot.hydratorFrom),
+      ctxSlotImports,
     );
     ctxSlotEntries.push(
       `  { contextKey: ${JSON.stringify(slot.contextKey)}, data: ${dataVar}, hydrate: (data, ctx) => ${hydratorAlias}(data, ctx) }`,
@@ -670,10 +677,7 @@ function generateSetupModule(
           skip = true;
           break;
         }
-        const dataVar = `${featureName}_${toCamelCase(path.basename(input.jsonFile, '.json'))}Data`;
-        extImports.push(
-          `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
-        );
+        const dataVar = importJson(featureName, input.jsonFile, extImports);
         inputVars.push({ inputKey: input.inputKey, dataVar });
       }
       if (skip) {
@@ -681,10 +685,11 @@ function generateSetupModule(
         continue;
       }
       if (!ext.hydratorCall || !ext.hydratorFrom) continue;
-      const hydratorAlias = `${featureName}_${ext.hydratorCall}`;
-      const absFrom = path.resolve(featureDir, ext.hydratorFrom);
-      extImports.push(
-        `import { ${ext.hydratorCall} as ${hydratorAlias} } from ${JSON.stringify(absFrom)};`,
+      const hydratorAlias = importNamed(
+        featureName,
+        ext.hydratorCall,
+        path.resolve(featureDir, ext.hydratorFrom),
+        extImports,
       );
       const dataObj = `{ ${inputVars.map(({ inputKey, dataVar }) => `${inputKey}: ${dataVar}`).join(', ')} }`;
       extEntries.push(
@@ -698,19 +703,14 @@ function generateSetupModule(
         skippedExtKeys.add(ext.contentKey);
         continue;
       }
-      const dataVar = `${featureName}_${toCamelCase(path.basename(ext.jsonFile, '.json'))}Data`;
       // A setup binding may already import the same file (e.g. needs.json).
-      if (!importedDataVars.has(dataVar)) {
-        extImports.push(
-          `import ${dataVar} from ${JSON.stringify(jsonFilePath)};`,
-        );
-        importedDataVars.add(dataVar);
-      }
+      const dataVar = importJson(featureName, ext.jsonFile, extImports);
       if (ext.hydratorFrom && ext.hydratorCall) {
-        const hydratorAlias = `${featureName}_${ext.hydratorCall}`;
-        const absFrom = path.resolve(featureDir, ext.hydratorFrom);
-        extImports.push(
-          `import { ${ext.hydratorCall} as ${hydratorAlias} } from ${JSON.stringify(absFrom)};`,
+        const hydratorAlias = importNamed(
+          featureName,
+          ext.hydratorCall,
+          path.resolve(featureDir, ext.hydratorFrom),
+          extImports,
         );
         extEntries.push(
           `  { key: ${JSON.stringify(ext.contentKey)}, data: ${dataVar}, hydrate: (data, ctx) => ${hydratorAlias}(data, ctx) }`,
@@ -730,10 +730,11 @@ function generateSetupModule(
     if (binding.source !== 'root' && skippedExtKeys.has(binding.contentKey)) {
       continue;
     }
-    const alias = `${featureName}_${binding.call}`;
-    const absFrom = path.resolve(featureDir, binding.from);
-    contentSetupImports.push(
-      `import { ${binding.call} as ${alias} } from ${JSON.stringify(absFrom)};`,
+    const alias = importNamed(
+      featureName,
+      binding.call,
+      path.resolve(featureDir, binding.from),
+      contentSetupImports,
     );
     const accessor =
       binding.source === 'root'

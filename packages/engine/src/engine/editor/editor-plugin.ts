@@ -4,6 +4,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Plugin } from 'vite';
 
+import { createIdentifierAllocator } from '../module-identifiers';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_EDITOR_APP_DIR = __dirname;
 
@@ -193,6 +195,7 @@ function generateEditorExtensionsModule(
 
   const imports: string[] = [];
   const contributions = new Map<string, string[]>();
+  const allocate = createIdentifierAllocator();
   const exportMeta = new Map<
     string,
     { container: 'object' | 'array'; typeAnnotation?: string }
@@ -226,7 +229,7 @@ function generateEditorExtensionsModule(
             .find((f) => fsSyncModule.existsSync(f)) ?? null;
         if (!file) continue;
 
-        const alias = `${name}${slot.aliasPrefix}`;
+        const alias = allocate(`${name}${slot.aliasPrefix}`);
 
         if (slot.importStyle === 'namespace') {
           imports.push(`import * as ${alias} from ${JSON.stringify(file)};`);

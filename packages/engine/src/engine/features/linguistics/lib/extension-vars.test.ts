@@ -93,4 +93,16 @@ describe('extension variables in templates', () => {
       ),
     ).toBe('Revise!');
   });
+
+  it('keeps a hyphenated extension name in the variable', () => {
+    const hyphenCtx = buildTemplateContext({
+      narrativeVars: collectExtensionVars(
+        { 'my-ext': () => ({ term: 'autumn' }) },
+        state,
+      ),
+    });
+    expect(
+      renderText("{my-ext.term}{if my-ext.term == 'autumn'}!{/if}", hyphenCtx),
+    ).toBe('autumn!');
+  });
 });

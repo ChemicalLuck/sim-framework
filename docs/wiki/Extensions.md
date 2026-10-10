@@ -28,6 +28,10 @@ extensions/<name>/
 Only include the files you need. A UI-only extension might have just `slice.ts`,
 `selectors.ts`, and `components/`.
 
+The folder name need not be a JS identifier: `my-ext/` works, and everything keyed by
+name (store slice, `{my-ext.<key>}` template variables, …) uses `my-ext` as is. Only
+`data.ts` must export a camel-cased name: `myExtData`.
+
 ## Extending the engine via module augmentation
 
 Everything an extension adds to engine-owned maps goes through TypeScript module
