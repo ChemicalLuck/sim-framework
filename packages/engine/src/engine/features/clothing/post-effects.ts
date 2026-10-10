@@ -10,13 +10,12 @@ import {
   getSizeSystems,
 } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import { getLocationById } from '@chemicalluck/sim-engine/features/travel/lib/world';
-import { selectWeatherConditionId } from '@chemicalluck/sim-engine/features/weather/selectors';
-import type { WeatherConditionId } from '@chemicalluck/sim-engine/features/weather/types';
+import { selectWeather } from '@chemicalluck/sim-engine/features/weather/selectors';
 import type { PostEffectHandler } from '@chemicalluck/sim-engine/state/thunks';
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
 
 import clothingReducer, { addWearMinutes, ensureItems, setWet } from './slice';
-import { UMBRELLA_SLOT, WET_WEATHER_CONDITIONS } from './types';
+import { UMBRELLA_SLOT } from './types';
 
 const clothingPostEffect: PostEffectHandler = ({
   dispatch,
@@ -52,10 +51,8 @@ const clothingPostEffect: PostEffectHandler = ({
     wear,
   );
 
-  const effectiveId: WeatherConditionId = selectWeatherConditionId(newState);
-
   const isProtected = equipment[UMBRELLA_SLOT] != null;
-  const isWetWeather = WET_WEATHER_CONDITIONS.has(effectiveId);
+  const isWetWeather = selectWeather(newState).condition.wetsClothing;
   const currentLocation = getLocationById(newState.present.player.locationId);
   const isOutdoors = currentLocation?.kind !== 'interior';
 

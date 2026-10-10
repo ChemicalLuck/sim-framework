@@ -262,7 +262,9 @@ evenly from a built-in pool. `weather.json` (every field optional) tunes it:
       "tempMin": 7,
       "tempMax": 13,
       "precipitationChance": 0.6,
-      "iconName": "CloudRain"
+      "iconName": "CloudRain",
+      "needEffects": { "Energy": 0.5 },
+      "wetsClothing": true
     }
   }
 }
@@ -275,6 +277,12 @@ evenly from a built-in pool. `weather.json` (every field optional) tunes it:
   `tempMin` and `tempMax` required; `precipitationChance`, `iconName` — `Sun`, `Cloud`,
   `CloudRain`, `CloudSnow`, `Snowflake` or `Wind` — and `iconColor` optional). Added ids
   work in `weather == '<id>'` and the `weather` effect.
+- `needEffects` (need name → points drained per hour) and `wetsClothing` (wets equipped
+  clothing outdoors without an umbrella) set a condition's effects. Built-ins drain
+  `hot_sunny` Hygiene 2; `light_rain` Energy 0.5; `rainy` Energy 1; `snowy` Energy 2,
+  Hunger 3; `freezing` Energy 3, Hunger 4; only `light_rain`, `rainy` and `snowy` wet
+  clothing. `needEffects` replaces a built-in's drains (`{}` turns them off); added
+  conditions default to none and `false`.
 
 The `weather` effect overrides the computed weather:
 

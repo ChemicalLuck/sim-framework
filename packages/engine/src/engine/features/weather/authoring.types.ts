@@ -11,6 +11,13 @@ export interface JsonWeatherCondition {
   iconName?: string;
   /** Tailwind text colour class for the icon. */
   iconColor?: string;
+  /**
+   * Need drains while this condition holds, as need name → points per hour,
+   * e.g. `{ "Energy": 1 }`. Replaces a built-in condition's drains; default none.
+   */
+  needEffects?: Record<string, number>;
+  /** Whether it wets equipped clothing outdoors (without an umbrella). Default false. */
+  wetsClothing?: boolean;
 }
 
 /** Optional `weather.json`. Every field is optional; omitted parts keep the built-in behaviour. */

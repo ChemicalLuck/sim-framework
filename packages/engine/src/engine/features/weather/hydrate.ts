@@ -54,6 +54,20 @@ function hydrateConditions(
         `weather.json: condition '${id}' precipitationChance must be 0–1`,
       );
     }
+    const needEffects = def.needEffects ?? base?.needEffects ?? {};
+    for (const [need, rate] of Object.entries(needEffects)) {
+      if (!isFiniteNumber(rate)) {
+        throw new Error(
+          `weather.json: condition '${id}' needEffects.${need} must be a number`,
+        );
+      }
+    }
+    const wetsClothing = def.wetsClothing ?? base?.wetsClothing ?? false;
+    if (typeof wetsClothing !== 'boolean') {
+      throw new Error(
+        `weather.json: condition '${id}' wetsClothing must be true or false`,
+      );
+    }
     conditions[id] = {
       id,
       label,
@@ -62,6 +76,8 @@ function hydrateConditions(
       precipitationChance,
       iconName: def.iconName ?? base?.iconName ?? 'Cloud',
       iconColor: def.iconColor ?? base?.iconColor ?? 'text-zinc-400',
+      needEffects: { ...needEffects },
+      wetsClothing,
     };
   }
   return conditions;

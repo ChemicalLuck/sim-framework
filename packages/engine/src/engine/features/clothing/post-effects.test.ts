@@ -1,9 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
 import { configureWearables } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import { configureWorld } from '@chemicalluck/sim-engine/features/travel/lib/world';
 import type { LocationNode } from '@chemicalluck/sim-engine/features/travel/types';
+import { hydrateWeather } from '@chemicalluck/sim-engine/features/weather/hydrate';
+import { configureWeather } from '@chemicalluck/sim-engine/features/weather/lib/config';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
@@ -76,6 +78,22 @@ describe('clothing weather post-effect', () => {
     );
   });
 
+  it.each([
+    ['sunny', false],
+    ['hot_sunny', false],
+    ['partly_cloudy', false],
+    ['cloudy', false],
+    ['overcast', false],
+    ['light_rain', true],
+    ['rainy', true],
+    ['windy', false],
+    ['snowy', true],
+    ['freezing', false],
+  ])('built-in %s wets clothing outdoors: %s', (id, wets) => {
+    const setWets = run({ locationId: 'park', override: id });
+    expect(setWets.some((a) => a.payload?.wet === true)).toBe(wets);
+  });
+
   it('does not wet clothing indoors even in wet weather', () => {
     const setWets = run({ locationId: 'home', override: 'rainy' });
     const wettings = setWets.filter((a) => a.payload?.wet === true);
@@ -94,6 +112,47 @@ describe('clothing weather post-effect', () => {
         payload: { ids: ['jacket-1'], wet: false },
       }),
     );
+  });
+});
+
+describe('clothing wetting from weather.json', () => {
+  beforeEach(() => {
+    configureWorld({ locations: [park, home], edges: [] });
+  });
+  afterEach(() => {
+    configureWeather(null);
+  });
+
+  const wetting = (id: string) =>
+    run({ locationId: 'park', override: id }).some(
+      (a) => a.payload?.wet === true,
+    );
+
+  it('wets clothing in a condition added with wetsClothing', () => {
+    configureWeather(
+      hydrateWeather({
+        conditions: {
+          sleet: { label: 'Sleet', tempMin: 0, tempMax: 3, wetsClothing: true },
+          haze: { label: 'Haze', tempMin: 15, tempMax: 22 },
+        },
+      }),
+    );
+    expect(wetting('sleet')).toBe(true);
+    expect(wetting('haze')).toBe(false);
+  });
+
+  it('lets weather.json change whether a built-in condition wets clothing', () => {
+    configureWeather(
+      hydrateWeather({
+        conditions: {
+          rainy: { wetsClothing: false },
+          freezing: { wetsClothing: true },
+        },
+      }),
+    );
+    expect(wetting('rainy')).toBe(false);
+    expect(wetting('freezing')).toBe(true);
+    expect(wetting('snowy')).toBe(true);
   });
 });
 

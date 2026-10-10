@@ -26,6 +26,10 @@ export interface WeatherCondition {
   iconName: string;
   iconColor: string;
   precipitationChance: number;
+  /** Need drains while this condition holds, as need name → points per hour. */
+  needEffects: Record<string, number>;
+  /** Whether it wets equipped clothing outdoors (without an umbrella). */
+  wetsClothing: boolean;
 }
 
 export interface WeightedCondition {

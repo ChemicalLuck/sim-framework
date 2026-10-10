@@ -1,10 +1,12 @@
 import type { UnknownAction } from '@reduxjs/toolkit';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { increaseNeedByAmount } from '@chemicalluck/sim-engine/features/needs/slice';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
+import { hydrateWeather } from './hydrate';
+import { configureWeather } from './lib/config';
 import { computeHourWeather } from './lib/weather';
 import postEffects, { WEATHER_SLEEP_FACTOR } from './post-effects';
 import { clearExpiredWeatherOverride } from './slice';
@@ -182,5 +184,73 @@ describe('weather need-drain post-effect', () => {
 
   it('does nothing when no time passed', () => {
     expect(run([], state(START, 'rainy'), state(START, 'rainy'))).toEqual({});
+  });
+
+  it.each([
+    ['sunny', {}],
+    ['hot_sunny', { Hygiene: -2 }],
+    ['partly_cloudy', {}],
+    ['cloudy', {}],
+    ['overcast', {}],
+    ['light_rain', { Energy: -0.5 }],
+    ['rainy', { Energy: -1 }],
+    ['windy', {}],
+    ['snowy', { Energy: -2, Hunger: -3 }],
+    ['freezing', { Energy: -3, Hunger: -4 }],
+  ])('drains the built-in rates for %s', (id, expected) => {
+    const totals = run(
+      [{ kind: 'time', hours: 1, minutes: 0 }],
+      state(START, id),
+      state(START + HOUR, id),
+    );
+    expect(totals).toEqual(expected);
+  });
+});
+
+describe('weather need drains from weather.json', () => {
+  afterEach(() => {
+    configureWeather(null);
+  });
+
+  it('drains the needs of a condition added in weather.json', () => {
+    configureWeather(
+      hydrateWeather({
+        conditions: {
+          heatwave: {
+            label: 'Heatwave',
+            tempMin: 30,
+            tempMax: 38,
+            needEffects: { Hygiene: 3, Thirst: 1.5 },
+          },
+        },
+      }),
+    );
+    const totals = run(
+      [{ kind: 'time', hours: 2, minutes: 0 }],
+      state(START, 'heatwave'),
+      state(START + 2 * HOUR, 'heatwave'),
+    );
+    expect(totals).toEqual({ Hygiene: -6, Thirst: -3 });
+  });
+
+  it("lets weather.json replace a built-in condition's drains", () => {
+    configureWeather(
+      hydrateWeather({
+        conditions: {
+          snowy: { needEffects: { Warmth: 2 } },
+          rainy: { needEffects: {} },
+        },
+      }),
+    );
+    const hour = (id: string) =>
+      run(
+        [{ kind: 'time', hours: 1, minutes: 0 }],
+        state(START, id),
+        state(START + HOUR, id),
+      );
+    expect(hour('snowy')).toEqual({ Warmth: -2 });
+    expect(hour('rainy')).toEqual({});
+    // Untouched built-ins keep their drains.
+    expect(hour('freezing')).toEqual({ Energy: -3, Hunger: -4 });
   });
 });

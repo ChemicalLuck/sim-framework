@@ -211,6 +211,35 @@ describe('computeDayWeather with weather.json', () => {
     );
   });
 
+  it('rejects invalid needEffects and wetsClothing', () => {
+    expect(() =>
+      hydrateWeather({
+        conditions: { rainy: { needEffects: { Energy: 'lots' as never } } },
+      }),
+    ).toThrow(/needEffects/);
+    expect(() =>
+      hydrateWeather({
+        conditions: { rainy: { wetsClothing: 'yes' as never } },
+      }),
+    ).toThrow(/wetsClothing/);
+  });
+
+  it('keeps built-in need drains and wetting unless overridden', () => {
+    const { conditions } = hydrateWeather({
+      conditions: {
+        rainy: { label: 'Wet' },
+        mist: { label: 'Mist', tempMin: 5, tempMax: 10 },
+      },
+    });
+    expect(conditions.rainy).toMatchObject({
+      label: 'Wet',
+      needEffects: { Energy: 1 },
+      wetsClothing: true,
+    });
+    expect(conditions.mist.needEffects).toEqual({});
+    expect(conditions.mist.wetsClothing).toBe(false);
+  });
+
   it('uses added conditions with their label and temperature range', () => {
     configureWeather(
       hydrateWeather({

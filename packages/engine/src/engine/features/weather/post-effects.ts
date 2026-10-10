@@ -9,17 +9,6 @@ import type { Effect } from '@chemicalluck/sim-engine/types';
 import { msToNextHour } from './lib/weather';
 import { getWeatherAt } from './selectors';
 import { clearExpiredWeatherOverride } from './slice';
-import type { WeatherConditionId } from './types';
-
-const WEATHER_NEED_MODIFIERS: Partial<
-  Record<WeatherConditionId, Partial<Record<string, number>>>
-> = {
-  snowy: { Energy: 2, Hunger: 3 },
-  freezing: { Energy: 3, Hunger: 4 },
-  rainy: { Energy: 1 },
-  light_rain: { Energy: 0.5 },
-  hot_sunny: { Hygiene: 2 },
-};
 
 /** Share of the weather drain applied while asleep (sheltered indoors). */
 export const WEATHER_SLEEP_FACTOR = 0.5;
@@ -81,9 +70,8 @@ const weatherPostEffect: PostEffectHandler = ({
     // Walk the span hour by hour, using each hour's weather.
     while (t < end) {
       const next = Math.min(end, t + msToNextHour(new Date(t)));
-      const modifiers =
-        WEATHER_NEED_MODIFIERS[getWeatherAt(newState, t).conditionId];
-      for (const [need, ratePerHour] of Object.entries(modifiers ?? {})) {
+      const { needEffects } = getWeatherAt(newState, t).condition;
+      for (const [need, ratePerHour] of Object.entries(needEffects)) {
         if (!ratePerHour) continue;
         totals[need] =
           (totals[need] ?? 0) - ratePerHour * ((next - t) / 3_600_000) * factor;
