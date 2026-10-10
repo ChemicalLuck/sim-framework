@@ -29,7 +29,7 @@ import {
 
 import {
   preloadEditorData,
-  readEditorData,
+  readOptionalEditorData,
   subscribeEditorData,
 } from './use-editor-data';
 
@@ -87,14 +87,18 @@ function ReferencesRunner({ onChange }: RunnerProps) {
   const [version, bump] = useReducer((n: number) => n + 1, 0);
   useEffect(() => subscribeEditorData(bump), [bump]);
 
-  // Recompute only when the cache changes (version bump). readEditorData
-  // suspends until every required file has loaded — so this must run during
-  // render, not inside the effect below.
+  // Recompute only when the cache changes (version bump). The read suspends
+  // until every file has loaded — so this must run during render, not inside
+  // the effect below. A file the game doesn't have (e.g. an optional
+  // weather.json) reads as undefined and is skipped, like a namespace with no
+  // source file; real read or parse errors still throw.
   // eslint-disable-next-line react-x/no-unnecessary-use-memo
   const records = useMemo(() => {
-    const dataByFile: DataByFile = Object.fromEntries(
-      FILES.map((file) => [file, readEditorData(urlFor(file))]),
-    );
+    const dataByFile: DataByFile = {};
+    for (const file of FILES) {
+      const data = readOptionalEditorData(urlFor(file));
+      if (data !== undefined) dataByFile[file] = data;
+    }
     return {
       refs: collectReferences(
         contributions.referenceProviders,

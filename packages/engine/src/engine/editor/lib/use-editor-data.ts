@@ -24,6 +24,9 @@ function notifyEditorData(): void {
   for (const cb of listeners) cb();
 }
 
+/** The data endpoint reported the file absent (HTTP 404). */
+export class EditorDataNotFoundError extends Error {}
+
 function ensureResource(url: string): void {
   if (cache.has(url)) return;
   let resolve!: () => void;
@@ -33,6 +36,7 @@ function ensureResource(url: string): void {
   const entry: Resource = { status: 'pending', promise };
   fetch(url)
     .then((r) => {
+      if (r.status === 404) throw new EditorDataNotFoundError('HTTP 404');
       if (!r.ok) throw new Error(`HTTP ${String(r.status)}`);
       return r.json() as Promise<unknown>;
     })
@@ -69,6 +73,20 @@ export function preloadEditorData(...urls: string[]): void {
 
 export function readEditorData(url: string): unknown {
   return readResource(url);
+}
+
+/**
+ * Like {@link readEditorData}, but an absent file reads as `undefined` instead
+ * of throwing — for content files a game may legitimately omit (e.g. the
+ * optional `weather.json`). Other failures (server or parse errors) still throw.
+ */
+export function readOptionalEditorData(url: string): unknown {
+  try {
+    return readResource(url);
+  } catch (e) {
+    if (e instanceof EditorDataNotFoundError) return undefined;
+    throw e;
+  }
 }
 
 function updateCache(url: string, data: unknown): void {

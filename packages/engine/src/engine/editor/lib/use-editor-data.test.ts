@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   preloadEditorData,
   readEditorData,
+  readOptionalEditorData,
   subscribeEditorData,
   useEditorData,
 } from './use-editor-data';
@@ -147,5 +148,65 @@ describe('useEditorData', () => {
 
     expect(error).toHaveBeenCalled();
     expect(result.current.original).toEqual({ value: 1 });
+  });
+});
+
+describe('readOptionalEditorData', () => {
+  function stubResponse(response: Partial<Response>) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve(response as Response)),
+    );
+  }
+
+  it('returns the parsed data for a file that exists', async () => {
+    const endpoint = freshEndpoint();
+    stubFetch({ value: 7 });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(readOptionalEditorData(endpoint)).toEqual({ value: 7 });
+    });
+  });
+
+  it('treats an absent file (HTTP 404) as undefined', async () => {
+    const endpoint = freshEndpoint();
+    stubResponse({ ok: false, status: 404 });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(readOptionalEditorData(endpoint)).toBeUndefined();
+    });
+  });
+
+  it('still throws for an absent file through readEditorData', async () => {
+    const endpoint = freshEndpoint();
+    stubResponse({ ok: false, status: 404 });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(() => readEditorData(endpoint)).toThrow('HTTP 404');
+    });
+  });
+
+  it('surfaces a server error', async () => {
+    const endpoint = freshEndpoint();
+    stubResponse({ ok: false, status: 500 });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(() => readOptionalEditorData(endpoint)).toThrow('HTTP 500');
+    });
+  });
+
+  it('surfaces a parse error', async () => {
+    const endpoint = freshEndpoint();
+    stubResponse({
+      ok: true,
+      status: 200,
+      json: () => Promise.reject(new SyntaxError('Unexpected token')),
+    });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(() => readOptionalEditorData(endpoint)).toThrow(
+        'Unexpected token',
+      );
+    });
   });
 });
