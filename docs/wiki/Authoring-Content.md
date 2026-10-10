@@ -464,6 +464,11 @@ available objective also completes according to its `condition`:
 `{npc0…}` placeholders. A quest counts as completed once all of its objectives are
 complete.
 
+A `quest_create` effect instantiates a template from `quest-templates.json` for one NPC.
+Its `idTemplate`, `name`, objective names and `onComplete` effect strings are rendered with
+that NPC as `npc0`: `{npc0.id}` is the NPC's id, alongside `{npc0.firstName}` and the other
+`{npc0.*}` fields (e.g. `"idTemplate": "meet_{npc0.id}"`).
+
 ## Referential integrity
 
 References between files (an item id in a shop, a location id in a quest) are checked by

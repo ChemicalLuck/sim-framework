@@ -1,10 +1,15 @@
-import type { BodyAttributes, CharacterProfile } from '@chemicalluck/sim-engine/types';
+import type {
+  BodyAttributes,
+  CharacterProfile,
+} from '@chemicalluck/sim-engine/types';
 
 import { getMacros, getTerms } from './config';
 import type { TemplateContext } from './template';
 
 /** A character flattened for templating: profile, optional body, pronouns, known-ness. */
 export interface EntityInput {
+  /** Character id, exposed as `{<prefix>.id}`; omitted when absent (e.g. the player). */
+  id?: string;
   profile: CharacterProfile;
   body?: BodyAttributes;
   /** Pronoun fields (subject/object/possessive/reflexive/noun). */
@@ -16,13 +21,14 @@ export interface EntityInput {
 /**
  * Flatten a character into template variables under `prefix` (e.g. `npc0` →
  * `npc0.firstName`; `''` → bare `firstName`). Exposes name parts, profession,
- * age, appearance feature values, body attributes and pronoun fields.
+ * age, appearance feature values, body attributes, pronoun fields and, when
+ * given, the character's `id`.
  */
 export function buildEntityVars(
   prefix: string,
   entity: EntityInput,
 ): Record<string, string | number> {
-  const { profile, body, pronouns, known } = entity;
+  const { id, profile, body, pronouns, known } = entity;
   const p = prefix ? `${prefix}.` : '';
   const vars: Record<string, string | number> = {
     [`${p}firstName`]: profile.firstName,
@@ -44,6 +50,8 @@ export function buildEntityVars(
   for (const [key, value] of Object.entries(pronouns)) {
     vars[`${p}${key}`] = value;
   }
+  // Set last so an appearance feature or body attribute named `id` can't shadow it.
+  if (id !== undefined) vars[`${p}id`] = id;
   return vars;
 }
 

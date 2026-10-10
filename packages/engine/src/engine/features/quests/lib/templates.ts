@@ -48,7 +48,12 @@ export function instantiateQuestTemplate(
 ): Quest {
   const ctx = buildTemplateContext({
     npcs: [
-      { profile: npc.profile, body: npc.body, pronouns: { ...npc.pronouns } },
+      {
+        id: npc.id,
+        profile: npc.profile,
+        body: npc.body,
+        pronouns: { ...npc.pronouns },
+      },
     ],
   });
   return {
