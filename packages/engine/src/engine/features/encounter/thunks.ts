@@ -1,4 +1,7 @@
-import { cryptoRNG } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import {
+  forkRng,
+  worldRng,
+} from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import { WeightsBuilder } from '@chemicalluck/sim-engine/features/rng/lib/weights';
 import { setView } from '@chemicalluck/sim-engine/features/view/slice';
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions/evaluator';
@@ -73,7 +76,7 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
   const picked = new WeightsBuilder<string>()
     .merge(weightMap)
     .normalize()
-    .pick(cryptoRNG);
+    .pick(forkRng(worldRng, `encounter:${encounter.id}`));
 
   if (picked !== '__pass__') {
     const pickedAction = availableActions.find((a) => a.id === picked);

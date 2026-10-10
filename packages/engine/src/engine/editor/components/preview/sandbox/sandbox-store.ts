@@ -12,6 +12,10 @@ import {
 } from 'virtual:game-extensions';
 
 import type { NamedNpcDefinition } from '@chemicalluck/sim-engine/features/npcs/types';
+import {
+  isRngSyncAction,
+  rngSyncMiddleware,
+} from '@chemicalluck/sim-engine/features/rng/middleware';
 import { setGameSeed } from '@chemicalluck/sim-engine/features/rng/slice';
 import { parseGameDate } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import type { EngineStore } from '@chemicalluck/sim-engine/state/store';
@@ -27,6 +31,8 @@ function makeReducer() {
   return undoable(combineReducers(slices as Record<string, Reducer<unknown>>), {
     groupBy: (action: GroupedAction) => action.meta?.group ?? null,
     limit: 10,
+    filter: (action) => !isRngSyncAction(action),
+    syncFilter: true,
   });
 }
 
@@ -35,7 +41,9 @@ function newStore(preloadedState?: unknown) {
     reducer: makeReducer(),
     preloadedState: preloadedState as never,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware({ serializableCheck: false }),
+      getDefaultMiddleware({ serializableCheck: false }).concat(
+        rngSyncMiddleware,
+      ),
   });
 }
 

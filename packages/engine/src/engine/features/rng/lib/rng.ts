@@ -27,6 +27,11 @@ export function initWorldRng(seed: number): void {
   _worldState = seed >>> 0;
 }
 
+/** Current Mulberry32 state of {@link worldRng} (its sequence position). */
+export function getWorldRngState(): number {
+  return _worldState >>> 0;
+}
+
 export const worldRng: RNG = {
   next(): number {
     let t = (_worldState += 0x6d2b79f5);
@@ -47,6 +52,15 @@ function fnv1a(str: string): number {
 
 export function subRng(masterSeed: number, namespace: string): Mulberry32 {
   return new Mulberry32((masterSeed ^ fnv1a(namespace)) >>> 0);
+}
+
+/**
+ * Seed an independent sub-stream from one draw of `parent`. Reproducible
+ * whenever the parent is (e.g. {@link worldRng}, which is saved and undone
+ * with the game), while keeping the namespace's draws separate from it.
+ */
+export function forkRng(parent: RNG, namespace: string): Mulberry32 {
+  return subRng(Math.floor(parent.next() * 4294967296), namespace);
 }
 
 export interface WeightedCDF<K extends string | number> {

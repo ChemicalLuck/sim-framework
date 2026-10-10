@@ -26,6 +26,11 @@ import undoable, {
   newHistory,
 } from 'redux-undo';
 
+import {
+  isRngSyncAction,
+  rngSyncMiddleware,
+} from '@chemicalluck/sim-engine/features/rng/middleware';
+
 import type {} from './augmentations';
 
 // Features augment this interface to register their slice state type.
@@ -126,8 +131,10 @@ export function buildStore(
     groupBy: (action: GroupedAction) => action.meta?.group ?? null,
     // redux-undo's limit counts the present state too.
     limit: undoLimit + 1,
-    // Record nothing when undo is disabled or the run is ironman.
-    filter: (_action, present) => undoLimit > 0 && !isIronman(present),
+    // Record nothing when undo is disabled or the run is ironman. RNG
+    // position syncs fold into the step that consumed the randomness.
+    filter: (action, present) =>
+      undoLimit > 0 && !isIronman(present) && !isRngSyncAction(action),
     syncFilter: true,
   });
 
@@ -156,7 +163,7 @@ export function buildStore(
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }),
+      }).concat(rngSyncMiddleware),
     devTools: {
       stateSanitizer: <S>(state: S): S => {
         const s = state as Record<string, unknown>;
