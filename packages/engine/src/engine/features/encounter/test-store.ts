@@ -45,6 +45,7 @@ export function createEncounterTestStore(npcs: NPC[] = []) {
       }),
   });
   return {
+    store,
     dispatch: store.dispatch as EngineDispatch,
     getState: () => store.getState() as unknown as RootState,
   };

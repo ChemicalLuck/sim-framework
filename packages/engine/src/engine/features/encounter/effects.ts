@@ -29,7 +29,12 @@ export function handleEncounterEffect(
   }
   dispatchWithGroup(
     dispatch,
-    startEncounter({ encounter, npcId: effect.npcId }),
+    startEncounter({
+      encounter,
+      npcIds: (effect.npcIds?.length ? effect.npcIds : [effect.npcId]).filter(
+        Boolean,
+      ),
+    }),
     group,
   );
   handleViewEffect(

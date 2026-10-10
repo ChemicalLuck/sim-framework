@@ -24,6 +24,30 @@ export function withEncounterActor<T>(actor: EncounterActor, fn: () => T): T {
   }
 }
 
+let _effectNpc: string | null = null;
+
+/**
+ * The NPC that NPC-scoped effects (e.g. `needs` with `target: 'npc'`) apply
+ * to, or null for the first NPC still present.
+ */
+export function getEncounterEffectNpc(): string | null {
+  return _effectNpc;
+}
+
+/** Run `fn` with NPC-scoped effects applying to `npcId`. */
+export function withEncounterEffectNpc<T>(
+  npcId: string | null,
+  fn: () => T,
+): T {
+  const previous = _effectNpc;
+  _effectNpc = npcId;
+  try {
+    return fn();
+  } finally {
+    _effectNpc = previous;
+  }
+}
+
 /** A named or generated NPC by id. */
 export function findNpc(state: RootState, npcId: string | null): NPC | null {
   if (!npcId) return null;

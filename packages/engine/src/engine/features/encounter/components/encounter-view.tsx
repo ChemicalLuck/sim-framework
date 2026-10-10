@@ -1,6 +1,9 @@
+import { useMemo } from 'react';
+
 import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
 import { playerActions } from '@chemicalluck/sim-engine/features/encounter/lib/actions';
 import {
+  presentNpcIds,
   setEncounterState,
   setPlayerAction,
 } from '@chemicalluck/sim-engine/features/encounter/slice';
@@ -10,7 +13,7 @@ import {
 } from '@chemicalluck/sim-engine/features/encounter/thunks';
 import { renderText } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
 import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistics/use-template-context';
-import { selectNpcById } from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { selectNpcsByIds } from '@chemicalluck/sim-engine/features/npcs/selectors';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 import {
   useEngineDispatch,
@@ -20,17 +23,27 @@ import {
 function EncounterView() {
   const dispatch = useEngineDispatch();
   const fullState = useEngineSelector((s) => s);
+  const encounterSlice = useEngineSelector((s) => s.present.encounter);
   const {
     encounter,
     npcId,
+    npcIds,
+    npcs,
     currentStateId,
     playerActiveActions,
     npcActiveActions,
     npcNeeds,
-  } = useEngineSelector((s) => s.present.encounter);
+  } = encounterSlice;
 
-  const npc = useEngineSelector(selectNpcById(npcId ?? ''));
-  const ctx = useTemplateContext(npc ? [npc] : []);
+  // Slot NPCs drive the `{npcN.*}` tokens; left NPCs keep their slot
+  const slotIds = npcIds.length ? npcIds : npcId ? [npcId] : [];
+  const slotKey = slotIds.join('|');
+  const selectSlotNpcs = useMemo(
+    () => selectNpcsByIds(slotKey ? slotKey.split('|') : []),
+    [slotKey],
+  );
+  const slotNpcs = useEngineSelector(selectSlotNpcs);
+  const ctx = useTemplateContext(slotNpcs);
 
   if (!encounter || !currentStateId) return null;
 
@@ -60,11 +73,22 @@ function EncounterView() {
     }
   }
 
-  // NPC's last active action labels
-  const npcActionLabels = Object.values(npcActiveActions)
-    .filter(Boolean)
-    .map((id) => currentState.actions.find((a) => a.id === id)?.text)
-    .filter(Boolean);
+  // Each present NPC's last active action labels and needs
+  const present = npcIds.length ? presentNpcIds(encounterSlice) : [npcId];
+  const npcRows = present.map((id) => {
+    const npc = id ? slotNpcs[slotIds.indexOf(id)] : undefined;
+    const npcState = id ? npcs[id] : undefined;
+    return {
+      key: id ?? '',
+      npc,
+      labels: Object.values(npcState?.activeActions ?? npcActiveActions)
+        .filter(Boolean)
+        .map((actionId) => currentState.actions.find((a) => a.id === actionId))
+        .filter((a) => a !== undefined)
+        .map((a) => a.text),
+      needs: npcState?.needs ?? npcNeeds,
+    };
+  });
 
   return (
     <WithSidebar>
@@ -107,41 +131,45 @@ function EncounterView() {
         )}
       </div>
 
-      {/* NPC's current action */}
-      {npc && npcActionLabels.length > 0 && (
-        <p className="text-sm text-zinc-400 mb-4">
-          <span className="font-medium text-zinc-300">
-            {npc.profile.firstName}
-          </span>
-          {': '}
-          {npcActionLabels.join(', ')}
-        </p>
-      )}
+      {npcRows.map(({ key, npc, labels, needs }) => (
+        <div key={key}>
+          {/* NPC's current actions */}
+          {npc && labels.length > 0 && (
+            <p className="text-sm text-zinc-400 mb-4">
+              <span className="font-medium text-zinc-300">
+                {npc.profile.firstName}
+              </span>
+              {': '}
+              {labels.join(', ')}
+            </p>
+          )}
 
-      {/* NPC needs */}
-      {Object.keys(npcNeeds).length > 0 && (
-        <div className="mb-6 space-y-1.5">
-          {Object.entries(npcNeeds).map(([need, value]) => (
-            <div key={need} className="flex items-center gap-3">
-              <span className="text-xs text-zinc-500 w-20 shrink-0">
-                {npc ? `${npc.profile.firstName}'s ` : ''}
-                {need}
-              </span>
-              <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{
-                    width: `${String(Math.max(0, Math.min(100, value)))}%`,
-                  }}
-                />
-              </div>
-              <span className="text-xs text-zinc-500 w-7 text-right tabular-nums">
-                {Math.round(value)}
-              </span>
+          {/* NPC needs */}
+          {Object.keys(needs).length > 0 && (
+            <div className="mb-6 space-y-1.5">
+              {Object.entries(needs).map(([need, value]) => (
+                <div key={need} className="flex items-center gap-3">
+                  <span className="text-xs text-zinc-500 w-20 shrink-0">
+                    {npc ? `${npc.profile.firstName}'s ` : ''}
+                    {need}
+                  </span>
+                  <div className="flex-1 h-1.5 bg-zinc-700 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all"
+                      style={{
+                        width: `${String(Math.max(0, Math.min(100, value)))}%`,
+                      }}
+                    />
+                  </div>
+                  <span className="text-xs text-zinc-500 w-7 text-right tabular-nums">
+                    {Math.round(value)}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+      ))}
 
       {/* Controls */}
       <div className="flex gap-3">

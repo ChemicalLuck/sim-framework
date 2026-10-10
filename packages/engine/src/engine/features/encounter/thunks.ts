@@ -8,13 +8,22 @@ import { WeightsBuilder } from '@chemicalluck/sim-engine/features/rng/lib/weight
 import { setView } from '@chemicalluck/sim-engine/features/view/slice';
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions/evaluator';
 import type { EngineThunk } from '@chemicalluck/sim-engine/state/store';
-import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
+import {
+  hashEffects,
+  processEffects,
+} from '@chemicalluck/sim-engine/state/thunks';
 import type { Effect } from '@chemicalluck/sim-engine/types';
 
 import { npcActions } from './lib/actions';
-import { findNpc } from './lib/actor';
-import { setEncounterState, setNpcAction, stopEncounter } from './slice';
-import type { EncounterAction, EncounterStopReason } from './types';
+import { findNpc, withEncounterEffectNpc } from './lib/actor';
+import {
+  npcLeaveEncounter,
+  presentNpcIds,
+  setEncounterState,
+  setNpcAction,
+  stopEncounter,
+} from './slice';
+import type { Encounter, EncounterAction, EncounterStopReason } from './types';
 
 /**
  * An NPC's selection weight for an action. Skill multipliers scale with the
@@ -41,65 +50,138 @@ export function npcActionWeight(
   return Math.max(0, weight);
 }
 
+/** The NPC an action's NPC-scoped effects apply to. */
+function effectNpcFor(
+  action: EncounterAction,
+  actorNpcId: string | null,
+  npcIds: string[],
+): string | null {
+  if (typeof action.target === 'number') {
+    return npcIds[action.target] ?? actorNpcId;
+  }
+  return actorNpcId;
+}
+
+/** Apply effects with NPC-scoped effects going to `npcId`. */
+const processScopedEffects =
+  (effects: Effect[], npcId: string | null, group: string): EngineThunk =>
+  (dispatch) => {
+    if (!effects.length) return;
+    withEncounterEffectNpc(npcId, () => {
+      dispatch(processEffects(effects, group));
+    });
+  };
+
+/** NPCs still present, in the encounter's turn order. */
+export function npcsInTurnOrder(
+  encounter: Encounter,
+  npcIds: string[],
+  present: string[],
+): string[] {
+  const ordered = (encounter.npcTurnOrder ?? [])
+    .map((slot) => npcIds[slot])
+    .filter((id) => present.includes(id));
+  return [...new Set([...ordered, ...present])];
+}
+
 export const processTurn = (): EngineThunk => (dispatch, getState) => {
   const state = getState();
-  const { encounter, currentStateId, playerActiveActions, npcActiveActions } =
+  const { encounter, currentStateId, playerActiveActions, npcIds, npcs } =
     state.present.encounter;
   if (!encounter || !currentStateId) return;
 
   const currentState = encounter.states.find((s) => s.id === currentStateId);
   if (!currentState) return;
 
-  // Collect effects from all currently active actions (player + NPC)
-  const activeEffects: Effect[] = [];
+  const findAction = (actionId: string | null) =>
+    actionId ? currentState.actions.find((a) => a.id === actionId) : undefined;
+  const present = presentNpcIds(state.present.encounter);
+  const group = hashEffects();
 
+  // Apply effects from all currently active actions (player, then each NPC),
+  // scoping NPC-targeted effects to the acting or targeted NPC
   for (const actionId of Object.values(playerActiveActions)) {
-    if (!actionId) continue;
-    const action = currentState.actions.find((a) => a.id === actionId);
-    if (action?.effects) activeEffects.push(...action.effects);
+    const action = findAction(actionId);
+    if (!action?.effects) continue;
+    dispatch(
+      processScopedEffects(
+        action.effects,
+        effectNpcFor(action, state.present.encounter.npcId, npcIds),
+        group,
+      ),
+    );
   }
 
-  for (const actionId of Object.values(npcActiveActions)) {
-    if (!actionId) continue;
-    const action = currentState.actions.find((a) => a.id === actionId);
-    if (action?.effects) activeEffects.push(...action.effects);
-  }
-
-  if (activeEffects.length > 0) {
-    dispatch(processEffects(activeEffects));
-  }
-
-  // NPC picks one action (or passes) from available actions in current state
-  const npcId = state.present.encounter.npcId;
-  const npc = findNpc(state, npcId);
-
-  // The NPC's pool: actions it may take, with `self.*` resolving to the NPC
-  const availableActions = npcActions(state, currentState, npcId ?? '');
-
-  const weightMap: Record<string, number> = {
-    __pass__: encounter.npcDoNothingWeight ?? 1,
-  };
-
-  for (const action of availableActions) {
-    weightMap[action.id] = npcActionWeight(action, npc);
-  }
-
-  const picked = new WeightsBuilder<string>()
-    .merge(weightMap)
-    .normalize()
-    .pick(forkRng(worldRng, `encounter:${encounter.id}`));
-
-  if (picked !== '__pass__') {
-    const pickedAction = availableActions.find((a) => a.id === picked);
-    if (pickedAction?.npcStop) {
-      dispatch(stopEncounterThunk('npc', pickedAction.effects));
-      return;
-    }
-    if (pickedAction) {
-      dispatch(
-        setNpcAction({ bodyPart: pickedAction.bodyPart, actionId: picked }),
+  const npcActiveActions: [string | null, string | null][] = npcIds.length
+    ? present.flatMap((npcId) =>
+        Object.values(npcs[npcId].activeActions).map(
+          (actionId): [string | null, string | null] => [npcId, actionId],
+        ),
+      )
+    : // Encounter started without an NPC: the legacy single-NPC fields
+      Object.values(state.present.encounter.npcActiveActions).map(
+        (actionId): [string | null, string | null] => [null, actionId],
       );
+  for (const [npcId, actionId] of npcActiveActions) {
+    const action = findAction(actionId);
+    if (!action?.effects) continue;
+    dispatch(
+      processScopedEffects(
+        action.effects,
+        effectNpcFor(action, npcId, npcIds),
+        group,
+      ),
+    );
+  }
+
+  // Each NPC still present picks one action (or passes) in turn order
+  const pickers = npcIds.length
+    ? npcsInTurnOrder(encounter, npcIds, present)
+    : [state.present.encounter.npcId ?? ''];
+  for (const npcId of pickers) {
+    const npc = findNpc(state, npcId);
+
+    // The NPC's pool: actions it may take, with `self.*` resolving to the NPC
+    const availableActions = npcActions(state, currentState, npcId);
+
+    const weightMap: Record<string, number> = {
+      __pass__: encounter.npcDoNothingWeight ?? 1,
+    };
+    for (const action of availableActions) {
+      weightMap[action.id] = npcActionWeight(action, npc);
     }
+
+    const picked = new WeightsBuilder<string>()
+      .merge(weightMap)
+      .normalize()
+      .pick(forkRng(worldRng, `encounter:${encounter.id}`));
+    const pickedAction = availableActions.find((a) => a.id === picked);
+    if (!pickedAction) continue;
+
+    if (pickedAction.npcStop) {
+      dispatch(
+        processScopedEffects(
+          pickedAction.effects ?? [],
+          effectNpcFor(pickedAction, npcId, npcIds),
+          group,
+        ),
+      );
+      // The encounter ends once no NPC remains; otherwise this one leaves
+      if (presentNpcIds(getState().present.encounter).length <= 1) {
+        dispatch(stopEncounterThunk('npc'));
+        return;
+      }
+      dispatch(npcLeaveEncounter(npcId));
+      continue;
+    }
+
+    dispatch(
+      setNpcAction({
+        bodyPart: pickedAction.bodyPart,
+        actionId: pickedAction.id,
+        npcId: npcIds.length ? npcId : undefined,
+      }),
+    );
   }
 
   const freshState = getState();
@@ -129,19 +211,14 @@ export const processTurn = (): EngineThunk => (dispatch, getState) => {
 };
 
 /**
- * End the encounter: apply `leadingEffects` (e.g. the NPC's stop action), the
- * encounter's `stopEffects` and the effects for `reason`, then return to the
- * default view.
+ * End the encounter: apply its `stopEffects` and the effects for `reason`,
+ * then return to the default view.
  */
 export const stopEncounterThunk =
-  (
-    reason: EncounterStopReason = 'player',
-    leadingEffects: Effect[] = [],
-  ): EngineThunk =>
+  (reason: EncounterStopReason = 'player'): EngineThunk =>
   (dispatch, getState) => {
     const { encounter } = getState().present.encounter;
     const effects = [
-      ...leadingEffects,
       ...(encounter?.stopEffects ?? []),
       ...(encounter?.stopEffectsByReason?.[reason] ?? []),
     ];

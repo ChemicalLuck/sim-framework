@@ -338,8 +338,8 @@ body part, which the player toggles and the NPC picks from by weight each turn. 
 encounter ends when:
 
 - the player presses Stop (reason `player`);
-- the NPC picks an action with `"npcStop": true` (reason `npc`; its effects apply first,
-  and the player is never offered it);
+- the last NPC present picks an action with `"npcStop": true` (reason `npc`; its effects
+  apply first, and the player is never offered it);
 - a `stopCondition` (on the encounter, or on the current state) is met after the NPC's
   pick (reason `condition`).
 
@@ -357,6 +357,18 @@ them. In encounter conditions, `self.skill.<id>` and `self.need.<id>` read whoev
 action is being checked for: the NPC while it picks, otherwise the player.
 `npc.skill.<id>`, `npc.need.<id>` and `npc.relationship.<metric>` always read the
 encounter NPC (`npcNeed.<name>` still works).
+
+An encounter can include several NPCs: give the `view` effect `"npcIds": ["a", "b"]`
+(slot order; `npcId` alone still means one NPC). Each NPC has its own needs and picks
+its own action every turn, in slot order or the encounter's `npcTurnOrder` (e.g.
+`[1, 0]`). `npcNeed.<slot>.<name>` and `npc.<slot>.skill.<id>` (likewise `need`,
+`relationship`) read a specific NPC; un-slotted forms read the first NPC still present,
+and `{npc0.*}`, `{npc1.*}` text tokens follow the slots. An NPC picking an `npcStop`
+action leaves and the rest carry on; the encounter ends when the last one leaves.
+`"target": <slot>` on an action sends its NPC-scoped effects (`needs` with
+`"target": "npc"`) to that slot's NPC; otherwise they go to the acting NPC (the first NPC
+for player actions). `"self"` and `"player"` targets are recorded for authoring but do
+not yet change effect routing or body-part occupancy.
 
 ## Conditions
 

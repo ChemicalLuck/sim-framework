@@ -53,9 +53,10 @@ Built-in identifiers:
 | --------------------------------------------------------- | --------- | ------------- |
 | `money`                                                   | number    | money         |
 | `need.<Name>`                                             | number    | needs         |
-| `npcNeed.<name>`                                          | number    | encounter     |
+| `npcNeed.<name>`, `npcNeed.<slot>.<name>`                 | number    | encounter     |
 | `self.skill.<id>`, `self.need.<id>`                       | number    | encounter     |
 | `npc.skill.<id>`, `npc.need.<id>`, `npc.relationship.<m>` | number    | encounter     |
+| `npc.<slot>.skill.<id>` (and `need`, `relationship`)      | number    | encounter     |
 | `skill.<id>`                                              | number    | player        |
 | `equipped.<attr>`                                         | number    | outfits       |
 | `location`                                                | string    | player        |

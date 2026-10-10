@@ -8,9 +8,14 @@ import { setView } from '@chemicalluck/sim-engine/features/view/slice';
 import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 
 import { npcActions, playerActions } from './lib/actions';
-import { setPlayerAction, startEncounter } from './slice';
+import { presentNpcIds, setPlayerAction, startEncounter } from './slice';
 import { createEncounterTestStore, makeTestNpc } from './test-store';
-import { npcActionWeight, processTurn, stopEncounterThunk } from './thunks';
+import {
+  npcActionWeight,
+  npcsInTurnOrder,
+  processTurn,
+  stopEncounterThunk,
+} from './thunks';
 import type { Encounter, EncounterAction } from './types';
 
 afterEach(() => {
@@ -283,5 +288,148 @@ describe('encounter action actors', () => {
     const state = encounterWith([shared, plain]).states[0];
     expect(playerActions(getState(), state)).toHaveLength(2);
     expect(npcActions(getState(), state, 'npc')).toHaveLength(2);
+  });
+});
+
+describe('encounters with several NPCs', () => {
+  const strong = parseCondition('self.skill.athletics >= 5');
+  const weak = parseCondition('self.skill.athletics < 5');
+  const flex: EncounterAction = {
+    id: 'flex',
+    text: 'Flex',
+    bodyPart: 'arms',
+    actor: 'npc',
+    condition: strong,
+    effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -20 }],
+  };
+  const wave: EncounterAction = {
+    id: 'wave',
+    text: 'Wave',
+    bodyPart: 'hands',
+    actor: 'npc',
+    condition: weak,
+  };
+  const leave: EncounterAction = {
+    id: 'leave',
+    text: 'Leave',
+    bodyPart: 'feet',
+    actor: 'npc',
+    npcStop: true,
+    condition: weak,
+  };
+
+  function startParty(
+    actions: EncounterAction[],
+    extra: Partial<Encounter> = {},
+  ) {
+    const store = createEncounterTestStore([
+      makeTestNpc('a', { skills: { athletics: 9 } }),
+      makeTestNpc('b', { skills: { athletics: 1 } }),
+      makeTestNpc('c', { skills: { athletics: 7 } }),
+    ]);
+    store.dispatch(
+      startEncounter({
+        encounter: {
+          ...encounterWith(actions),
+          npcNeeds: { Energy: 50 },
+          stopEffectsByReason: { npc: [{ kind: 'money', amount: 100 }] },
+          ...extra,
+        },
+        npcIds: ['a', 'b', 'c'],
+      }),
+    );
+    store.dispatch(setView({ activeViewId: 'EncounterView', props: {} }));
+    return store;
+  }
+
+  it('lets each NPC pick independently with its own conditions', () => {
+    const { dispatch, getState } = startParty([flex, wave]);
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.a.activeActions).toEqual({ arms: 'flex' });
+    expect(npcs.b.activeActions).toEqual({ hands: 'wave' });
+    expect(npcs.c.activeActions).toEqual({ arms: 'flex' });
+  });
+
+  it('scopes NPC-targeted effects to the acting NPC', () => {
+    const { dispatch, getState } = startParty([flex, wave]);
+    dispatch(processTurn());
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.a.needs.Energy).toBe(30);
+    expect(npcs.b.needs.Energy).toBe(50);
+    expect(npcs.c.needs.Energy).toBe(30);
+  });
+
+  it('scopes a targeted player action to the slot NPC', () => {
+    const poke: EncounterAction = {
+      id: 'poke',
+      text: 'Poke',
+      bodyPart: 'hands',
+      actor: 'player',
+      target: 2,
+      effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -10 }],
+    };
+    const { dispatch, getState } = startParty([poke], {
+      npcDoNothingWeight: 1,
+    });
+    dispatch(setPlayerAction({ bodyPart: 'hands', actionId: 'poke' }));
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.c.needs.Energy).toBe(40);
+    expect(npcs.a.needs.Energy).toBe(50);
+    expect(npcs.b.needs.Energy).toBe(50);
+  });
+
+  it('keeps the encounter going for the others when one NPC leaves', () => {
+    const { dispatch, getState } = startParty([flex, leave]);
+    dispatch(processTurn());
+    const enc = getState().present.encounter;
+    expect(enc.encounter).not.toBeNull();
+    expect(presentNpcIds(enc)).toEqual(['a', 'c']);
+    expect(enc.npcId).toBe('a');
+    expect(getState().present.money).toBe(0);
+    expect(getState().present.view.activeViewId).toBe('EncounterView');
+
+    // The remaining NPCs keep picking
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.encounter.npcs.a.needs.Energy).toBe(30);
+  });
+
+  it('ends the encounter (reason npc) once the last NPC leaves', () => {
+    const quit: EncounterAction = { ...leave, condition: undefined };
+    const { dispatch, getState } = startParty([quit]);
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(100);
+  });
+
+  it('orders pickers by npcTurnOrder, then the remaining slots', () => {
+    const enc = encounterWith([]);
+    const ids = ['a', 'b', 'c'];
+    expect(npcsInTurnOrder(enc, ids, ids)).toEqual(['a', 'b', 'c']);
+    expect(npcsInTurnOrder({ ...enc, npcTurnOrder: [2, 0] }, ids, ids)).toEqual(
+      ['c', 'a', 'b'],
+    );
+    // NPCs that left are skipped
+    expect(
+      npcsInTurnOrder({ ...enc, npcTurnOrder: [2, 0] }, ids, ['a', 'b']),
+    ).toEqual(['a', 'b']);
+  });
+
+  it('shows one NPC slot as before for single-NPC encounters', () => {
+    const { dispatch, getState } = createEncounterTestStore([
+      makeTestNpc('solo'),
+    ]);
+    dispatch(
+      startEncounter({ encounter: encounterWith([plain]), npcId: 'solo' }),
+    );
+    dispatch(processTurn());
+    const enc = getState().present.encounter;
+    expect(enc.npcIds).toEqual(['solo']);
+    expect(enc.npcId).toBe('solo');
+    expect(enc.npcActiveActions.hands).toBe('plain');
   });
 });

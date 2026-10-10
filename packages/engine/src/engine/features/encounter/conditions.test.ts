@@ -44,6 +44,56 @@ describe('encounter actor expressions', () => {
     });
   });
 
+  it('parses and serializes slotted npcNeed and npc forms', () => {
+    for (const src of [
+      'npcNeed.1.Energy < 20',
+      'npc.2.skill.charm > 5',
+      'npc.0.relationship.Romance >= 1',
+    ]) {
+      expect(conditionToString(parseCondition(src))).toBe(src);
+    }
+    expect(parseCondition('npcNeed.1.Energy < 20')).toMatchObject({
+      lhs: { kind: 'npcNeed', need: 'Energy', slot: 1 },
+    });
+    expect(parseCondition('npcNeed.Energy < 20')).toMatchObject({
+      lhs: { kind: 'npcNeed', need: 'Energy' },
+    });
+  });
+
+  it('reads slotted NPCs; un-slotted forms read the first NPC still present', () => {
+    const base = makeState();
+    const state = {
+      present: {
+        ...base.present,
+        npcs: {
+          named: [],
+          characters: [
+            makeTestNpc('alice', { skills: { charm: 9 } }),
+            makeTestNpc('bob', { skills: { charm: 1 } }),
+          ],
+        },
+        encounter: {
+          npcId: 'alice',
+          npcIds: ['alice', 'bob'],
+          npcNeeds: { Energy: 15 },
+          npcs: {
+            alice: { activeActions: {}, needs: { Energy: 15 }, left: false },
+            bob: { activeActions: {}, needs: { Energy: 70 }, left: false },
+          },
+        },
+      },
+    } as unknown as RootState;
+    const met = (src: string) => isConditionMet(state, parseCondition(src));
+    expect(met('npcNeed.1.Energy == 70')).toBe(true);
+    expect(met('npcNeed.Energy == 15')).toBe(true);
+    expect(met('npc.1.skill.charm == 1 && npc.skill.charm == 9')).toBe(true);
+    expect(met('npc.1.relationship.Friendship == 0')).toBe(true);
+    expect(met('npcNeed.5.Energy == 0')).toBe(true);
+    withEncounterActor({ kind: 'npc', npcId: 'bob' }, () => {
+      expect(met('self.need.Energy == 70 && self.skill.charm == 1')).toBe(true);
+    });
+  });
+
   it('rejects unknown npc relationship metrics', () => {
     expect(() => parseCondition('npc.relationship.Rivalry > 1')).toThrow();
   });

@@ -499,6 +499,40 @@ function EncounterActionRow({
               <SelectItem value="npc">NPC only</SelectItem>
             </SelectContent>
           </Select>
+          <Label className="text-xs text-zinc-500">Aimed at</Label>
+          <Select
+            value={
+              action.target === undefined ? '__none__' : String(action.target)
+            }
+            onValueChange={(v) => {
+              onChange({
+                ...action,
+                target:
+                  v === '__none__'
+                    ? undefined
+                    : v === 'self' || v === 'player'
+                      ? v
+                      : Number(v),
+              });
+            }}
+          >
+            <SelectTrigger
+              size="sm"
+              className="h-7 w-28 text-xs bg-zinc-800 border-zinc-600"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">— default —</SelectItem>
+              <SelectItem value="self">self</SelectItem>
+              <SelectItem value="player">player</SelectItem>
+              {[0, 1, 2].map((slot) => (
+                <SelectItem key={slot} value={String(slot)}>
+                  NPC slot {slot}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* NPC stop */}
@@ -852,6 +886,28 @@ function EncounterDetail({
             />
           </Field>
         </div>
+
+        {/* NPC turn order */}
+        <Field>
+          <Label>
+            NPC turn order (slots, comma-separated; default slot order)
+          </Label>
+          <InlineEdit
+            value={(encounter.npcTurnOrder ?? []).join(', ')}
+            onCommit={(raw) => {
+              const order = raw
+                .split(',')
+                .map((v) => v.trim())
+                .filter((v) => /^\d+$/.test(v))
+                .map(Number);
+              onChange({
+                ...encounter,
+                npcTurnOrder: order.length ? order : undefined,
+              });
+            }}
+            placeholder="1, 0"
+          />
+        </Field>
 
         {/* Initial state */}
         <Field>

@@ -15,7 +15,9 @@ import type {
   JsonEncounter,
   JsonEncounterAction,
   JsonEncounterState,
+  JsonViewEncounterEffect,
 } from './authoring.types';
+import effectHydrators from './effect-hydrators';
 import {
   hydrateEncounter,
   hydrateEncounterAction,
@@ -221,5 +223,47 @@ describe('hydrate encounter action actor', () => {
       makeCtx(),
     );
     expect(result.actor).toBe('npc');
+  });
+});
+
+describe('hydrate multi-NPC encounter fields', () => {
+  it('preserves action target and npcTurnOrder', () => {
+    const ctx = makeCtx();
+    expect(
+      hydrateEncounterAction(
+        { id: 'a', text: 'A', bodyPart: 'hands', target: 2 },
+        ctx,
+      ).target,
+    ).toBe(2);
+    expect(
+      hydrateEncounter(
+        {
+          id: 'e',
+          name: 'E',
+          states: [],
+          initialStateId: 's',
+          npcTurnOrder: [1, 0],
+        },
+        ctx,
+      ).npcTurnOrder,
+    ).toEqual([1, 0]);
+  });
+
+  it('hydrates view_encounter npcIds into the encounter effect', () => {
+    const [hydrator] = effectHydrators;
+    const json: JsonViewEncounterEffect = {
+      kind: 'view',
+      activeViewId: 'EncounterView',
+      encounterId: 'party',
+      npcId: 'a',
+      npcIds: ['a', 'b'],
+    };
+    expect(hydrator.test(json)).toBe(true);
+    expect(hydrator.hydrate(json, makeCtx())).toEqual({
+      kind: 'encounter',
+      encounterId: 'party',
+      npcId: 'a',
+      npcIds: ['a', 'b'],
+    });
   });
 });
