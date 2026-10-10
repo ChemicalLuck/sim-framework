@@ -2,8 +2,12 @@ import { Pencil, Plus, X } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import {
   Form,
   FormControl,
@@ -37,14 +41,18 @@ import {
 } from '@chemicalluck/sim-engine/editor/lib/cascade';
 import { conditionToString } from '@chemicalluck/sim-engine/editor/lib/condition-utils';
 import { useAddForm } from '@chemicalluck/sim-engine/editor/lib/use-add-form';
+import { useAvailableData } from '@chemicalluck/sim-engine/editor/lib/use-available-data';
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { usePanelEntries } from '@chemicalluck/sim-engine/editor/lib/use-panel-entries';
 import type {
   ObjectiveState,
+  ObjectiveTrigger,
   Quest,
   QuestObjective,
 } from '@chemicalluck/sim-engine/features/quests/types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
+
+import { ObjectiveTriggerField } from './objective-trigger-field';
 
 // ── State cycling ────────────────────────────────────────────────
 
@@ -66,7 +74,7 @@ interface ObjectiveRowProps {
 
 function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
   const [editingCond, setEditingCond] = useState(false);
-  const [editingTrigger, setEditingTrigger] = useState(false);
+  const availableData = useAvailableData();
 
   function cycleState() {
     const idx = STATE_ORDER.indexOf(objective.state);
@@ -80,10 +88,6 @@ function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
       : typeof objective.condition === 'object'
         ? JSON.stringify(objective.condition)
         : '';
-
-  const triggerText = objective.trigger
-    ? conditionToString(objective.trigger as Condition)
-    : '';
 
   const showTriggerSection =
     objective.state === 'locked' || !!objective.trigger;
@@ -156,55 +160,13 @@ function ObjectiveRow({ objective, onChange, onRemove }: ObjectiveRowProps) {
 
         {showTriggerSection && (
           <div className="pt-1 border-t border-zinc-800">
-            {!editingTrigger && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-zinc-500 shrink-0">trigger</span>
-                <p className="flex-1 text-xs text-zinc-400 truncate font-mono">
-                  {triggerText || '—'}
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setEditingTrigger(true);
-                  }}
-                  className="h-6 text-xs text-zinc-600 hover:text-zinc-300 shrink-0"
-                  title={objective.trigger ? 'Edit trigger' : 'Set trigger'}
-                >
-                  <Pencil size={12} />{' '}
-                  {objective.trigger ? 'trigger' : 'set trigger'}
-                </Button>
-                {objective.trigger && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      onChange({ ...objective, trigger: undefined });
-                    }}
-                    className="h-6 w-6 p-0 text-zinc-600 hover:text-red-400 shrink-0"
-                    title="Remove trigger"
-                  >
-                    <X size={12} />
-                  </Button>
-                )}
-              </div>
-            )}
-            {editingTrigger && (
-              <ConditionEditor
-                initial={
-                  objective.trigger && 'kind' in objective.trigger
-                    ? (objective.trigger as Condition)
-                    : undefined
-                }
-                onSave={(c) => {
-                  onChange({ ...objective, trigger: c });
-                  setEditingTrigger(false);
-                }}
-                onCancel={() => {
-                  setEditingTrigger(false);
-                }}
-              />
-            )}
+            <ObjectiveTriggerField
+              trigger={objective.trigger}
+              onChange={(trigger) => {
+                onChange({ ...objective, trigger });
+              }}
+              availableData={availableData}
+            />
           </div>
         )}
       </div>
@@ -225,8 +187,8 @@ function AddObjectiveForm({ onAdd, onCancel }: AddObjectiveFormProps) {
   });
   const [condition, setCondition] = useState<Condition | null>(null);
   const [showCondForm, setShowCondForm] = useState(false);
-  const [trigger, setTrigger] = useState<Condition | null>(null);
-  const [showTriggerForm, setShowTriggerForm] = useState(false);
+  const [trigger, setTrigger] = useState<ObjectiveTrigger | undefined>();
+  const availableData = useAvailableData();
 
   const watchedState = form.watch('state');
 
@@ -353,57 +315,12 @@ function AddObjectiveForm({ onAdd, onCancel }: AddObjectiveFormProps) {
                   (optional — unlocks this objective)
                 </span>
               </Label>
-              {trigger && (
-                <span className="text-xs text-zinc-400 truncate flex-1 font-mono">
-                  {conditionToString(trigger)}
-                </span>
-              )}
-              {!showTriggerForm && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setShowTriggerForm(true);
-                  }}
-                  className="h-6 text-xs text-zinc-500 hover:text-zinc-300 ml-auto"
-                >
-                  {trigger ? (
-                    <>
-                      <Pencil size={12} /> edit
-                    </>
-                  ) : (
-                    <>
-                      <Plus size={12} /> set trigger
-                    </>
-                  )}
-                </Button>
-              )}
-              {trigger && !showTriggerForm && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setTrigger(null);
-                  }}
-                  className="h-6 w-6 p-0 text-zinc-500 hover:text-red-400"
-                  title="Remove trigger"
-                >
-                  <X size={12} />
-                </Button>
-              )}
             </div>
-            {showTriggerForm && (
-              <ConditionEditor
-                initial={trigger ?? undefined}
-                onSave={(c) => {
-                  setTrigger(c);
-                  setShowTriggerForm(false);
-                }}
-                onCancel={() => {
-                  setShowTriggerForm(false);
-                }}
-              />
-            )}
+            <ObjectiveTriggerField
+              trigger={trigger}
+              onChange={setTrigger}
+              availableData={availableData}
+            />
           </div>
         )}
 
@@ -590,10 +507,7 @@ export function QuestsPanel() {
   } = usePanelEntries<Quest>({
     saveMessage: 'Quests saved',
     onSave: (items, original) => {
-      const renames = diffObjectiveRenames(
-        original,
-        items,
-      );
+      const renames = diffObjectiveRenames(original, items);
       if (renames.length > 0) {
         const { patched: patchedScenes, count: sceneCount } =
           patchObjectiveRenames(
