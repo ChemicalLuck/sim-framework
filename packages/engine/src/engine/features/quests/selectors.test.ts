@@ -120,4 +120,13 @@ describe('questActions', () => {
     const [group] = questActions(makeState([quest]));
     expect(group.actions[0].effects).toEqual([completeEffect]);
   });
+
+  it('hides an action trigger while its objective is locked', () => {
+    const quest = questWith({
+      state: 'locked',
+      trigger: { kind: 'action', text: 'Ask', effects: [ownEffect] },
+      condition: { kind: 'const', value: 0 } as unknown as Condition,
+    });
+    expect(questActions(makeState([quest]))).toEqual([]);
+  });
 });

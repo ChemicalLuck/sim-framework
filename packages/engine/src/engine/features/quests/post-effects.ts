@@ -9,9 +9,10 @@ import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
 import type { Scene } from '@chemicalluck/sim-engine/types';
+import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 import { updateQuestObjective } from './slice';
-import type { Quest, QuestObjective } from './types';
+import type { ObjectiveTrigger, Quest, QuestObjective } from './types';
 
 const logger = GlobalLogger.child('quests');
 
@@ -66,6 +67,18 @@ function isSameScene(a: Scene, b: Scene): boolean {
   return a === b || JSON.stringify(a) === JSON.stringify(b);
 }
 
+/**
+ * What unlocks a locked objective: its trigger condition, or — for an action
+ * trigger — the action's own condition, so the objective (and with it the
+ * action, which completes it) becomes available whenever the action could be
+ * taken. No trigger, or an action without a condition, unlocks straight away.
+ */
+function unlockCondition(
+  trigger: ObjectiveTrigger | undefined,
+): Condition | undefined {
+  return trigger?.kind === 'action' ? trigger.condition : trigger;
+}
+
 export function handleQuestStateTransitions(ctx: EffectContext) {
   const { dispatch, group, prevState, newState } = ctx;
   if (!newState) throw new Error('uncallable without newState');
@@ -83,8 +96,8 @@ export function handleQuestStateTransitions(ctx: EffectContext) {
         continue;
       }
 
-      if (objState === 'locked' && trigger?.kind !== 'action') {
-        if (isConditionMet(newState, trigger)) {
+      if (objState === 'locked') {
+        if (isConditionMet(newState, unlockCondition(trigger))) {
           logger.debug('Objective available: ', name);
           toast(`Objective Available: ${name}`);
           dispatchWithGroup(

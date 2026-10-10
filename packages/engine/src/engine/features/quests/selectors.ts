@@ -35,6 +35,11 @@ function completingAction(
   };
 }
 
+/**
+ * Actions offered by available objectives: an action `condition`, or an action
+ * `trigger` (which unlocks the objective once the action's own condition holds;
+ * see the quests post-effect). Taking either completes the objective.
+ */
 export function questActions(state: RootState): ActionGroup[] {
   const actions = state.present.quests.flatMap((quest) => {
     const triggers = quest.objectives

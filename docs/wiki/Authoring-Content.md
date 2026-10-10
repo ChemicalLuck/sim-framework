@@ -435,8 +435,11 @@ compare two literals, both signs of a mistyped identifier.
 ## Quests
 
 Each quest in `quests.json` has objectives that go `locked` → `available` → `complete`.
-A locked objective becomes available when its `trigger` condition holds. An available
-objective completes according to its `condition`:
+A locked objective becomes available when its `trigger` condition holds (straight away
+if it has no trigger). A trigger may instead be an action: the objective becomes
+available once the action's own `condition` holds (straight away if it has none), the
+action is then shown on the default view, and taking it completes the objective. An
+available objective also completes according to its `condition`:
 
 - a condition: as soon as it holds;
 - an action (`{ "kind": "action", "text": …, "effects": [] }`): shown on the default view,

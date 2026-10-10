@@ -172,3 +172,50 @@ describe('quests post-effect', () => {
     expect(actions).not.toContainEqual(firedOnComplete);
   });
 });
+
+describe('quests post-effect: action triggers', () => {
+  const availableO1 = updateQuestObjective({
+    questId: 'q',
+    objectiveName: 'o1',
+    objectiveState: 'available',
+  });
+
+  function triggered(state: ObjectiveState, condition?: Condition): Quest {
+    return {
+      id: 'q',
+      name: 'Quest',
+      objectives: [
+        {
+          name: 'o1',
+          state,
+          trigger: { kind: 'action', text: 'Ask', condition, effects: [] },
+          condition: never,
+        },
+      ],
+    };
+  }
+
+  it("unlocks an action-triggered objective once the action's condition holds", () => {
+    const actions = run(
+      rootState([triggered('locked', always)]),
+      rootState([triggered('locked', always)]),
+    );
+    expect(actions).toEqual([availableO1]);
+  });
+
+  it('unlocks an action-triggered objective whose action has no condition', () => {
+    const actions = run(
+      rootState([triggered('locked')]),
+      rootState([triggered('locked')]),
+    );
+    expect(actions).toEqual([availableO1]);
+  });
+
+  it("keeps an action-triggered objective locked while the action's condition fails", () => {
+    const actions = run(
+      rootState([triggered('locked', never)]),
+      rootState([triggered('locked', never)]),
+    );
+    expect(actions).toEqual([]);
+  });
+});
