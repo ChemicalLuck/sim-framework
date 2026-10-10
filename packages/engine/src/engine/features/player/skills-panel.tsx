@@ -85,7 +85,10 @@ export function SkillsPanel() {
     data: initial,
     saving,
     save,
-  } = useEditorData<SkillDefinition[]>('/editor/api/data/skills');
+  } = useEditorData<SkillDefinition[]>('/editor/api/data/skills', {
+    // skills.json is optional: without one the panel opens empty.
+    whenAbsent: [],
+  });
   const [skills, setSkills] = useState<SkillDefinition[]>(initial);
   const dirty = JSON.stringify(skills) !== JSON.stringify(initial);
   useReportDirty({

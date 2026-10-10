@@ -1,5 +1,6 @@
 import fsSyncModule from 'node:fs';
 import fs from 'node:fs/promises';
+import type { ServerResponse } from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Plugin } from 'vite';
@@ -288,6 +289,22 @@ function generateEditorExtensionsModule(
 // Plugin
 // ---------------------------------------------------------------------------
 
+/**
+ * Answer a failed data-file read: 404 only when the file is absent (ENOENT), so
+ * clients may treat it as legitimately missing content; any other failure (a
+ * permissions error, a directory in the file's place, …) is a 500 carrying the
+ * error message, so it isn't mistaken for absence.
+ */
+function sendReadError(res: ServerResponse, e: unknown): void {
+  if ((e as NodeJS.ErrnoException | null)?.code === 'ENOENT') {
+    res.statusCode = 404;
+    res.end('Not found');
+    return;
+  }
+  res.statusCode = 500;
+  res.end(e instanceof Error ? e.message : String(e));
+}
+
 export function editorPlugin(options: EditorPluginOptions): Plugin {
   const {
     dataDir,
@@ -365,9 +382,8 @@ export function editorPlugin(options: EditorPluginOptions): Plugin {
                 const content = await fs.readFile(filePath, 'utf-8');
                 res.setHeader('Content-Type', 'application/json');
                 res.end(content);
-              } catch {
-                res.statusCode = 404;
-                res.end('Not found');
+              } catch (e: unknown) {
+                sendReadError(res, e);
               }
             } else if (req.method === 'POST') {
               let body = '';
@@ -417,9 +433,8 @@ export function editorPlugin(options: EditorPluginOptions): Plugin {
                 const content = await fs.readFile(filePath, 'utf-8');
                 res.setHeader('Content-Type', 'application/json');
                 res.end(content);
-              } catch {
-                res.statusCode = 404;
-                res.end('Not found');
+              } catch (e: unknown) {
+                sendReadError(res, e);
               }
             } else if (req.method === 'POST') {
               let body = '';

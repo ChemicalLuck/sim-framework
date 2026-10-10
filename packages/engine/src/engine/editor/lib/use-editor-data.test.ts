@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   preloadEditorData,
   readEditorData,
+  readEditorDataOr,
   readOptionalEditorData,
   subscribeEditorData,
   useEditorData,
@@ -186,6 +187,21 @@ describe('readOptionalEditorData', () => {
     });
   });
 
+  it('surfaces a server error with its message', async () => {
+    const endpoint = freshEndpoint();
+    stubResponse({
+      ok: false,
+      status: 500,
+      text: () => Promise.resolve('EISDIR: illegal operation on a directory'),
+    });
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      expect(() => readOptionalEditorData(endpoint)).toThrow(
+        'HTTP 500: EISDIR: illegal operation on a directory',
+      );
+    });
+  });
+
   it('surfaces a server error', async () => {
     const endpoint = freshEndpoint();
     stubResponse({ ok: false, status: 500 });
@@ -208,5 +224,81 @@ describe('readOptionalEditorData', () => {
         'Unexpected token',
       );
     });
+  });
+});
+
+describe('absent files', () => {
+  function stubAbsent() {
+    const fetchMock = vi.fn((_url: string, opts?: RequestInit) =>
+      Promise.resolve(
+        (opts?.method === 'POST'
+          ? { ok: true, text: () => Promise.resolve('{"ok":true}') }
+          : { ok: false, status: 404 }) as unknown as Response,
+      ),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    return fetchMock;
+  }
+
+  async function settle(endpoint: string) {
+    preloadEditorData(endpoint);
+    await waitFor(() => {
+      readOptionalEditorData(endpoint);
+    });
+  }
+
+  it('readEditorDataOr reads an absent file as the fallback', async () => {
+    const endpoint = freshEndpoint();
+    stubAbsent();
+    await settle(endpoint);
+    expect(readEditorDataOr(endpoint, [])).toEqual([]);
+  });
+
+  it('readEditorDataOr returns the data of a file that exists', async () => {
+    const endpoint = freshEndpoint();
+    stubFetch({ value: 4 });
+    await seed(endpoint);
+    expect(readEditorDataOr(endpoint, { value: 0 })).toEqual({ value: 4 });
+  });
+
+  it('useEditorData seeds an absent file from whenAbsent', async () => {
+    const endpoint = freshEndpoint();
+    stubAbsent();
+    await settle(endpoint);
+
+    const { result } = renderHook(() =>
+      useEditorData<Doc>(endpoint, { whenAbsent: { value: 0 } }),
+    );
+    expect(result.current.data).toEqual({ value: 0 });
+    expect(result.current.original).toEqual({ value: 0 });
+  });
+
+  it('saving an absent file POSTs it and caches it as present', async () => {
+    const endpoint = freshEndpoint();
+    const fetchMock = stubAbsent();
+    await settle(endpoint);
+
+    const { result } = renderHook(() =>
+      useEditorData<Doc[]>(endpoint, { whenAbsent: [] }),
+    );
+    await act(async () => {
+      await result.current.save([{ value: 1 }]);
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      endpoint,
+      expect.objectContaining({ method: 'POST' }),
+    );
+    expect(readEditorData(endpoint)).toEqual([{ value: 1 }]);
+  });
+
+  it('useEditorData without whenAbsent still throws for an absent file', async () => {
+    const endpoint = freshEndpoint();
+    stubAbsent();
+    await settle(endpoint);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    expect(() => renderHook(() => useEditorData<Doc>(endpoint))).toThrow(
+      'HTTP 404',
+    );
   });
 });

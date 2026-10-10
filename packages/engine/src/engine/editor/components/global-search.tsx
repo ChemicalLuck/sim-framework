@@ -10,7 +10,7 @@ import {
   CommandList,
 } from '@chemicalluck/sim-engine/components/ui/command';
 
-import { useEditorData } from '../lib/use-editor-data';
+import { readEditorDataOr } from '../lib/use-editor-data';
 
 interface SearchResult {
   id: string;
@@ -19,43 +19,30 @@ interface SearchResult {
   path: string;
 }
 
+const NONE: never[] = [];
+
+// Any of these files may be absent (optional content such as quests.json or
+// events.json); an absent one simply contributes no results. Reads throw
+// Suspense promises, so this must be called during render.
+function readList<T>(file: string): T[] {
+  return readEditorDataOr<T[]>(`/editor/api/data/${file}`, NONE);
+}
+
 function useAllSearchData(): SearchResult[] {
-  const { data: items } = useEditorData<
-    { id: string; name: string; kind: string }[]
-  >('/editor/api/data/items');
-  const { data: wearableTemplates } = useEditorData<
-    { id: string; name: string }[]
-  >('/editor/api/data/wearable-templates');
-  const { data: locations } = useEditorData<{ id: string; name: string }[]>(
-    '/editor/api/data/locations',
+  const items = readList<{ id: string; name: string; kind: string }>('items');
+  const wearableTemplates = readList<{ id: string; name: string }>(
+    'wearable-templates',
   );
-  const { data: encounters } = useEditorData<{ id: string; name: string }[]>(
-    '/editor/api/data/encounters',
-  );
-  const { data: quests } = useEditorData<{ id: string; name: string }[]>(
-    '/editor/api/data/quests',
-  );
-  const { data: skills } = useEditorData<{ id: string; name: string }[]>(
-    '/editor/api/data/skills',
-  );
-  const { data: scenes } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/scenes',
-  );
-  const { data: scripts } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/scripts',
-  );
-  const { data: shops } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/shops',
-  );
-  const { data: questTemplates } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/quest-templates',
-  );
-  const { data: conversations } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/conversations',
-  );
-  const { data: events } = useEditorData<{ id: string }[]>(
-    '/editor/api/data/events',
-  );
+  const locations = readList<{ id: string; name: string }>('locations');
+  const encounters = readList<{ id: string; name: string }>('encounters');
+  const quests = readList<{ id: string; name: string }>('quests');
+  const skills = readList<{ id: string; name: string }>('skills');
+  const scenes = readList<{ id: string }>('scenes');
+  const scripts = readList<{ id: string }>('scripts');
+  const shops = readList<{ id: string }>('shops');
+  const questTemplates = readList<{ id: string }>('quest-templates');
+  const conversations = readList<{ id: string }>('conversations');
+  const events = readList<{ id: string }>('events');
   return useMemo(
     () => [
       ...items

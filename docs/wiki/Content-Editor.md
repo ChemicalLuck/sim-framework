@@ -9,6 +9,9 @@ production build.
 - Browse and edit your `src/game/data/*.json` through forms instead of raw JSON.
 - Edits **save straight to disk** (via the dev server's `/editor/api/data/:name` endpoint)
   and hot-reload the running game.
+- A data file your game doesn't have (optional content such as `quests.json` or
+  `events.json`) opens as an empty panel; saving it creates the file. A missing
+  **required** file is listed under the editor's problems instead.
 - Edit extension data at `/editor/api/extensions/:key`.
 - Structured editors for effects and conditions, a template editor, global search, and
   referential-integrity tooling (cascade rename / delete) powered by the same

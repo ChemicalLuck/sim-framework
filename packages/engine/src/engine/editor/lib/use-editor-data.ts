@@ -35,9 +35,17 @@ function ensureResource(url: string): void {
   });
   const entry: Resource = { status: 'pending', promise };
   fetch(url)
-    .then((r) => {
+    .then(async (r) => {
       if (r.status === 404) throw new EditorDataNotFoundError('HTTP 404');
-      if (!r.ok) throw new Error(`HTTP ${String(r.status)}`);
+      if (!r.ok) {
+        // The data server sends the read error's message with a 500.
+        const detail = await Promise.resolve()
+          .then(() => r.text())
+          .catch(() => '');
+        throw new Error(
+          `HTTP ${String(r.status)}${detail ? `: ${detail}` : ''}`,
+        );
+      }
       return r.json() as Promise<unknown>;
     })
     .then((data) => {
@@ -87,6 +95,15 @@ export function readOptionalEditorData(url: string): unknown {
     if (e instanceof EditorDataNotFoundError) return undefined;
     throw e;
   }
+}
+
+/**
+ * Like {@link readOptionalEditorData}, but an absent file reads as `fallback` —
+ * the empty value of the file's shape (e.g. `[]` for a list file).
+ */
+export function readEditorDataOr<T>(url: string, fallback: T): T {
+  const data = readOptionalEditorData(url);
+  return data === undefined ? fallback : (data as T);
 }
 
 function updateCache(url: string, data: unknown): void {
@@ -150,8 +167,22 @@ export interface EditorDataHandle<T> {
   discard: () => void;
 }
 
-export function useEditorData<T>(endpoint: string): EditorDataHandle<T> {
-  const initialData = readResource(endpoint) as T;
+export interface EditorDataOptions<T> {
+  /**
+   * The value an absent file (HTTP 404) reads as — the empty value of its shape
+   * (e.g. `[]` for a list file). The panel then opens empty, and saving creates
+   * the file. Without it, an absent file throws like any other read error.
+   */
+  whenAbsent: T;
+}
+
+export function useEditorData<T>(
+  endpoint: string,
+  options?: EditorDataOptions<T>,
+): EditorDataHandle<T> {
+  const initialData = options
+    ? readEditorDataOr(endpoint, options.whenAbsent)
+    : (readResource(endpoint) as T);
   const originalRef = useRef<T>(initialData);
   const [data, setData] = useState<T>(initialData);
   const [saving, setSaving] = useState(false);

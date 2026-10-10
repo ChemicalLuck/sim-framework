@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 import {
+  type DataByFile,
   namespaceOf,
   requiredFiles,
   rewriteReferences,
@@ -11,7 +12,8 @@ import { useRegisterSave } from './save-context';
 import { type ConfirmState, useUnsavedChanges } from './unsaved-changes';
 import {
   bumpDataEpoch,
-  readEditorData,
+  readEditorDataOr,
+  readOptionalEditorData,
   useEditorData,
   writeEditorData,
 } from './use-editor-data';
@@ -20,6 +22,10 @@ import { usePanelItems } from './use-panel-items';
 import { contributions, useReferencesTo } from './validation';
 
 const endpointFor = (file: string) => `/editor/api/data/${file}`;
+
+// Panels are list files. One the game doesn't have yet (optional content such
+// as quests.json) opens empty, and saving creates it.
+const NO_ENTRIES: never[] = [];
 
 export interface PanelEntriesOptions<T> {
   /** Toast message shown on save (defaults to a generic message). */
@@ -68,7 +74,7 @@ export function usePanelEntries<T extends { id: string }>(
     saving,
     save,
     discard: discardRaw,
-  } = useEditorData<T[]>(endpoint);
+  } = useEditorData<T[]>(endpoint, { whenAbsent: NO_ENTRIES });
 
   const {
     items,
@@ -140,7 +146,10 @@ export function usePanelEntries<T extends { id: string }>(
         return;
       }
 
-      const sourceData = readEditorData(endpoint) as { id: string }[];
+      const sourceData = readEditorDataOr<{ id: string }[]>(
+        endpoint,
+        NO_ENTRIES,
+      );
       const ns = namespaceOf(
         file,
         id,
@@ -148,12 +157,12 @@ export function usePanelEntries<T extends { id: string }>(
         contributions.idSources,
       );
 
-      const dataByFile = Object.fromEntries(
-        requiredFiles(contributions).map((f) => [
-          f,
-          readEditorData(endpointFor(f)),
-        ]),
-      );
+      // Files the game doesn't have hold no references to rewrite.
+      const dataByFile: DataByFile = {};
+      for (const f of requiredFiles(contributions)) {
+        const data = readOptionalEditorData(endpointFor(f));
+        if (data !== undefined) dataByFile[f] = data;
+      }
 
       const { changed, count } = ns
         ? rewriteReferences(dataByFile, contributions, ns, id, trimmed)

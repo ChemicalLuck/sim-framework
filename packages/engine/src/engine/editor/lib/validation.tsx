@@ -15,6 +15,7 @@ import {
   nodeRefRewriters,
   referenceProviders,
   referenceRewriters,
+  requiredDataFiles,
 } from 'virtual:references';
 
 import {
@@ -22,6 +23,7 @@ import {
   type ReferenceContributions,
   type ValidationIssue,
   collectReferences,
+  missingRequiredFiles,
   requiredFiles,
   reverseReferences,
   validateReferences,
@@ -52,15 +54,30 @@ export type ReferencesTo = (namespace: string, id: string) => string[];
 
 interface ReferencesValue {
   issues: ValidationIssue[];
+  /** Required data files (see `requiredDataFiles`) the game doesn't have. */
+  missingFiles: string[];
   referencesTo: ReferencesTo;
 }
 
-const EMPTY: ReferencesValue = { issues: [], referencesTo: () => [] };
+const EMPTY: ReferencesValue = {
+  issues: [],
+  missingFiles: [],
+  referencesTo: () => [],
+};
 
 const ReferencesContext = createContext<ReferencesValue>(EMPTY);
 
 export function useValidationIssues(): ValidationIssue[] {
   return use(ReferencesContext).issues;
+}
+
+/**
+ * Required data files that are absent. Their panels open empty (saving creates
+ * the file), so this is where the absence surfaces; an absent optional file
+ * (e.g. weather.json) is not listed.
+ */
+export function useMissingRequiredFiles(): string[] {
+  return use(ReferencesContext).missingFiles;
 }
 
 export function useReferencesTo(): ReferencesTo {
@@ -106,6 +123,11 @@ function ReferencesRunner({ onChange }: RunnerProps) {
         dataByFile,
       ),
       issues: validateReferences(dataByFile, contributions),
+      missingFiles: missingRequiredFiles(
+        contributions,
+        dataByFile,
+        requiredDataFiles,
+      ),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version]);
@@ -113,7 +135,11 @@ function ReferencesRunner({ onChange }: RunnerProps) {
   useEffect(() => {
     const referencesTo: ReferencesTo = (namespace, id) =>
       reverseReferences(records.refs, namespace, id);
-    onChange({ issues: records.issues, referencesTo });
+    onChange({
+      issues: records.issues,
+      missingFiles: records.missingFiles,
+      referencesTo,
+    });
   }, [records, onChange]);
 
   return null;

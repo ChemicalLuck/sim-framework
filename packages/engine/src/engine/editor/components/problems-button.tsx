@@ -10,13 +10,19 @@ import {
 } from '@chemicalluck/sim-engine/components/ui/dialog';
 import { ScrollArea } from '@chemicalluck/sim-engine/components/ui/scroll-area';
 
-import { sourceToPath, useValidationIssues } from '../lib/validation';
+import {
+  sourceToPath,
+  useMissingRequiredFiles,
+  useValidationIssues,
+} from '../lib/validation';
 
 export function ProblemsButton() {
   const issues = useValidationIssues();
+  const missingFiles = useMissingRequiredFiles();
   const [open, setOpen] = useState(false);
+  const count = issues.length + missingFiles.length;
 
-  if (issues.length === 0) {
+  if (count === 0) {
     return (
       <span className="flex items-center gap-1 text-xs text-emerald-500/80">
         <Check size={13} /> No problems
@@ -35,15 +41,30 @@ export function ProblemsButton() {
         className="h-7 gap-1 text-red-400 hover:text-red-300"
       >
         <AlertTriangle size={14} />
-        {issues.length} problem{issues.length === 1 ? '' : 's'}
+        {count} problem{count === 1 ? '' : 's'}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[640px]">
           <DialogHeader>
-            <DialogTitle>Data problems ({issues.length})</DialogTitle>
+            <DialogTitle>Data problems ({count})</DialogTitle>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh]">
             <ul className="space-y-1 pr-2">
+              {missingFiles.map((file) => (
+                <li
+                  key={`missing-${file}`}
+                  className="text-sm border-b border-zinc-800 pb-1"
+                >
+                  <span className="font-mono text-xs text-zinc-200">
+                    {file}.json
+                  </span>
+                  <span className="text-zinc-400">
+                    {' '}
+                    — required data file is missing (saving its panel creates
+                    it)
+                  </span>
+                </li>
+              ))}
               {issues.map((issue, i) => (
                 <li
                   key={`${issue.source}-${String(i)}`}

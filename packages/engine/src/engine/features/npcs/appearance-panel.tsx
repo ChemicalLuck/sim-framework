@@ -1097,12 +1097,22 @@ const SIDEBAR_ITEMS = [
 
 type SidebarId = (typeof SIDEBAR_ITEMS)[number]['id'];
 
+const EMPTY_APPEARANCE: AppearanceJsonData = {
+  features: [],
+  ageDistribution: { min: 18, max: 60, mean: 28, stdDev: 8 },
+  bodyAttributes: [],
+  display: { strangerFeatureIds: [], metaFeatureIds: [] },
+};
+
 export function AppearancePanel() {
   const {
     data: initial,
     saving,
     save,
-  } = useEditorData<AppearanceJsonData>('/editor/api/data/appearance');
+  } = useEditorData<AppearanceJsonData>('/editor/api/data/appearance', {
+    // appearance.json is optional: without one the panel opens empty.
+    whenAbsent: EMPTY_APPEARANCE,
+  });
 
   const [data, setData] = useState<AppearanceJsonData>(initial);
   const [section, setSection] = useState<SidebarId>('features');

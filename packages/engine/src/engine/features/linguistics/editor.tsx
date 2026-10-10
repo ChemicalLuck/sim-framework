@@ -286,12 +286,17 @@ function TermEditor({
   );
 }
 
+const EMPTY_LINGUISTICS: LinguisticsJsonData = { macros: [], terms: [] };
+
 function LinguisticsPanel() {
   const {
     data: initial,
     saving,
     save,
-  } = useEditorData<LinguisticsJsonData>('/editor/api/data/linguistics');
+  } = useEditorData<LinguisticsJsonData>('/editor/api/data/linguistics', {
+    // linguistics.json is optional: without one the panel opens empty.
+    whenAbsent: EMPTY_LINGUISTICS,
+  });
 
   const [data, setData] = useState<LinguisticsJsonData>(initial);
 
