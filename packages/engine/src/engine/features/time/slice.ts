@@ -1,12 +1,16 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+
 import { makeConfig } from '@chemicalluck/sim-engine/lib/core';
+
+import { parseGameDate } from './lib/game-time';
 
 const _gameStart = makeConfig(0);
 
 export const configureGameStart = _gameStart.configure;
 
+/** Set the game start from `time.json`; a zoneless ISO string is game (UTC) time. */
 export function setGameStartFromISO(iso: string): void {
-  _gameStart.configure(new Date(iso).getTime());
+  _gameStart.configure(parseGameDate(iso));
 }
 
 interface TimeState {

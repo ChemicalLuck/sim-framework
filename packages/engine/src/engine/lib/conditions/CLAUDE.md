@@ -57,6 +57,8 @@ Built-in identifiers:
 | `skill.<id>`                                             | number    | player        |
 | `location`                                               | string    | player        |
 | `gametime`, `gamehour`                                   | number    | time          |
+| `gameweekday` (0=Sun…6=Sat), `gameday`, `gamemonth`      | number    | time          |
+| `nearby` (NPCs at current location)                      | number    | npcs          |
 | `relationship.<metric>`, `relationship.<npcId>.<metric>` | number    | relationships |
 | `milestone.<id>`                                         | condition | milestones    |
 | `container.<id>.has_items`, `container.<id>.has_dirty`   | condition | containers    |
@@ -69,7 +71,7 @@ Built-in identifiers:
 
 - `const` — numeric literal
 - `string` — string literal
-- `date` — ISO date string (compared as timestamp)
+- `date` — ISO date string (compared as timestamp; no offset = game/UTC time)
 
 **Condition kinds:**
 

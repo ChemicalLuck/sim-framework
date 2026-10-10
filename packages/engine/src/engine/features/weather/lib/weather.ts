@@ -1,23 +1,30 @@
 import { Mulberry32 } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import {
+  addGameDays,
+  gameDayOfYear,
+  gameMonth,
+  gameYear,
+} from '@chemicalluck/sim-engine/features/time/lib/game-time';
 
 import type { DailyWeather, SeasonId, WeatherConditionId } from '../types';
 import { WEATHER_CONDITIONS } from './conditions';
 
+// Dates are read in game (UTC) time via time/lib/game-time, so the day's
+// weather and season don't depend on the host's timezone.
+
 function dayOfYear(date: Date): number {
-  const start = new Date(date.getFullYear(), 0, 0);
-  const diff = date.getTime() - start.getTime();
-  return Math.floor(diff / 86400000);
+  return gameDayOfYear(date.getTime());
 }
 
 function daySeed(date: Date): number {
-  return dayOfYear(date) + date.getFullYear() * 366;
+  return dayOfYear(date) + gameYear(date.getTime()) * 366;
 }
 
 export function getSeason(date: Date): SeasonId {
-  const m = date.getMonth();
-  if (m === 11 || m <= 1) return 'winter';
-  if (m <= 4) return 'spring';
-  if (m <= 7) return 'summer';
+  const m = gameMonth(date.getTime());
+  if (m === 12 || m <= 2) return 'winter';
+  if (m <= 5) return 'spring';
+  if (m <= 8) return 'summer';
   return 'autumn';
 }
 
@@ -40,8 +47,7 @@ function pickCondition(date: Date, masterSeed = 0): WeatherConditionId {
   const pool = SEASON_POOLS[season];
   const rng = new Mulberry32((daySeed(date) ^ masterSeed) >>> 0);
 
-  const prevDate = new Date(date);
-  prevDate.setDate(prevDate.getDate() - 1);
+  const prevDate = new Date(addGameDays(date.getTime(), -1));
   const prevRng = new Mulberry32((daySeed(prevDate) ^ masterSeed) >>> 0);
 
   // Run prev day's RNG to get its condition
@@ -100,7 +106,6 @@ export function getWeatherForDay(
   dayOffset: number,
   masterSeed = 0,
 ): DailyWeather {
-  const d = new Date(date);
-  d.setDate(d.getDate() + dayOffset);
+  const d = new Date(addGameDays(date.getTime(), dayOffset));
   return computeDayWeather(d, masterSeed);
 }

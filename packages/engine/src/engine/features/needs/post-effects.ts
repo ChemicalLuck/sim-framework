@@ -2,6 +2,7 @@ import {
   type EffectContext,
   dispatchWithGroup,
 } from '@chemicalluck/sim-engine/features/core/types';
+import { nextGameHour } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import type { SleepEffect } from '@chemicalluck/sim-engine/features/time/types';
 import type { EngineThunk } from '@chemicalluck/sim-engine/state/store';
 import {
@@ -14,11 +15,8 @@ import { decayNeedsByMinutes, getNeedOptions } from './slice';
 
 function sleepMinutes(effect: SleepEffect, prevTimestamp: number): number {
   if (effect.wakeTime !== undefined) {
-    const now = new Date(prevTimestamp);
-    const wakeDate = new Date(now);
-    if (now.getHours() >= effect.wakeTime) wakeDate.setDate(now.getDate() + 1);
-    wakeDate.setHours(effect.wakeTime, 0, 0, 0);
-    return Math.ceil((wakeDate.getTime() - now.getTime()) / 1000 / 60);
+    const wake = nextGameHour(prevTimestamp, effect.wakeTime);
+    return Math.ceil((wake - prevTimestamp) / 1000 / 60);
   }
   if (effect.hours !== undefined && effect.hours > 0) return effect.hours * 60;
   return 0;

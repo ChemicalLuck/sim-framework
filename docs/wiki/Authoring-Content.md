@@ -24,7 +24,7 @@ omitted or left as an empty `[]` / `{}`.
 | `player.json`                          | Starting player state                                                    | ✅               |
 | `needs.json`                           | Needs & decay rates                                                      | ✅               |
 | `currency.json` / `initial-money.json` | Money setup                                                              | ✅               |
-| `time.json`                            | Game start timestamp (ISO string)                                        | ✅               |
+| `time.json`                            | Game start timestamp (ISO string; without an offset it is read as UTC)   | ✅               |
 | `names.json`                           | Random NPC name pools                                                    | ✅               |
 | `professions.json`                     | NPC professions                                                          | ✅               |
 | `quests.json`                          | Quests & objectives                                                      | ✅ (may be `[]`) |
@@ -205,9 +205,13 @@ levels, …) are contributed by features, so the available vocabulary grows with
 
 The editor writes these from a string DSL, e.g. `money >= 50 && gamehour < 20`. Built-in
 identifiers include `money`, `need.<Name>`, `skill.<id>`, `location`, `gametime`,
-`gamehour`, `relationship.<metric>` (the current NPC in a scene, script, NPC view or
-encounter), `relationship.<npcId>.<metric>`, `milestone.<id>`, `season == '<id>'` and
-`weather == '<id>'`. An unrecognised bare identifier is a parse error; quote string
+`gamehour`, `gameweekday` (0 = Sunday … 6 = Saturday), `gameday` (1–31), `gamemonth`
+(1–12), `nearby` (number of NPCs at the current location), `relationship.<metric>` (the
+current NPC in a scene, script, NPC view or encounter), `relationship.<npcId>.<metric>`,
+`milestone.<id>`, `season == '<id>'` and `weather == '<id>'`. The game clock is read in
+UTC, so hours, weekdays and seasons are the same on every machine; ISO date literals
+without an offset (`gametime >= '2025-09-01T08:00'`) are game time too.
+An unrecognised bare identifier is a parse error; quote string
 literals. `sim check` also flags stored conditions that compare a string with `<`/`>` or
 compare two literals, both signs of a mistyped identifier.
 

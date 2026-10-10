@@ -1,5 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
+
+import { gameHour, gameMinute } from './lib/game-time';
 
 export const selectTimestamp = (state: RootState) =>
   state.present.time.timestamp;
@@ -10,14 +13,10 @@ export const selectDate = createSelector(
   (timestamp) => new Date(timestamp),
 );
 
-// Derived selectors
-export const selectHour = createSelector([selectDate], (date) =>
-  date.getHours(),
-);
+// Derived selectors — read in game (UTC) time, see lib/game-time
+export const selectHour = createSelector([selectTimestamp], gameHour);
 
-export const selectMinute = createSelector([selectDate], (date) =>
-  date.getMinutes(),
-);
+export const selectMinute = createSelector([selectTimestamp], gameMinute);
 
 export type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night';
 

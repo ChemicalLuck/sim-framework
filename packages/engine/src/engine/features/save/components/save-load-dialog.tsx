@@ -32,7 +32,11 @@ export default function SaveLoadDialog() {
 
   const handleSave = () => {
     if (!saveName.trim()) return;
-    saveGame(saveName, playerName, new Date(time).toLocaleString());
+    saveGame(
+      saveName,
+      playerName,
+      new Date(time).toLocaleString(undefined, { timeZone: 'UTC' }),
+    );
     setSlots(getSaveSlots());
     setSaveName('');
     toast.success('Game Saved');

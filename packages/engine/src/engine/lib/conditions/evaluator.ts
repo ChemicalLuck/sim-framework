@@ -1,5 +1,6 @@
 import { conditionEvaluators, exprEvaluators } from 'virtual:conditions';
 
+import { parseGameDate } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import { type RootState } from '@chemicalluck/sim-engine/state/store';
 import type {
   ComparisonCondition,
@@ -16,7 +17,7 @@ export function evalExpr(state: RootState, expr: Expr): number | string {
       return expr.value;
 
     case 'date':
-      return new Date(expr.value).getTime();
+      return parseGameDate(expr.value);
 
     default: {
       const handler = exprEvaluators[expr.kind];

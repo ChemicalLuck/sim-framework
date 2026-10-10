@@ -10,8 +10,10 @@ import {
   postEffectHandlers,
   slices,
 } from 'virtual:game-extensions';
+
 import type { NamedNpcDefinition } from '@chemicalluck/sim-engine/features/npcs/types';
 import { setGameSeed } from '@chemicalluck/sim-engine/features/rng/slice';
+import { parseGameDate } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import type { EngineStore } from '@chemicalluck/sim-engine/state/store';
 import { initProcessEffects } from '@chemicalluck/sim-engine/state/thunks';
 
@@ -38,10 +40,9 @@ function newStore(preloadedState?: unknown) {
 }
 
 function timestampFor(seed: PreviewState, fallback: number): number {
-  const date = new Date(`${seed.date}T00:00:00`);
-  if (Number.isNaN(date.getTime())) return fallback;
-  date.setHours(seed.hour);
-  return date.getTime();
+  const midnight = parseGameDate(`${seed.date}T00:00:00`);
+  if (Number.isNaN(midnight)) return fallback;
+  return midnight + seed.hour * 60 * 60 * 1000;
 }
 
 /**
