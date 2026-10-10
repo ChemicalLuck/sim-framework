@@ -71,7 +71,7 @@ Not every file is present in every feature. The mandatory minimum is `slice.ts` 
 
 Editor validation and "referenced-by"/cascade-delete are **feature-contributed**, not centralised. A feature exports any of three named arrays from `references.ts`; the `game-plugin.ts` bundles them into `virtual:references`, consumed by both the editor and `data-integrity.test.ts`. Engine logic lives in `~/engine/lib/validation`.
 
-- `idSources: IdSource[]` — namespaces this feature is the source of truth for (`{ namespace, file, select }`).
+- `idSources: IdSource[]` — namespaces this feature is the source of truth for (`{ namespace, file, select }`; optional `selectPatterns` for ids made at runtime, e.g. quests from a template's `idTemplate`).
 - `referenceProviders: ReferenceProvider[]` — content files this feature owns that hold references (`{ file, section, collect }`); use `collectActionGroupRefs`/`collectEffectRefs` for action-shaped content.
 - `nodeRefExtractors: NodeRefExtractor[]` — for each effect/condition kind the feature owns, the references it makes (`(node) => ContentRef[]`).
 

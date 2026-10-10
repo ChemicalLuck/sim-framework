@@ -34,6 +34,18 @@ export interface IdSource {
   /** Data file base name (no extension), e.g. 'items'. */
   file: string;
   select: (data: unknown) => string[];
+  /**
+   * Patterns for ids the file's content produces at runtime rather than
+   * listing (e.g. quests instantiated from a template's `meet_{npc0.id}`). An
+   * id matching one is known. Each pattern should match only such ids.
+   */
+  selectPatterns?: (data: unknown) => RegExp[];
+}
+
+/** The ids a namespace knows: listed ids, plus any matching a pattern. */
+export interface KnownIds {
+  ids: Set<string>;
+  patterns: RegExp[];
 }
 
 /** Maps a single effect/condition node to the references it makes. */

@@ -100,6 +100,64 @@ describe('validateReferences', () => {
     );
     expect(issues).toEqual([]);
   });
+
+  describe('id patterns', () => {
+    // Items a 'crafts' file produces at runtime, named by pattern.
+    const withPatterns: ReferenceContributions = {
+      ...contributions,
+      idSources: [
+        ...contributions.idSources,
+        {
+          namespace: 'item',
+          file: 'crafts',
+          select: () => [],
+          selectPatterns: (data) =>
+            (data as { pattern: string }[]).map((c) => new RegExp(c.pattern)),
+        },
+      ],
+    };
+    const pages = (...itemIds: string[]) => [
+      { id: 'p', effects: itemIds.map((itemId) => ({ kind: 'use', itemId })) },
+    ];
+
+    it('accepts an id matching a pattern', () => {
+      const issues = validateReferences(
+        {
+          ...dataByFile,
+          pages: pages('apple', 'cake_ann'),
+          crafts: [{ pattern: '^cake_.+$' }],
+        },
+        withPatterns,
+      );
+      expect(issues).toEqual([]);
+    });
+
+    it('still flags an id matching neither an id nor a pattern', () => {
+      const issues = validateReferences(
+        {
+          ...dataByFile,
+          pages: pages('pie_ann'),
+          crafts: [{ pattern: '^cake_.+$' }],
+        },
+        withPatterns,
+      );
+      expect(issues).toHaveLength(1);
+      expect(issues[0].message).toContain("'pie_ann'");
+    });
+
+    it('checks a namespace whose only present source is a pattern source', () => {
+      const issues = validateReferences(
+        {
+          pages: pages('cake_ann', 'ghost'),
+          crafts: [{ pattern: '^cake_.+$' }],
+        },
+        withPatterns,
+      );
+      expect(issues.map((i) => i.message)).toEqual([
+        "references unknown item 'ghost'",
+      ]);
+    });
+  });
 });
 
 describe('missingRequiredFiles', () => {
