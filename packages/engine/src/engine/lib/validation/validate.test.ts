@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   type ReferenceContributions,
   collectReferences,
+  missingRequiredFiles,
   namespaceOf,
   reverseReferences,
   rewriteReferences,
@@ -98,6 +99,21 @@ describe('validateReferences', () => {
       contributions,
     );
     expect(issues).toEqual([]);
+  });
+});
+
+describe('missingRequiredFiles', () => {
+  it('lists absent referenced files only when they are required', () => {
+    // 'items' and 'pages' are required content; 'scenes' is optional.
+    expect(
+      missingRequiredFiles(contributions, {}, ['items', 'pages', 'other']),
+    ).toEqual(['items', 'pages']);
+  });
+
+  it('ignores required files that are present', () => {
+    expect(
+      missingRequiredFiles(contributions, { items: [] }, ['items', 'pages']),
+    ).toEqual(['pages']);
   });
 });
 

@@ -496,9 +496,34 @@ function collectFeatureFileAliases(
   return { imports, aliases };
 }
 
+/**
+ * Data files (base names, without `.json`) the feature manifests declare
+ * required — the ones whose absence `virtual:game-setup` does not tolerate.
+ * Anything declared only as `optional` (e.g. `weather.json`) is left out.
+ */
+function requiredDataFiles(manifestData: ManifestData): string[] {
+  const { setupBindings, contentSlots, contentExtensions, contextSlots } =
+    manifestData;
+  const files = new Set<string>();
+  const add = (jsonFile: string, optional?: boolean) => {
+    if (!optional) files.add(jsonFile.replace(/\.json$/, ''));
+  };
+  for (const { binding } of setupBindings)
+    add(binding.jsonFile, binding.optional);
+  for (const slot of contentSlots) add(slot.jsonFile, slot.optional);
+  for (const { slot } of contextSlots) add(slot.jsonFile, slot.optional);
+  for (const { ext } of contentExtensions) {
+    if (ext.jsonFile) add(ext.jsonFile, ext.optional);
+    for (const input of ext.inputs ?? [])
+      add(input.jsonFile, (ext.optional ?? false) || input.optional);
+  }
+  return [...files].sort();
+}
+
 function generateReferencesBundle(
   engineFeaturesDir: string,
   extensionsDir: string,
+  manifestData: ManifestData,
 ): string {
   const { imports, aliases } = collectFeatureFileAliases(
     engineFeaturesDir,
@@ -527,6 +552,7 @@ ${arr('nodeRefRewriters').join(',\n')}
 export const referenceRewriters = [
 ${arr('referenceRewriters').join(',\n')}
 ];
+export const requiredDataFiles = ${JSON.stringify(requiredDataFiles(manifestData))};
 `.trim();
 }
 
@@ -815,7 +841,12 @@ export function gamePlugin(options: GamePluginOptions): Plugin {
     ],
     [
       RESOLVED_VIRTUAL_REFERENCES_ID,
-      () => generateReferencesBundle(engineFeaturesDir, extensionsDir),
+      () =>
+        generateReferencesBundle(
+          engineFeaturesDir,
+          extensionsDir,
+          getManifestData(),
+        ),
     ],
   ]);
 
@@ -876,6 +907,11 @@ export function gamePlugin(options: GamePluginOptions): Plugin {
             RESOLVED_VIRTUAL_SETUP_ID,
           );
           if (setupMod) server.moduleGraph.invalidateModule(setupMod);
+          // Its requiredDataFiles export derives from the manifests.
+          const refMod = server.moduleGraph.getModuleById(
+            RESOLVED_VIRTUAL_REFERENCES_ID,
+          );
+          if (refMod) server.moduleGraph.invalidateModule(refMod);
         }
       });
 
@@ -903,6 +939,11 @@ export function gamePlugin(options: GamePluginOptions): Plugin {
               RESOLVED_VIRTUAL_SETUP_ID,
             );
             if (setupMod) server.moduleGraph.invalidateModule(setupMod);
+
+            const refMod = server.moduleGraph.getModuleById(
+              RESOLVED_VIRTUAL_REFERENCES_ID,
+            );
+            if (refMod) server.moduleGraph.invalidateModule(refMod);
           }
 
           const mod = server.moduleGraph.getModuleById(

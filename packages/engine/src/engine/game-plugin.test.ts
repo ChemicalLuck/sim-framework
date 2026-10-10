@@ -184,6 +184,63 @@ describe('virtual:game-setup quests hydration', () => {
   });
 });
 
+describe('virtual:references requiredDataFiles', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function requiredDataFiles(): string[] {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const load = plugin.load as (id: string) => string | null;
+    const resolved = resolveId('virtual:references');
+    if (!resolved) throw new Error('virtual:references did not resolve');
+    const code = load(resolved) ?? '';
+    const list = /export const requiredDataFiles = (\[.*\]);/.exec(code)?.[1];
+    if (!list) throw new Error('requiredDataFiles not exported');
+    return JSON.parse(list) as string[];
+  }
+
+  it('lists the data files feature manifests declare as required', () => {
+    const files = requiredDataFiles();
+    // Content slot, setup binding, content extension and bundle inputs.
+    for (const file of ['items', 'scenes', 'needs', 'player', 'locations']) {
+      expect(files).toContain(file);
+    }
+  });
+
+  it('leaves out data files declared optional', () => {
+    const files = requiredDataFiles();
+    for (const file of ['weather', 'quests', 'quest-templates', 'events']) {
+      expect(files).not.toContain(file);
+    }
+  });
+
+  it("includes a game extension's required content files", () => {
+    const dir = path.join(gameDir, 'extensions', 'diary');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'feature.json'),
+      JSON.stringify({
+        contentExtensions: [
+          { jsonFile: 'diary.json', contentKey: 'diary' },
+          { jsonFile: 'notes.json', contentKey: 'notes', optional: true },
+        ],
+      }),
+    );
+    const files = requiredDataFiles();
+    expect(files).toContain('diary');
+    expect(files).not.toContain('notes');
+  });
+});
+
 describe('generated identifiers for extension folder names', () => {
   let gameDir: string;
 

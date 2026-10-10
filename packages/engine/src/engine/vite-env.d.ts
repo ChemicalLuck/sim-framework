@@ -50,6 +50,8 @@ declare module 'virtual:references' {
   export const nodeRefExtractors: NodeRefExtractor[];
   export const nodeRefRewriters: NodeRefRewriter[];
   export const referenceRewriters: ReferenceRewriter[];
+  /** Data files (no `.json`) the feature manifests declare required. */
+  export const requiredDataFiles: string[];
 }
 
 declare module 'virtual:conditions' {

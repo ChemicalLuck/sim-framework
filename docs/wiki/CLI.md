@@ -44,7 +44,9 @@ Serves a production build locally to sanity-check the single-file output.
 Validates content referential integrity — every reference in your data (item ids, location
 ids, scene ids, …) must resolve to something that exists. Prints each issue as
 `source: references unknown <kind> '<id>'` and exits non-zero if any are found. It also
-warns about data files that are referenced but missing. It also flags conditions that
+warns about referenced data files that are missing but required — those a feature's
+`feature.json` doesn't mark `optional`; an absent optional file such as `weather.json` is
+simply not validated. It also flags conditions that
 compare a string with `<`/`>` or compare two literals (usually a mistyped identifier). Run
 it in CI.
 
