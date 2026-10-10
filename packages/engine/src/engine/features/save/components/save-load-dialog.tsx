@@ -40,8 +40,16 @@ export default function SaveLoadDialog() {
 
   if (ironman) return null;
 
+  const manualSlots = slots.filter((s) => !s.auto);
+  const autoSlots = slots.filter((s) => s.auto);
+
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        // Autosaves are made by effects while the dialog is closed.
+        if (open) setSlots(getSaveSlots());
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="secondary" className="w-full">
           <Save className="size-4" />
@@ -69,12 +77,27 @@ export default function SaveLoadDialog() {
           </div>
         </div>
 
-        <div className="my-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+        <section className="my-4" aria-labelledby="load-save-heading">
+          <h3
+            id="load-save-heading"
+            className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2"
+          >
             Load Save
           </h3>
-          <SaveSlotList slots={slots} onSlotsChange={setSlots} />
-        </div>
+          <SaveSlotList slots={manualSlots} onSlotsChange={setSlots} />
+        </section>
+
+        {autoSlots.length > 0 && (
+          <section className="my-4" aria-labelledby="autosaves-heading">
+            <h3
+              id="autosaves-heading"
+              className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2"
+            >
+              Autosaves
+            </h3>
+            <SaveSlotList slots={autoSlots} onSlotsChange={setSlots} />
+          </section>
+        )}
       </DialogContent>
     </Dialog>
   );

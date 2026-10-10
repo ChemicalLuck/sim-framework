@@ -105,6 +105,22 @@ An item that restores energy and is consumed:
 
 Extensions can add their own effect kinds — see [[Extensions]].
 
+### Autosaves
+
+`autosave` snapshots the game into an autosave slot, listed under **Autosaves** in the
+Save / Load dialog and loaded like a manual save:
+
+```json
+{ "kind": "autosave", "label": "Woke up" }
+{ "kind": "autosave", "label": "Chapter 2", "keep": true }
+```
+
+The snapshot is taken after the rest of the action's effects apply. Only the newest
+rotating autosaves are kept (3 by default, set with the `autosave: { rotate }` game
+config — see [[Project-Structure]]); `"keep": true` makes a permanent checkpoint that is
+never rotated out. Ironman runs make no autosave snapshots: their continuous autosave
+stays the only save.
+
 ## Needs
 
 `needs.json` sets each need's starting value and decay rate (points per hour the value

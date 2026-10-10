@@ -40,6 +40,7 @@ interface GameConfig {
   persistTransforms?: Transform<unknown, unknown>[];  // redux-persist transforms
   undoLimit?: number;                         // Back-button undo steps (default 10, 0 disables)
   ironman?: 'never' | 'optional' | 'always';  // ironman runs (default 'never')
+  autosave?: { rotate: number };              // rotating `autosave` snapshots kept (default 3)
 }
 ```
 
@@ -48,6 +49,11 @@ autosave is its only save. With `ironman: 'optional'` the player chooses it with
 checkbox at New Game; with `'always'` every run is ironman. The choice is stored with the
 run and can't be changed mid-run. A custom sidebar can read it with
 `selectIronman` / `selectUndoEnabled` from `@chemicalluck/sim-engine/features/save/selectors`.
+
+`autosave.rotate` is how many snapshots made by the `autosave` effect are kept before the
+oldest is dropped (checkpoints made with `"keep": true` don't count; `0` keeps only
+checkpoints). Ironman runs, including every run under `ironman: 'always'`, make no
+autosave snapshots.
 
 ```tsx
 <GameEngine config={{ sidebar: MySidebar }} />

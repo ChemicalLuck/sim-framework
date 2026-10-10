@@ -50,6 +50,7 @@ import type {} from '../features/relationships/slice';
 import type {} from '../features/relationships/types';
 import type {} from '../features/rng/slice';
 import type {} from '../features/save/slice';
+import type {} from '../features/save/types';
 import type {} from '../features/shop/authoring.types';
 import type {} from '../features/shop/hydrate';
 import type {} from '../features/shop/types';
