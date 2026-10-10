@@ -272,4 +272,18 @@ describe('quest templates editor panel', () => {
     });
     expect(saved[0].objectives[0]).toEqual(templates[0].objectives[0]);
   });
+
+  it('warns about an ID template only when it has no NPC token', () => {
+    const { getByDisplayValue, queryByText } = renderTemplates();
+    const warning = /all instances will share the same ID/;
+
+    expect(queryByText(warning)).toBeNull();
+
+    const input = getByDisplayValue('meet_{npc0.id}');
+    fireEvent.change(input, { target: { value: 'meet' } });
+    expect(queryByText(warning)).toBeInTheDocument();
+
+    fireEvent.change(input, { target: { value: 'meet_{npc0.firstName}' } });
+    expect(queryByText(warning)).toBeNull();
+  });
 });

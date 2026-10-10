@@ -4,7 +4,7 @@ import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import type { Scene } from '@chemicalluck/sim-engine/types/scene.types';
 
 import type { QuestTemplate } from '../types';
-import { instantiateQuestTemplate } from './templates';
+import { hasNpcToken, instantiateQuestTemplate } from './templates';
 
 const npc = {
   id: 'ann_lee',
@@ -187,5 +187,18 @@ describe('instantiateQuestTemplate', () => {
     instantiateQuestTemplate(template, npc);
 
     expect(template).toEqual(before);
+  });
+});
+
+describe('hasNpcToken', () => {
+  it('finds the {npc0…} tokens a template is rendered with', () => {
+    expect(hasNpcToken('meet_{npc0.id}')).toBe(true);
+    expect(hasNpcToken('meet_{npc0.firstName}_{npc0.lastName}')).toBe(true);
+  });
+
+  it('finds no token in a fixed id or other braces', () => {
+    expect(hasNpcToken('meet')).toBe(false);
+    expect(hasNpcToken('meet_{weather}')).toBe(false);
+    expect(hasNpcToken('meet_{npc0.id')).toBe(false);
   });
 });

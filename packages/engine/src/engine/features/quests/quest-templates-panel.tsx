@@ -49,6 +49,7 @@ import {
 } from '@chemicalluck/sim-engine/features/quests/types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
+import { hasNpcToken } from './lib/templates';
 import {
   ObjectiveConditionField,
   ObjectiveTriggerField,
@@ -368,9 +369,9 @@ function AddQuestTemplateDialog({ onAdd }: AddQuestTemplateDialogProps) {
               <FormControl>
                 <Input {...field} placeholder="meet_{npc0.id}" />
               </FormControl>
-              {field.value && !field.value.includes('{{') && (
+              {field.value && !hasNpcToken(field.value) && (
                 <p className="text-xs text-amber-500">
-                  No {'{{...}}'} token — all instances will share the same ID.
+                  No {'{npc0…}'} token — all instances will share the same ID.
                 </p>
               )}
               <FormMessage />
@@ -458,9 +459,9 @@ function QuestTemplateDetail({
           className="h-8 text-sm bg-zinc-800 border-zinc-600 font-mono"
           placeholder="meet_{npc0.id}"
         />
-        {template.idTemplate && !template.idTemplate.includes('{{') && (
+        {template.idTemplate && !hasNpcToken(template.idTemplate) && (
           <p className="text-xs text-amber-500 mt-1">
-            No {'{{...}}'} token — all instances will share the same ID.
+            No {'{npc0…}'} token — all instances will share the same ID.
           </p>
         )}
       </Field>

@@ -58,6 +58,14 @@ function resolvePart<T extends ObjectiveTrigger | ObjectiveCondition>(
   return part.kind === 'scene' ? part : resolveDeep(part, ctx);
 }
 
+/**
+ * Whether a template string holds a `{npc0…}` token (e.g. `meet_{npc0.id}`),
+ * the part {@link instantiateQuestTemplate} fills per NPC.
+ */
+export function hasNpcToken(template: string): boolean {
+  return /\{npc0\.[^{}]+\}/.test(template);
+}
+
 export function instantiateQuestTemplate(
   template: QuestTemplate,
   npc: NPC,
