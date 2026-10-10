@@ -1,6 +1,8 @@
+// @vitest-environment node
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { parseAst } from 'vite';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { gamePlugin } from './game-plugin';
@@ -65,5 +67,271 @@ describe('virtual:game-setup data imports', () => {
     expect(code).toContain(
       'needs_configureNeedThresholds(content.extensions.needThresholds);',
     );
+  });
+});
+
+describe('virtual:game-extensions template-vars slot', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+    fs.mkdirSync(path.join(gameDir, 'extensions', 'university'), {
+      recursive: true,
+    });
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function generateExtensions(): string {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const load = plugin.load as (id: string) => string | null;
+    const resolved = resolveId('virtual:game-extensions');
+    if (!resolved) throw new Error('virtual:game-extensions did not resolve');
+    return load(resolved) ?? '';
+  }
+
+  it('exports an empty provider map when no extension supplies one', () => {
+    expect(generateExtensions()).toContain('export const templateVarProviders');
+  });
+
+  it("keys an extension's template-vars.ts default export by its name", () => {
+    const file = path.join(
+      gameDir,
+      'extensions',
+      'university',
+      'template-vars.ts',
+    );
+    fs.writeFileSync(file, 'export default () => ({ term: "autumn" });');
+    const code = generateExtensions();
+    expect(code).toContain(
+      `import universityTemplateVars from ${JSON.stringify(file)};`,
+    );
+    expect(code).toMatch(
+      /export const templateVarProviders = \{\s*"university": universityTemplateVars\s*\};/,
+    );
+  });
+
+  it('exposes each template-vars.ts module so the linter can read its declared keys', () => {
+    const file = path.join(
+      gameDir,
+      'extensions',
+      'university',
+      'template-vars.ts',
+    );
+    fs.writeFileSync(
+      file,
+      'export const keys = ["term"];\nexport default () => ({ term: "autumn" });',
+    );
+    const code = generateExtensions();
+    expect(code).toContain(
+      `import * as universityTemplateVarsModule from ${JSON.stringify(file)};`,
+    );
+    expect(code).toMatch(
+      /export const templateVarDeclarations = \{\s*"university": universityTemplateVarsModule\s*\};/,
+    );
+  });
+});
+
+describe('virtual:game-setup quests hydration', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  it('hydrates quests.json through the quests hydrator', () => {
+    fs.writeFileSync(path.join(gameDir, 'data', 'quests.json'), '[]');
+    const code = generateSetup(gameDir);
+    expect(code).toContain(
+      'key: "quests", data: quests_questsData, hydrate: (data, ctx) => quests_hydrateQuests(data, ctx)',
+    );
+    expect(code).toContain(
+      'quests_registerInitialQuests(content.extensions.quests);',
+    );
+  });
+
+  it('loads a game without quests.json', () => {
+    const code = generateSetup(gameDir);
+    expect(code).not.toContain('quests.json');
+    expect(code).not.toContain('quests_questsData');
+    expect(code).not.toContain('registerInitialQuests');
+  });
+
+  it('hydrates quest-templates.json and registers the hydrated templates', () => {
+    fs.writeFileSync(path.join(gameDir, 'data', 'quest-templates.json'), '[]');
+    const code = generateSetup(gameDir);
+    expect(code).toContain(
+      'key: "questTemplates", data: quests_questTemplatesData, hydrate: (data, ctx) => quests_hydrateQuestTemplates(data, ctx)',
+    );
+    expect(code).toContain(
+      'quests_initQuestTemplates(content.extensions.questTemplates);',
+    );
+  });
+
+  it('skips quest templates when quest-templates.json is absent', () => {
+    const code = generateSetup(gameDir);
+    expect(code).not.toContain('questTemplates');
+    expect(code).not.toContain('initQuestTemplates');
+  });
+});
+
+describe('virtual:references requiredDataFiles', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function requiredDataFiles(): string[] {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const load = plugin.load as (id: string) => string | null;
+    const resolved = resolveId('virtual:references');
+    if (!resolved) throw new Error('virtual:references did not resolve');
+    const code = load(resolved) ?? '';
+    const list = /export const requiredDataFiles = (\[.*\]);/.exec(code)?.[1];
+    if (!list) throw new Error('requiredDataFiles not exported');
+    return JSON.parse(list) as string[];
+  }
+
+  it('lists the data files feature manifests declare as required', () => {
+    const files = requiredDataFiles();
+    // Content slot, setup binding, content extension and bundle inputs.
+    for (const file of ['items', 'scenes', 'needs', 'player', 'locations']) {
+      expect(files).toContain(file);
+    }
+  });
+
+  it('leaves out data files declared optional', () => {
+    const files = requiredDataFiles();
+    for (const file of ['weather', 'quests', 'quest-templates', 'events']) {
+      expect(files).not.toContain(file);
+    }
+  });
+
+  it("includes a game extension's required content files", () => {
+    const dir = path.join(gameDir, 'extensions', 'diary');
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'feature.json'),
+      JSON.stringify({
+        contentExtensions: [
+          { jsonFile: 'diary.json', contentKey: 'diary' },
+          { jsonFile: 'notes.json', contentKey: 'notes', optional: true },
+        ],
+      }),
+    );
+    const files = requiredDataFiles();
+    expect(files).toContain('diary');
+    expect(files).not.toContain('notes');
+  });
+});
+
+describe('generated identifiers for extension folder names', () => {
+  let gameDir: string;
+
+  function writeExt(name: string, file: string, contents: string): void {
+    const dir = path.join(gameDir, 'extensions', name);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, file), contents);
+  }
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+    // `my-ext` and `2d` are not identifiers; `myExt` clashes with `my-ext`
+    // once camel-cased.
+    for (const name of ['my-ext', 'myExt', '2d']) {
+      writeExt(name, 'slice.ts', 'export default (s = {}) => s;');
+      writeExt(name, 'template-vars.ts', 'export default () => ({});');
+      writeExt(name, 'conditions.ts', 'export default {};');
+      writeExt(name, 'references.ts', 'export const idSources = [];');
+    }
+    writeExt('my-ext', 'effects.ts', 'export default {};');
+    writeExt('my-ext', 'data.ts', 'export const myExtData = {};');
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function load(id: string): string {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const loadHook = plugin.load as (id: string) => string | null;
+    const resolved = resolveId(id);
+    if (!resolved) throw new Error(`${id} did not resolve`);
+    return loadHook(resolved) ?? '';
+  }
+
+  /** Parse as an ES module (throws if invalid); returns imported bindings. */
+  function importBindings(code: string): string[] {
+    return parseAst(code).body.flatMap((node) =>
+      node.type === 'ImportDeclaration'
+        ? node.specifiers.map((s) => s.local.name)
+        : [],
+    );
+  }
+
+  function expectUnique(names: string[]) {
+    expect(new Set(names).size).toBe(names.length);
+  }
+
+  it('generates a valid virtual:game-extensions keyed by the real names', () => {
+    const code = load('virtual:game-extensions');
+    expectUnique(importBindings(code));
+    for (const exportName of [
+      'slices',
+      'templateVarProviders',
+      'templateVarDeclarations',
+    ]) {
+      const block = new RegExp(
+        `export const ${exportName} = \\{([^}]*)\\}`,
+      ).exec(code)?.[1];
+      expect(block).toContain('"my-ext": ');
+      expect(block).toContain('"myExt": ');
+      expect(block).toContain('"2d": ');
+    }
+  });
+
+  it('generates valid virtual:conditions and virtual:references', () => {
+    expectUnique(importBindings(load('virtual:conditions')));
+    expectUnique(importBindings(load('virtual:references')));
+  });
+
+  it("imports a hyphenated extension's data.ts by its camel-cased export", () => {
+    const code = load('virtual:game-setup');
+    expectUnique(importBindings(code));
+    expect(code).toMatch(/import \{ myExtData( as \w+)? \} from /);
+  });
+
+  it('exports a contribution from a hyphenated folder under its real name', () => {
+    writeExt(
+      'my-ext',
+      'feature.json',
+      JSON.stringify({
+        contributions: [
+          { file: 'widget.ts', virtualModule: 'virtual:widgets' },
+        ],
+      }),
+    );
+    writeExt('my-ext', 'widget.ts', 'export default 1;');
+    const code = load('virtual:widgets');
+    importBindings(code);
+    expect(code).toContain('as "my-ext"');
   });
 });

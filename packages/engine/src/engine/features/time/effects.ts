@@ -4,6 +4,7 @@ import {
 } from '@chemicalluck/sim-engine/features/core/types';
 import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
+import { nextGameHour } from './lib/game-time';
 import { advanceTimeByMinutes } from './slice';
 import type { SleepEffect, TimeEffect } from './types';
 
@@ -32,16 +33,13 @@ export function handleSleepEffect(
   let minutes = 0;
 
   if (effect.wakeTime !== undefined) {
-    const now = new Date(prevState.present.time.timestamp);
-    const wakeDate = new Date(now);
+    const now = prevState.present.time.timestamp;
+    const wake = nextGameHour(now, effect.wakeTime);
 
-    if (now.getHours() >= effect.wakeTime) wakeDate.setDate(now.getDate() + 1);
-    wakeDate.setHours(effect.wakeTime, 0, 0, 0);
-
-    minutes = Math.ceil((wakeDate.getTime() - now.getTime()) / 1000 / 60);
+    minutes = Math.ceil((wake - now) / 1000 / 60);
     logger.debug(
       'Computed full sleep until',
-      wakeDate,
+      new Date(wake),
       '→',
       minutes,
       'minutes',

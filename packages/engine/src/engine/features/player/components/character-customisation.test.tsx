@@ -1,6 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { configureAppearance } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 import { configureWearables } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import { renderWithStore } from '@chemicalluck/sim-engine/test-utils/render';

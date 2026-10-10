@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   type ReferenceContributions,
   collectReferences,
+  missingRequiredFiles,
   namespaceOf,
   reverseReferences,
   rewriteReferences,
@@ -98,6 +99,21 @@ describe('validateReferences', () => {
       contributions,
     );
     expect(issues).toEqual([]);
+  });
+});
+
+describe('missingRequiredFiles', () => {
+  it('lists absent referenced files only when they are required', () => {
+    // 'items' and 'pages' are required content; 'scenes' is optional.
+    expect(
+      missingRequiredFiles(contributions, {}, ['items', 'pages', 'other']),
+    ).toEqual(['items', 'pages']);
+  });
+
+  it('ignores required files that are present', () => {
+    expect(
+      missingRequiredFiles(contributions, { items: [] }, ['items', 'pages']),
+    ).toEqual(['pages']);
   });
 });
 
@@ -212,5 +228,68 @@ describe('condition validation', () => {
       contributions,
     );
     expect(issues).toEqual([]);
+  });
+
+  describe('with a provider that returns plain references without extract', () => {
+    // Like the minimap provider: every node is a `location` reference, and
+    // the condition extractor is never called.
+    const withPlainProvider: ReferenceContributions = {
+      ...contributions,
+      idSources: [
+        ...contributions.idSources,
+        {
+          namespace: 'location',
+          file: 'places',
+          select: (data) => (data as { id: string }[]).map((p) => p.id),
+        },
+      ],
+      referenceProviders: [
+        ...contributions.referenceProviders,
+        {
+          file: 'map',
+          section: 'map',
+          collect: (data) =>
+            (data as string[]).map((id) => ({
+              namespace: 'location',
+              id,
+              source: 'map',
+              section: 'map',
+            })),
+        },
+      ],
+    };
+    const data = {
+      ...dataByFile,
+      pages: [],
+      places: [{ id: 'halls' }, { id: 'bedroom' }],
+      map: ['halls', 'bedroom'],
+    };
+
+    it('yields no condition issues for valid plain references', () => {
+      expect(validateReferences(data, withPlainProvider)).toEqual([]);
+    });
+
+    it('still reports a malformed condition', () => {
+      const issues = validateReferences(
+        {
+          ...data,
+          pages: [
+            {
+              id: 'p',
+              effects: [
+                {
+                  kind: 'eq',
+                  lhs: { kind: 'string', value: 'season' },
+                  rhs: { kind: 'string', value: 'summer' },
+                },
+              ],
+            },
+          ],
+        },
+        withPlainProvider,
+      );
+      expect(issues).toHaveLength(1);
+      expect(issues[0].source).toBe('page:p');
+    });
   });
 });

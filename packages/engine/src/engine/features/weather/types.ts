@@ -2,7 +2,8 @@ import type { BaseEffect } from '@chemicalluck/sim-engine/types';
 
 export type SeasonId = 'spring' | 'summer' | 'autumn' | 'winter';
 
-export type WeatherConditionId =
+/** The conditions the engine ships with. */
+export type BuiltinWeatherConditionId =
   | 'sunny'
   | 'hot_sunny'
   | 'partly_cloudy'
@@ -14,6 +15,9 @@ export type WeatherConditionId =
   | 'snowy'
   | 'freezing';
 
+/** A built-in condition id, or one added by the game's `weather.json`. */
+export type WeatherConditionId = BuiltinWeatherConditionId | (string & {});
+
 export interface WeatherCondition {
   id: WeatherConditionId;
   label: string;
@@ -22,6 +26,25 @@ export interface WeatherCondition {
   iconName: string;
   iconColor: string;
   precipitationChance: number;
+  /** Need drains while this condition holds, as need name → points per hour. */
+  needEffects: Record<string, number>;
+  /** Whether it wets equipped clothing outdoors (without an umbrella). */
+  wetsClothing: boolean;
+}
+
+export interface WeightedCondition {
+  id: WeatherConditionId;
+  weight: number;
+}
+
+/** Hydrated `weather.json`: per-season weights, persistence and condition definitions. */
+export interface WeatherConfig {
+  /** Weighted condition pools per season; a season left out uses the built-in pool. */
+  seasons: Partial<Record<SeasonId, WeightedCondition[]>>;
+  /** Chance a day keeps the previous day's condition (0–1). */
+  persistence: number;
+  /** All known conditions: the built-ins merged with the game's overrides/additions. */
+  conditions: Record<WeatherConditionId, WeatherCondition>;
 }
 
 export interface DailyWeather {
@@ -29,6 +52,11 @@ export interface DailyWeather {
   condition: WeatherCondition;
   temperature: number;
   seasonId: SeasonId;
+}
+
+/** The weather for one hour of a day: the daily condition plus intra-day variation. */
+export interface HourlyWeather extends DailyWeather {
+  hour: number;
 }
 
 export interface SeasonCondition {
@@ -44,6 +72,20 @@ export interface WeatherConditionExpr {
 export interface WeatherEffect extends BaseEffect<'weather'> {
   /** Set a specific condition override, or null to clear and return to computed weather. */
   readonly conditionId: WeatherConditionId | null;
+  /** Game time (ISO string) the override expires at. Without it (or `durationHours`) it lasts until cleared. */
+  readonly until?: string;
+  /** Hours of game time the override lasts from when the effect applies. */
+  readonly durationHours?: number;
+  /** Temperature (°C) reported while the override is active. */
+  readonly temperature?: number;
+}
+
+/** An active weather override as stored in the weather slice. */
+export interface WeatherOverride {
+  conditionId: WeatherConditionId;
+  /** Game timestamp (ms) the override expires at; omitted = until cleared. */
+  until?: number;
+  temperature?: number;
 }
 
 declare module '@chemicalluck/sim-engine/types/effect.types' {

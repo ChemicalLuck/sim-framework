@@ -12,13 +12,18 @@ import { selectNpcsByIds } from '@chemicalluck/sim-engine/features/npcs/selector
 import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
 import { selectTimestamp } from '@chemicalluck/sim-engine/features/time/selectors';
 import * as effects from '@chemicalluck/sim-engine/features/view/helpers';
-import { selectDescription } from '@chemicalluck/sim-engine/features/view/selectors';
+import {
+  selectDescription,
+  selectView,
+} from '@chemicalluck/sim-engine/features/view/selectors';
+import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
 import {
   useEngineDispatch,
   useEngineSelector,
+  useEngineStore,
 } from '@chemicalluck/sim-engine/state/store';
 import { processEffects } from '@chemicalluck/sim-engine/state/thunks';
-import type { Script } from '@chemicalluck/sim-engine/types';
+import type { Effect, Script } from '@chemicalluck/sim-engine/types';
 
 interface ScriptViewProps {
   script: Script;
@@ -36,8 +41,17 @@ function shuffle(indices: number[]): number[] {
 
 const EMPTY_NPC_IDS: string[] = [];
 
+/** Effects run when a script's `endCondition` ends it after `turnsCompleted` scenes. */
+function endConditionEffects(script: Script, turnsCompleted: number): Effect[] {
+  if (script.endWith === 'leave') {
+    return effects.earlyExitEffects(script, turnsCompleted);
+  }
+  return script.completionEffects ?? effects.viewDefault();
+}
+
 function ScriptView({ script, npcIds = EMPTY_NPC_IDS }: ScriptViewProps) {
   const dispatch = useEngineDispatch();
+  const store = useEngineStore();
   const currentTimestamp = useEngineSelector(selectTimestamp);
   const currentDescription = useEngineSelector(selectDescription);
   const startTimestamp = useRef(currentTimestamp);
@@ -54,6 +68,7 @@ function ScriptView({ script, npcIds = EMPTY_NPC_IDS }: ScriptViewProps) {
   );
 
   const [step, setStep] = useState(0);
+  const [ended, setEnded] = useState(false);
   const isDone = step >= scenes.length;
   const progressValue = (step / scenes.length) * 100;
 
@@ -72,7 +87,27 @@ function ScriptView({ script, npcIds = EMPTY_NPC_IDS }: ScriptViewProps) {
     }
   }, [isDone, completionEffects, dispatch]);
 
-  if (isDone) return null;
+  // After each beat: end early when `endCondition` holds, unless the beat's
+  // own effects already moved away from this script.
+  const afterBeat = () => {
+    const turnsCompleted = step + 1;
+    const state = store.getState();
+    const view = selectView(state);
+    const stillHere =
+      view.activeViewId === 'ScriptView' && view.props.script === script;
+    if (
+      script.endCondition &&
+      stillHere &&
+      isConditionMet(state, script.endCondition)
+    ) {
+      setEnded(true);
+      dispatch(processEffects(endConditionEffects(script, turnsCompleted)));
+      return;
+    }
+    setStep(turnsCompleted);
+  };
+
+  if (isDone || ended) return null;
 
   const scene = scenes[orderedIndices.current[step]];
   const resolvedGroups = scene.actions.map((group) => ({
@@ -94,10 +129,11 @@ function ScriptView({ script, npcIds = EMPTY_NPC_IDS }: ScriptViewProps) {
             {group.pretext && <p>{group.pretext}</p>}
             <ActionButtonList
               actions={group.actions}
-              defaultEffects={[{ kind: 'time', minutes: computedIncrement }]}
-              callback={() => {
-                setStep((s) => s + 1);
-              }}
+              defaultEffects={[
+                ...(scene.completionEffects ?? []),
+                { kind: 'time', minutes: computedIncrement },
+              ]}
+              callback={afterBeat}
             />
           </div>
         ))}

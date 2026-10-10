@@ -3,7 +3,10 @@ import {
   hydrateScene,
   hydrateScript,
 } from '@chemicalluck/sim-engine/features/core/hydrate';
-import type { JsonSceneWithId, JsonScript } from '@chemicalluck/sim-engine/features/core/types';
+import type {
+  JsonSceneWithId,
+  JsonScript,
+} from '@chemicalluck/sim-engine/features/core/types';
 import type { Scene, Script } from '@chemicalluck/sim-engine/types';
 import type {
   InventoryItem,
@@ -77,6 +80,49 @@ export interface Content {
 const empty = <T>(label: string): Registry<T> =>
   buildRegistry<T>(label, [], () => '');
 
+function placeholderRegistry<T>(
+  label: string,
+  entries: { id: string }[],
+): Registry<T> {
+  return new Registry(label, new Map(entries.map((e) => [e.id, {} as T])));
+}
+
+/**
+ * Hydrated content is stored in game state (view props) and persisted as JSON,
+ * so a scene/script that leads back to itself can't be saved. Reject such
+ * loops at load time with the ids involved rather than failing on save.
+ */
+function assertNoCycles(
+  rawScenes: { id: string }[],
+  scenes: Registry<Scene>,
+  rawScripts: { id: string }[],
+  scripts: Registry<Script>,
+): void {
+  const labels = new Map<object, string>();
+  for (const { id } of rawScenes) labels.set(scenes.get(id), `scene ${id}`);
+  for (const { id } of rawScripts) labels.set(scripts.get(id), `script ${id}`);
+
+  const done = new Set<object>();
+  const path: object[] = [];
+  const onPath = new Set<object>();
+  const visit = (node: unknown): void => {
+    if (!node || typeof node !== 'object' || done.has(node)) return;
+    if (onPath.has(node)) {
+      const loop = [...path.slice(path.indexOf(node)), node]
+        .map((n) => labels.get(n))
+        .filter((l) => l !== undefined);
+      throw new Error(`Loader: circular reference between ${loop.join(' → ')}`);
+    }
+    onPath.add(node);
+    path.push(node);
+    for (const child of Object.values(node)) visit(child);
+    path.pop();
+    onPath.delete(node);
+    done.add(node);
+  };
+  for (const node of labels.keys()) visit(node);
+}
+
 export function loadContent(raw: RawContent): Content {
   const itemList = raw.items.filter((i): i is Item => i.kind === 'item');
   const wearableList = raw.items.filter(
@@ -87,7 +133,7 @@ export function loadContent(raw: RawContent): Content {
   const templates = buildRegistry('template', raw.templates, (t) => t.id);
 
   // Pass 1: run context extensions to populate HydrationContext before
-  // scripts/scenes are hydrated. Features augment HydrationContext and
+  // scenes/scripts are hydrated. Features augment HydrationContext and
   // register a ContextExtension to populate their key (e.g. shops).
   const ctx: HydrationContext = {
     items,
@@ -103,23 +149,23 @@ export function loadContent(raw: RawContent): Content {
     );
   }
 
-  // Pass 2: scripts may reference shops/items but not yet scenes.
-  const scriptList = raw.scripts.map((s) => hydrateScript(s, ctx));
-  const scripts = new Registry(
-    'script',
-    new Map(raw.scripts.map((s, i) => [s.id, scriptList[i]])),
-  );
-  ctx.scripts = scripts;
-
-  // Pass 3: scenes may reference shops/scripts/items.
-  const sceneList = raw.scenes.map((s) => hydrateScene(s, ctx));
-  const scenes = new Registry(
-    'scene',
-    new Map(raw.scenes.map((s, i) => [s.id, sceneList[i]])),
-  );
+  // Pass 2: scenes and scripts. Scenes and scripts may reference each other
+  // (and themselves) in any order, so each id is registered up front as an
+  // empty placeholder that effect hydrators resolve to; the hydrated content
+  // is then written into it, keeping every reference pointing at the final
+  // object.
+  const scenes = placeholderRegistry<Scene>('scene', raw.scenes);
+  const scripts = placeholderRegistry<Script>('script', raw.scripts);
   ctx.scenes = scenes;
+  ctx.scripts = scripts;
+  for (const s of raw.scenes)
+    Object.assign(scenes.get(s.id), hydrateScene(s, ctx));
+  for (const s of raw.scripts) {
+    Object.assign(scripts.get(s.id), hydrateScript(s, ctx));
+  }
+  assertNoCycles(raw.scenes, scenes, raw.scripts, scripts);
 
-  // Pass 4: data extensions hydrate with full context (items/wearables/templates/shops/scripts/scenes).
+  // Pass 3: data extensions hydrate with full context (items/wearables/templates/shops/scripts/scenes).
   const extensions: Record<string, unknown> = {};
   for (const ext of raw.extensions ?? []) {
     extensions[ext.key] = ext.hydrate ? ext.hydrate(ext.data, ctx) : ext.data;

@@ -1,6 +1,6 @@
 import editorExtensions from 'virtual:editor-extensions';
 
-import { preloadEditorData, readEditorData } from './use-editor-data';
+import { preloadEditorData, readOptionalEditorData } from './use-editor-data';
 
 export type { AvailableData } from './effect-editor';
 
@@ -30,11 +30,13 @@ export function useAvailableData(): Record<string, unknown> {
   // Start all fetches in parallel before reading any
   preloadEditorData(...unique.map((r) => `/editor/api/data/${r.key}`));
 
-  // Read each result (throws via Suspense if not yet loaded)
+  // Read each result (throws via Suspense if not yet loaded). A file the game
+  // doesn't have (optional content such as events.json) offers no ids.
   const result: Record<string, unknown> = {};
   for (const req of unique) {
-    const raw = readEditorData(`/editor/api/data/${req.key}`);
-    result[req.key] = req.extract ? req.extract(raw) : defaultExtract(raw);
+    const raw = readOptionalEditorData(`/editor/api/data/${req.key}`);
+    if (raw === undefined) result[req.key] = [];
+    else result[req.key] = req.extract ? req.extract(raw) : defaultExtract(raw);
   }
   return result;
 }

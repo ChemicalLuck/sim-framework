@@ -14,12 +14,18 @@ export interface EventCategoryMap {
 
 export type EventCategory = keyof EventCategoryMap;
 
+/**
+ * Day of week: 0 = Sunday, 1 = Monday … 5 = Friday, 6 = Saturday. Same
+ * convention as `Date.getDay()` and the `gameweekday` condition id.
+ */
+export type DayOfWeek = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
 export interface ScheduledEvent {
   id: string;
   label: string;
   category: EventCategory;
-  /** Day of week: 1 = Monday … 5 = Friday (matches JS Date.getDay() for Mon–Fri) */
-  dayOfWeek: 1 | 2 | 3 | 4 | 5;
+  /** Day of week, 0 = Sunday … 6 = Saturday (read in game time, see `time/lib/game-time`). */
+  dayOfWeek: DayOfWeek;
   hour: number;
   durationMinutes: number;
 }

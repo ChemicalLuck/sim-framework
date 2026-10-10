@@ -1,4 +1,5 @@
 import { type ComponentType, createContext, use } from 'react';
+
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
 export type AvailableData = Record<string, unknown>;

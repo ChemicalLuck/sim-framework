@@ -1,14 +1,32 @@
+import type {
+  JsonAction,
+  JsonScene,
+} from '@chemicalluck/sim-engine/features/core/types';
 import {
+  type ContentRef,
   type IdSource,
   type NodeRefExtractor,
   type NodeRefRewriter,
+  type RefNode,
+  type RefRecord,
   type ReferenceProvider,
   type ReferenceRewriter,
+  collectActionGroupRefs,
+  collectEffectRefs,
   flattenConditions,
+  rewriteActionGroupRefs,
+  rewriteEffectRefs,
 } from '@chemicalluck/sim-engine/lib/validation';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
-import type { Quest } from './types';
+import type {
+  JsonObjectiveCondition,
+  JsonObjectiveTrigger,
+  JsonQuest,
+  JsonQuestObjective,
+  JsonQuestTemplate,
+  JsonSceneRef,
+} from './authoring.types';
 
 const objectiveId = (questId: string, name: string) => `${questId}::${name}`;
 
@@ -16,13 +34,13 @@ export const idSources: IdSource[] = [
   {
     namespace: 'quest',
     file: 'quests',
-    select: (data) => (data as Quest[]).map((q) => q.id),
+    select: (data) => (data as JsonQuest[]).map((q) => q.id),
   },
   {
     namespace: 'questObjective',
     file: 'quests',
     select: (data) =>
-      (data as Quest[]).flatMap((q) =>
+      (data as JsonQuest[]).flatMap((q) =>
         q.objectives.map((o) => objectiveId(q.id, o.name)),
       ),
   },
@@ -52,25 +70,122 @@ const questRef: NodeRefExtractor = (node) => {
 
 export const nodeRefExtractors: NodeRefExtractor[] = [questRef];
 
+/** The scene id of a `{ kind: 'scene', sceneId }` scene objective. */
+function sceneRefId(condition: unknown): string | undefined {
+  const c = condition as Partial<JsonSceneRef> | undefined;
+  return c?.kind === 'scene' && typeof c.sceneId === 'string'
+    ? c.sceneId
+    : undefined;
+}
+
+/**
+ * An objective's trigger or condition, split by shape: an action (or the
+ * actions of an inline scene, plus its completion effects) or a plain
+ * condition tree. A `{ kind: 'scene', sceneId }` ref holds neither.
+ */
+function objectiveParts(part: JsonObjectiveTrigger | JsonObjectiveCondition): {
+  actions: JsonAction[];
+  scene?: JsonScene;
+  condition?: Condition;
+} {
+  if (part.kind === 'action') return { actions: [part] };
+  if (part.kind === 'scene') {
+    return 'sceneId' in part ? { actions: [] } : { actions: [], scene: part };
+  }
+  return { actions: [], condition: part };
+}
+
+function collectPartRefs(
+  part: JsonObjectiveTrigger | JsonObjectiveCondition | undefined,
+  source: string,
+  section: string,
+  extract: (node: RefNode) => ContentRef[],
+): RefRecord[] {
+  if (!part) return [];
+  const { actions, scene, condition } = objectiveParts(part);
+  return [
+    ...collectActionGroupRefs([{ actions }], source, section, extract),
+    ...collectActionGroupRefs(scene?.actions, source, section, extract),
+    ...collectEffectRefs(scene?.completionEffects, source, section, extract),
+    ...collectEffectRefs(
+      flattenConditions(condition),
+      source,
+      section,
+      extract,
+    ),
+  ];
+}
+
+/** Every reference an objective makes: its scene ref, trigger, condition and `onComplete`. */
+function collectObjectiveRefs(
+  objective: JsonQuestObjective,
+  source: string,
+  section: string,
+  extract: (node: RefNode) => ContentRef[],
+): RefRecord[] {
+  const sceneId = sceneRefId(objective.condition);
+  return [
+    ...(sceneId ? [{ namespace: 'scene', id: sceneId, source, section }] : []),
+    ...collectPartRefs(objective.condition, source, section, extract),
+    ...collectPartRefs(objective.trigger, source, section, extract),
+    ...collectEffectRefs(objective.onComplete, source, section, extract),
+  ];
+}
+
+/**
+ * Whether an id holds a `{npc0…}`-style template placeholder. Such ids are only
+ * filled when a template is instantiated, so they can't be checked statically.
+ */
+const hasPlaceholder = (id: string) => /\{[^}]*\}/.test(id);
+
+function rewritePartRefs(
+  part: JsonObjectiveTrigger | JsonObjectiveCondition | undefined,
+  rewriteNode: (node: RefNode) => boolean,
+  ns: string,
+  oldId: string,
+  newId: string,
+): number {
+  if (!part) return 0;
+  const { actions, scene, condition } = objectiveParts(part);
+  return (
+    rewriteActionGroupRefs([{ actions }], rewriteNode, ns, oldId, newId) +
+    rewriteActionGroupRefs(scene?.actions, rewriteNode, ns, oldId, newId) +
+    rewriteEffectRefs(scene?.completionEffects, rewriteNode) +
+    rewriteEffectRefs(flattenConditions(condition), rewriteNode)
+  );
+}
+
 export const referenceProviders: ReferenceProvider[] = [
   {
     file: 'quests',
     section: 'quests',
     collect: (data, extract) =>
-      (data as Quest[]).flatMap((quest) =>
+      (data as JsonQuest[]).flatMap((quest) =>
         quest.objectives.flatMap((objective) =>
-          [objective.condition, objective.trigger]
-            .filter((c): c is Condition => c != null)
-            .flatMap((cond) =>
-              flattenConditions(cond).flatMap((conditionNode) =>
-                extract(conditionNode).map((ref) => ({
-                  ...ref,
-                  source: `quest:${quest.id}`,
-                  section: 'quests',
-                })),
-              ),
-            ),
+          collectObjectiveRefs(
+            objective,
+            `quest:${quest.id}`,
+            'quests',
+            extract,
+          ),
         ),
+      ),
+  },
+  {
+    file: 'quest-templates',
+    section: 'quest-templates',
+    collect: (data, extract) =>
+      (data as JsonQuestTemplate[]).flatMap((template) =>
+        template.objectives
+          .flatMap((objective) =>
+            collectObjectiveRefs(
+              objective,
+              `questTemplate:${template.id}`,
+              'quest-templates',
+              extract,
+            ),
+          )
+          .filter((ref) => !hasPlaceholder(ref.id)),
       ),
   },
 ];
@@ -102,23 +217,48 @@ const questRewrite: NodeRefRewriter = (node, ns, oldId, newId) => {
 
 export const nodeRefRewriters: NodeRefRewriter[] = [questRewrite];
 
+/**
+ * Mutating mirror of {@link collectObjectiveRefs}, over every objective of a
+ * list of quests or quest templates.
+ */
+function rewriteObjectiveRefs(
+  owners: { objectives: JsonQuestObjective[] }[],
+  rewriteNode: (node: RefNode) => boolean,
+  ns: string,
+  oldId: string,
+  newId: string,
+): number {
+  let count = 0;
+  for (const { objectives } of owners) {
+    for (const objective of objectives) {
+      if (ns === 'scene' && sceneRefId(objective.condition) === oldId) {
+        (objective.condition as JsonSceneRef).sceneId = newId;
+        count++;
+      }
+      for (const part of [objective.condition, objective.trigger]) {
+        count += rewritePartRefs(part, rewriteNode, ns, oldId, newId);
+      }
+      count += rewriteEffectRefs(objective.onComplete, rewriteNode);
+    }
+  }
+  return count;
+}
+
 export const referenceRewriters: ReferenceRewriter[] = [
   {
     file: 'quests',
-    rewrite: (data, rewriteNode) => {
-      let count = 0;
-      for (const quest of data as Quest[]) {
-        for (const objective of quest.objectives) {
-          for (const cond of [objective.condition, objective.trigger].filter(
-            (c): c is Condition => c != null,
-          )) {
-            for (const node of flattenConditions(cond)) {
-              if (rewriteNode(node)) count++;
-            }
-          }
-        }
-      }
-      return count;
-    },
+    rewrite: (data, rewriteNode, ns, oldId, newId) =>
+      rewriteObjectiveRefs(data as JsonQuest[], rewriteNode, ns, oldId, newId),
+  },
+  {
+    file: 'quest-templates',
+    rewrite: (data, rewriteNode, ns, oldId, newId) =>
+      rewriteObjectiveRefs(
+        data as JsonQuestTemplate[],
+        rewriteNode,
+        ns,
+        oldId,
+        newId,
+      ),
   },
 ];

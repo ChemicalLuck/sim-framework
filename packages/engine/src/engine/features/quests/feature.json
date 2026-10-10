@@ -1,16 +1,18 @@
 {
-  "setup": [
-    {
-      "jsonFile": "quest-templates.json",
-      "optional": true,
-      "from": "./lib/templates",
-      "call": "initQuestTemplates"
-    }
-  ],
   "contentExtensions": [
     {
       "jsonFile": "quests.json",
-      "contentKey": "quests"
+      "contentKey": "quests",
+      "optional": true,
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateQuests"
+    },
+    {
+      "jsonFile": "quest-templates.json",
+      "contentKey": "questTemplates",
+      "optional": true,
+      "hydratorFrom": "./hydrate",
+      "hydratorCall": "hydrateQuestTemplates"
     }
   ],
   "contentSetup": [
@@ -18,6 +20,11 @@
       "contentKey": "quests",
       "from": "./initializer",
       "call": "registerInitialQuests"
+    },
+    {
+      "contentKey": "questTemplates",
+      "from": "./lib/templates",
+      "call": "initQuestTemplates"
     }
   ]
 }

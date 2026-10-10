@@ -3,6 +3,10 @@ declare module 'virtual:game-extensions' {
   import type { Reducer } from '@reduxjs/toolkit';
   import type { EffectHydrator } from '@chemicalluck/sim-engine/data/effect-hydrators';
   import type {
+    TemplateVarDeclaration,
+    TemplateVarProvider,
+  } from '@chemicalluck/sim-engine/features/linguistics/lib/extension-vars';
+  import type {
     EffectHandler,
     PostEffectHandler,
   } from '@chemicalluck/sim-engine/state/thunks';
@@ -22,6 +26,9 @@ declare module 'virtual:game-extensions' {
   export const views: Record<string, ComponentType<never>>;
   export const effectHydrators: EffectHydrator[];
   export const storeInitializers: ((store: EngineStore) => void)[];
+  export const templateVarProviders: Record<string, TemplateVarProvider>;
+  /** Each extension's `template-vars.ts` module, for its declared `keys`. */
+  export const templateVarDeclarations: Record<string, TemplateVarDeclaration>;
 }
 
 declare module 'virtual:game-setup' {
@@ -43,6 +50,8 @@ declare module 'virtual:references' {
   export const nodeRefExtractors: NodeRefExtractor[];
   export const nodeRefRewriters: NodeRefRewriter[];
   export const referenceRewriters: ReferenceRewriter[];
+  /** Data files (no `.json`) the feature manifests declare required. */
+  export const requiredDataFiles: string[];
 }
 
 declare module 'virtual:conditions' {

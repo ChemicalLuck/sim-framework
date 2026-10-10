@@ -1,0 +1,435 @@
+import { afterEach, describe, expect, it } from 'vitest';
+
+import {
+  DEFAULT_SKILL_MAX,
+  configureSkillMax,
+} from '@chemicalluck/sim-engine/features/player/lib/skills';
+import { setView } from '@chemicalluck/sim-engine/features/view/slice';
+import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
+
+import { npcActions, playerActions } from './lib/actions';
+import { presentNpcIds, setPlayerAction, startEncounter } from './slice';
+import { createEncounterTestStore, makeTestNpc } from './test-store';
+import {
+  npcActionWeight,
+  npcsInTurnOrder,
+  processTurn,
+  stopEncounterThunk,
+} from './thunks';
+import type { Encounter, EncounterAction } from './types';
+
+afterEach(() => {
+  configureSkillMax(DEFAULT_SKILL_MAX);
+});
+
+const athletic: EncounterAction = {
+  id: 'athletic',
+  text: 'Stretch',
+  bodyPart: 'hands',
+  npcSkillWeights: { athletics: 3 },
+};
+const plain: EncounterAction = { id: 'plain', text: 'Wave', bodyPart: 'hands' };
+
+function encounterWith(actions: EncounterAction[]): Encounter {
+  return {
+    kind: 'encounter',
+    id: 'enc',
+    name: 'Enc',
+    initialStateId: 's',
+    npcDoNothingWeight: 0,
+    states: [{ id: 's', name: 'S', text: '', actions }],
+  };
+}
+
+describe('npcActionWeight', () => {
+  it('applies the full multiplier at the top of the configured skill scale', () => {
+    const npc = makeTestNpc('a', { skills: { athletics: DEFAULT_SKILL_MAX } });
+    expect(npcActionWeight(athletic, npc)).toBeCloseTo(3);
+  });
+
+  it('applies half the multiplier at half the scale', () => {
+    const npc = makeTestNpc('a', { skills: { athletics: 5 } });
+    expect(npcActionWeight(athletic, npc)).toBeCloseTo(2);
+  });
+
+  it('follows a custom skill max', () => {
+    configureSkillMax(20);
+    const top = makeTestNpc('a', { skills: { athletics: 20 } });
+    const mid = makeTestNpc('b', { skills: { athletics: 10 } });
+    expect(npcActionWeight(athletic, top)).toBeCloseTo(3);
+    expect(npcActionWeight(athletic, mid)).toBeCloseTo(2);
+  });
+
+  it('leaves the base weight alone at skill 0', () => {
+    const npc = makeTestNpc('a', { skills: { athletics: 0 } });
+    expect(npcActionWeight(athletic, npc)).toBe(1);
+  });
+});
+
+describe('processTurn NPC skill weighting', () => {
+  function pickRate(skill: number, turns = 2000): number {
+    const npc = makeTestNpc('npc', { skills: { athletics: skill } });
+    const { dispatch, getState } = createEncounterTestStore([npc]);
+    dispatch(
+      startEncounter({
+        encounter: encounterWith([athletic, plain]),
+        npcId: 'npc',
+      }),
+    );
+    let hits = 0;
+    for (let i = 0; i < turns; i++) {
+      dispatch(processTurn());
+      if (getState().present.encounter.npcActiveActions.hands === 'athletic') {
+        hits++;
+      }
+    }
+    return hits / turns;
+  }
+
+  it('an NPC at the top skill level picks the weighted action noticeably more often', () => {
+    const low = pickRate(0);
+    const top = pickRate(DEFAULT_SKILL_MAX);
+    // Expected: ~0.5 at skill 0, ~0.75 at the top of the scale.
+    expect(low).toBeGreaterThan(0.4);
+    expect(low).toBeLessThan(0.6);
+    expect(top).toBeGreaterThan(0.68);
+    expect(top - low).toBeGreaterThan(0.15);
+  });
+});
+
+describe('encounter stops', () => {
+  const tire: EncounterAction = {
+    id: 'tire',
+    text: 'Tire them out',
+    bodyPart: 'hands',
+    effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -20 }],
+  };
+  const leave: EncounterAction = {
+    id: 'leave',
+    text: 'Leave',
+    bodyPart: 'feet',
+    npcStop: true,
+  };
+
+  function stoppable(
+    actions: EncounterAction[],
+    extra: Partial<Encounter> = {},
+  ): Encounter {
+    return {
+      ...encounterWith(actions),
+      npcNeeds: { Energy: 30 },
+      stopEffects: [{ kind: 'money', amount: 1 }],
+      stopEffectsByReason: {
+        player: [{ kind: 'money', amount: 10 }],
+        npc: [{ kind: 'money', amount: 100 }],
+        condition: [{ kind: 'money', amount: 1000 }],
+      },
+      ...extra,
+    };
+  }
+
+  function start(encounter: Encounter) {
+    const store = createEncounterTestStore([makeTestNpc('npc')]);
+    store.dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    store.dispatch(setView({ activeViewId: 'EncounterView', props: {} }));
+    return store;
+  }
+
+  it('ends without player input once the stop condition is met after a turn', () => {
+    // NPC never acts, so only the player's action drains the need.
+    const { dispatch, getState } = start(
+      stoppable([{ ...tire, condition: parseCondition('money < 0') }], {
+        npcDoNothingWeight: 1,
+        stopCondition: parseCondition('npcNeed.Energy <= 0'),
+      }),
+    );
+    dispatch(setPlayerAction({ bodyPart: 'hands', actionId: 'tire' }));
+
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.encounter.npcNeeds.Energy).toBe(10);
+
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 1000);
+  });
+
+  it('supports a stop condition on the current state', () => {
+    const encounter = stoppable([tire]);
+    const { dispatch, getState } = start({
+      ...encounter,
+      states: [
+        {
+          ...encounter.states[0],
+          stopCondition: parseCondition('npcNeed.Energy < 50'),
+        },
+      ],
+    });
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.money).toBe(1 + 1000);
+  });
+
+  it('ends when the NPC picks an npcStop action', () => {
+    const { dispatch, getState } = start(stoppable([leave]));
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 100);
+  });
+
+  it('applies player-specific stop effects when the player stops', () => {
+    const { dispatch, getState } = start(stoppable([tire]));
+    dispatch(stopEncounterThunk());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(1 + 10);
+  });
+
+  it('keeps going while no stop condition is met', () => {
+    const { dispatch, getState } = start(
+      stoppable([tire], {
+        stopCondition: parseCondition('npcNeed.Energy <= 0'),
+      }),
+    );
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.view.activeViewId).toBe('EncounterView');
+  });
+});
+
+describe('encounter action actors', () => {
+  const playerOnly: EncounterAction = {
+    id: 'player_only',
+    text: 'Hold',
+    bodyPart: 'hands',
+    actor: 'player',
+  };
+  const npcOnly: EncounterAction = {
+    id: 'npc_only',
+    text: 'Grab',
+    bodyPart: 'hands',
+    actor: 'npc',
+  };
+  const shared: EncounterAction = {
+    id: 'shared',
+    text: 'Look',
+    bodyPart: 'eyes',
+  };
+
+  it('keeps player-only actions out of the NPC pool and vice versa', () => {
+    const { dispatch, getState } = createEncounterTestStore([
+      makeTestNpc('npc'),
+    ]);
+    const encounter = encounterWith([playerOnly, npcOnly, shared]);
+    dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    const state = encounter.states[0];
+
+    expect(npcActions(getState(), state, 'npc').map((a) => a.id)).toEqual([
+      'npc_only',
+      'shared',
+    ]);
+    expect(playerActions(getState(), state).map((a) => a.id)).toEqual([
+      'player_only',
+      'shared',
+    ]);
+
+    for (let i = 0; i < 200; i++) dispatch(processTurn());
+    const picked = getState().present.encounter.npcActiveActions;
+    expect(picked.hands).toBe('npc_only');
+    expect(Object.values(picked)).not.toContain('player_only');
+  });
+
+  it('never offers npcStop actions to the player', () => {
+    const { getState } = createEncounterTestStore();
+    const state = encounterWith([
+      { id: 'leave', text: 'Leave', bodyPart: 'feet', npcStop: true },
+    ]).states[0];
+    expect(playerActions(getState(), state)).toEqual([]);
+  });
+
+  it('resolves self.* to the NPC and npc.* to its skills and relationship during the pick', () => {
+    const npc = makeTestNpc('npc', { skills: { charm: 9 } });
+    const { dispatch, getState } = createEncounterTestStore([npc]);
+    const flirt: EncounterAction = {
+      id: 'flirt',
+      text: 'Flirt',
+      bodyPart: 'mouth',
+      condition: parseCondition('self.skill.charm >= 5'),
+    };
+    const bond: EncounterAction = {
+      id: 'bond',
+      text: 'Bond',
+      bodyPart: 'hands',
+      condition: parseCondition(
+        'npc.skill.charm >= 5 && npc.relationship.Friendship < 50',
+      ),
+    };
+    const encounter = encounterWith([flirt, bond]);
+    dispatch(startEncounter({ encounter, npcId: 'npc' }));
+    const state = encounter.states[0];
+
+    // The NPC (charm 9) can flirt; the player (charm 0) cannot.
+    expect(npcActions(getState(), state, 'npc').map((a) => a.id)).toEqual([
+      'flirt',
+      'bond',
+    ]);
+    expect(playerActions(getState(), state).map((a) => a.id)).toEqual(['bond']);
+
+    for (let i = 0; i < 50; i++) dispatch(processTurn());
+    const picked = getState().present.encounter.npcActiveActions;
+    expect(picked.mouth).toBe('flirt');
+    expect(picked.hands).toBe('bond');
+  });
+
+  it('offers actions without an actor to both sides, as before', () => {
+    const { getState } = createEncounterTestStore([makeTestNpc('npc')]);
+    const state = encounterWith([shared, plain]).states[0];
+    expect(playerActions(getState(), state)).toHaveLength(2);
+    expect(npcActions(getState(), state, 'npc')).toHaveLength(2);
+  });
+});
+
+describe('encounters with several NPCs', () => {
+  const strong = parseCondition('self.skill.athletics >= 5');
+  const weak = parseCondition('self.skill.athletics < 5');
+  const flex: EncounterAction = {
+    id: 'flex',
+    text: 'Flex',
+    bodyPart: 'arms',
+    actor: 'npc',
+    condition: strong,
+    effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -20 }],
+  };
+  const wave: EncounterAction = {
+    id: 'wave',
+    text: 'Wave',
+    bodyPart: 'hands',
+    actor: 'npc',
+    condition: weak,
+  };
+  const leave: EncounterAction = {
+    id: 'leave',
+    text: 'Leave',
+    bodyPart: 'feet',
+    actor: 'npc',
+    npcStop: true,
+    condition: weak,
+  };
+
+  function startParty(
+    actions: EncounterAction[],
+    extra: Partial<Encounter> = {},
+  ) {
+    const store = createEncounterTestStore([
+      makeTestNpc('a', { skills: { athletics: 9 } }),
+      makeTestNpc('b', { skills: { athletics: 1 } }),
+      makeTestNpc('c', { skills: { athletics: 7 } }),
+    ]);
+    store.dispatch(
+      startEncounter({
+        encounter: {
+          ...encounterWith(actions),
+          npcNeeds: { Energy: 50 },
+          stopEffectsByReason: { npc: [{ kind: 'money', amount: 100 }] },
+          ...extra,
+        },
+        npcIds: ['a', 'b', 'c'],
+      }),
+    );
+    store.dispatch(setView({ activeViewId: 'EncounterView', props: {} }));
+    return store;
+  }
+
+  it('lets each NPC pick independently with its own conditions', () => {
+    const { dispatch, getState } = startParty([flex, wave]);
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.a.activeActions).toEqual({ arms: 'flex' });
+    expect(npcs.b.activeActions).toEqual({ hands: 'wave' });
+    expect(npcs.c.activeActions).toEqual({ arms: 'flex' });
+  });
+
+  it('scopes NPC-targeted effects to the acting NPC', () => {
+    const { dispatch, getState } = startParty([flex, wave]);
+    dispatch(processTurn());
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.a.needs.Energy).toBe(30);
+    expect(npcs.b.needs.Energy).toBe(50);
+    expect(npcs.c.needs.Energy).toBe(30);
+  });
+
+  it('scopes a targeted player action to the slot NPC', () => {
+    const poke: EncounterAction = {
+      id: 'poke',
+      text: 'Poke',
+      bodyPart: 'hands',
+      actor: 'player',
+      target: 2,
+      effects: [{ kind: 'needs', target: 'npc', need: 'Energy', delta: -10 }],
+    };
+    const { dispatch, getState } = startParty([poke], {
+      npcDoNothingWeight: 1,
+    });
+    dispatch(setPlayerAction({ bodyPart: 'hands', actionId: 'poke' }));
+    dispatch(processTurn());
+    const { npcs } = getState().present.encounter;
+    expect(npcs.c.needs.Energy).toBe(40);
+    expect(npcs.a.needs.Energy).toBe(50);
+    expect(npcs.b.needs.Energy).toBe(50);
+  });
+
+  it('keeps the encounter going for the others when one NPC leaves', () => {
+    const { dispatch, getState } = startParty([flex, leave]);
+    dispatch(processTurn());
+    const enc = getState().present.encounter;
+    expect(enc.encounter).not.toBeNull();
+    expect(presentNpcIds(enc)).toEqual(['a', 'c']);
+    expect(enc.npcId).toBe('a');
+    expect(getState().present.money).toBe(0);
+    expect(getState().present.view.activeViewId).toBe('EncounterView');
+
+    // The remaining NPCs keep picking
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).not.toBeNull();
+    expect(getState().present.encounter.npcs.a.needs.Energy).toBe(30);
+  });
+
+  it('ends the encounter (reason npc) once the last NPC leaves', () => {
+    const quit: EncounterAction = { ...leave, condition: undefined };
+    const { dispatch, getState } = startParty([quit]);
+    dispatch(processTurn());
+    expect(getState().present.encounter.encounter).toBeNull();
+    expect(getState().present.view.activeViewId).toBe('DefaultView');
+    expect(getState().present.money).toBe(100);
+  });
+
+  it('orders pickers by npcTurnOrder, then the remaining slots', () => {
+    const enc = encounterWith([]);
+    const ids = ['a', 'b', 'c'];
+    expect(npcsInTurnOrder(enc, ids, ids)).toEqual(['a', 'b', 'c']);
+    expect(npcsInTurnOrder({ ...enc, npcTurnOrder: [2, 0] }, ids, ids)).toEqual(
+      ['c', 'a', 'b'],
+    );
+    // NPCs that left are skipped
+    expect(
+      npcsInTurnOrder({ ...enc, npcTurnOrder: [2, 0] }, ids, ['a', 'b']),
+    ).toEqual(['a', 'b']);
+  });
+
+  it('shows one NPC slot as before for single-NPC encounters', () => {
+    const { dispatch, getState } = createEncounterTestStore([
+      makeTestNpc('solo'),
+    ]);
+    dispatch(
+      startEncounter({ encounter: encounterWith([plain]), npcId: 'solo' }),
+    );
+    dispatch(processTurn());
+    const enc = getState().present.encounter;
+    expect(enc.npcIds).toEqual(['solo']);
+    expect(enc.npcId).toBe('solo');
+    expect(enc.npcActiveActions.hands).toBe('plain');
+  });
+});

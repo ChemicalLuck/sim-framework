@@ -46,6 +46,12 @@ export function SaveSlotList({ slots, onSlotsChange }: SaveSlotListProps) {
           className="flex justify-between items-center border p-2 rounded"
         >
           <div className="text-sm text-muted-foreground flex flex-col gap-0.5">
+            {slot.auto && (
+              <span>
+                <strong>{slot.label ?? slot.name}</strong>
+                {slot.keep && ' (Checkpoint)'}
+              </span>
+            )}
             <span>
               <strong>Character:</strong> {slot.characterName}
             </span>

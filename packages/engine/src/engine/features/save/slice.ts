@@ -13,13 +13,26 @@ export interface SaveState {
 /** How a game offers ironman mode at New Game. */
 export type IronmanMode = 'never' | 'optional' | 'always';
 
+export interface AutosaveOptions {
+  /**
+   * Rotating snapshots made by `autosave` effects to keep; older ones are
+   * dropped. Checkpoints (`keep: true`) don't count. 0 disables rotating ones.
+   */
+  rotate: number;
+}
+
 export interface RunOptions {
   ironman: IronmanMode;
   /** Undo steps kept for the Back button. 0 disables undo. */
   undoLimit: number;
+  autosave: AutosaveOptions;
 }
 
-const DEFAULT_RUN_OPTIONS: RunOptions = { ironman: 'never', undoLimit: 10 };
+const DEFAULT_RUN_OPTIONS: RunOptions = {
+  ironman: 'never',
+  undoLimit: 10,
+  autosave: { rotate: 3 },
+};
 
 const _options = makeConfig<RunOptions>(DEFAULT_RUN_OPTIONS);
 

@@ -8,7 +8,10 @@ import type {
 } from '@chemicalluck/sim-engine/state/store';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
-import type { ScriptLeave } from '@chemicalluck/sim-engine/types/script.types';
+import type {
+  ScriptEndWith,
+  ScriptLeave,
+} from '@chemicalluck/sim-engine/types/script.types';
 
 export type JsonEffect = JsonEffectMap[keyof JsonEffectMap] | Effect;
 
@@ -43,11 +46,14 @@ export interface JsonScript {
   order: 'sequential' | 'random';
   duration?: number;
   endTime?: number;
+  increment?: number;
   completionEffects?: JsonEffect[];
   leave?: ScriptLeave<JsonEffect>;
   scenes: JsonScene[];
   npcSelection?: JsonNpcSelection;
   hideProgress?: boolean;
+  endCondition?: Condition;
+  endWith?: ScriptEndWith;
 }
 
 export interface EffectContext {

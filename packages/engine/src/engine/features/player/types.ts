@@ -1,6 +1,12 @@
-import type { BodyAttributes, Character } from '@chemicalluck/sim-engine/types/character.types';
+import type {
+  BodyAttributes,
+  Character,
+} from '@chemicalluck/sim-engine/types/character.types';
 import type { BaseEffect } from '@chemicalluck/sim-engine/types/effect.types';
-import type { InventoryItem, Wearable } from '@chemicalluck/sim-engine/types/item.types';
+import type {
+  InventoryItem,
+  Wearable,
+} from '@chemicalluck/sim-engine/types/item.types';
 
 export interface Player extends Character {
   id: 'player';

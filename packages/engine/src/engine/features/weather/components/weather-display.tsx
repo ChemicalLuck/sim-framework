@@ -1,12 +1,12 @@
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
-import { WEATHER_ICON_MAP } from '../lib/icons';
+import { getWeatherIcon } from '../lib/icons';
 import { selectSeason, selectWeather } from '../selectors';
 
 export default function WeatherDisplay() {
   const weather = useEngineSelector(selectWeather);
   const season = useEngineSelector(selectSeason);
-  const Icon = WEATHER_ICON_MAP[weather.conditionId];
+  const Icon = getWeatherIcon(weather.condition);
 
   return (
     <div className="flex flex-col items-center gap-0.5 py-1">

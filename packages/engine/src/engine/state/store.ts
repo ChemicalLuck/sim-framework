@@ -26,6 +26,11 @@ import undoable, {
   newHistory,
 } from 'redux-undo';
 
+import {
+  isRngSyncAction,
+  rngSyncMiddleware,
+} from '@chemicalluck/sim-engine/features/rng/middleware';
+
 import type {} from './augmentations';
 
 // Features augment this interface to register their slice state type.
@@ -81,6 +86,39 @@ export function createCompactTransform(additionalStrip?: TransientStripper) {
   );
 }
 
+type History = StateWithHistory<Record<string, unknown>>;
+
+/**
+ * Merge a loaded save into the store, slice by slice. redux-persist's default
+ * reconciler compares whole top-level keys, so one slice reacting to REHYDRATE
+ * (npcs, rng) would make it drop the entire saved `present`.
+ *
+ * - A slice whose own REHYDRATE handling changed it keeps that result: it was
+ *   derived from the save (npcs regenerated from the saved seed, rng restored)
+ *   and the saved copy is stripped or older.
+ * - Any other slice takes its saved value; slices missing from the save
+ *   (stripped like `encounter`, or added since) keep their initial state, and
+ *   saved slices the game no longer has are dropped.
+ * - Undo history isn't saved, so the load starts a fresh one: nothing to step
+ *   back into from before the load.
+ */
+export function reconcileHistory(
+  inbound: unknown,
+  original: unknown,
+  reduced: History,
+): History {
+  const saved = (inbound as Partial<History> | undefined)?.present;
+  if (!saved || typeof saved !== 'object') return reduced;
+  const before = (original as Partial<History> | undefined)?.present ?? {};
+  const present = { ...reduced.present };
+  for (const key of Object.keys(present)) {
+    if (key in saved && before[key] === reduced.present[key]) {
+      present[key] = saved[key];
+    }
+  }
+  return newHistory([], present, []);
+}
+
 interface GroupedAction extends UnknownAction {
   meta?: {
     group?: string;
@@ -118,6 +156,7 @@ export function buildStore(
     version: 3,
     storage,
     transforms: [compactTransform, ...additionalTransforms],
+    stateReconciler: reconcileHistory,
   };
 
   const rootReducer = combineReducers(reducers);
@@ -126,8 +165,10 @@ export function buildStore(
     groupBy: (action: GroupedAction) => action.meta?.group ?? null,
     // redux-undo's limit counts the present state too.
     limit: undoLimit + 1,
-    // Record nothing when undo is disabled or the run is ironman.
-    filter: (_action, present) => undoLimit > 0 && !isIronman(present),
+    // Record nothing when undo is disabled or the run is ironman. RNG
+    // position syncs fold into the step that consumed the randomness.
+    filter: (action, present) =>
+      undoLimit > 0 && !isIronman(present) && !isRngSyncAction(action),
     syncFilter: true,
   });
 
@@ -156,7 +197,7 @@ export function buildStore(
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
-      }),
+      }).concat(rngSyncMiddleware),
     devTools: {
       stateSanitizer: <S>(state: S): S => {
         const s = state as Record<string, unknown>;

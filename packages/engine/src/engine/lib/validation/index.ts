@@ -170,6 +170,8 @@ function conditionIssues(
     const data = dataByFile[provider.file];
     if (data === undefined) continue;
     for (const rec of provider.collect(data, extract)) {
+      // Providers may also return their own plain references; skip those.
+      if (rec.namespace !== CONDITION_PROBLEM) continue;
       issues.push({
         section: rec.section,
         source: rec.source,
@@ -243,4 +245,21 @@ export function requiredFiles(contributions: ReferenceContributions): string[] {
   for (const rewriter of contributions.referenceRewriters)
     files.add(rewriter.file);
   return [...files];
+}
+
+/**
+ * The files the contributions read that are missing from `dataByFile` and that
+ * a game must have (`required`, e.g. `virtual:references`' `requiredDataFiles`).
+ * An absent optional file (like `weather`) is simply not validated, so it isn't
+ * reported.
+ */
+export function missingRequiredFiles(
+  contributions: ReferenceContributions,
+  dataByFile: DataByFile,
+  required: readonly string[],
+): string[] {
+  const requiredSet = new Set(required);
+  return requiredFiles(contributions).filter(
+    (file) => requiredSet.has(file) && !(file in dataByFile),
+  );
 }

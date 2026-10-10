@@ -1,4 +1,9 @@
 import type { JsonEffect } from '@chemicalluck/sim-engine/features/core/types';
+import type {
+  EncounterActionActor,
+  EncounterActionTarget,
+  EncounterStopReason,
+} from '@chemicalluck/sim-engine/features/encounter/types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export interface JsonViewEncounterEffect {
@@ -6,6 +11,7 @@ export interface JsonViewEncounterEffect {
   activeViewId: 'EncounterView';
   encounterId: string;
   npcId: string;
+  npcIds?: string[];
 }
 
 declare module '@chemicalluck/sim-engine/data/authoring.types' {
@@ -24,6 +30,9 @@ export interface JsonEncounterAction {
   npcWeight?: number;
   npcSkillWeights?: Record<string, number>;
   npcTraitWeights?: Record<string, number>;
+  npcStop?: boolean;
+  actor?: EncounterActionActor;
+  target?: EncounterActionTarget;
 }
 
 export interface JsonEncounterState {
@@ -33,6 +42,7 @@ export interface JsonEncounterState {
   actions: JsonEncounterAction[];
   condition?: Condition;
   transitionTo?: string;
+  stopCondition?: Condition;
 }
 
 export interface JsonEncounter {
@@ -42,5 +52,8 @@ export interface JsonEncounter {
   initialStateId: string;
   npcNeeds?: Record<string, number>;
   npcDoNothingWeight?: number;
+  npcTurnOrder?: number[];
   stopEffects?: JsonEffect[];
+  stopEffectsByReason?: Partial<Record<EncounterStopReason, JsonEffect[]>>;
+  stopCondition?: Condition;
 }

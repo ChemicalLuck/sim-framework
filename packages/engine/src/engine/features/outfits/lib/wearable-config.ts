@@ -41,6 +41,43 @@ export interface SizeSystem {
   labelFormat: string;
 }
 
+/** Need drained while equipped clothing is dirty. Rates are points per hour. */
+export interface ClothingHygieneNeedConfig {
+  need: string;
+  drainPerDirtyItemPerHour?: number;
+  maxDrainPerHour?: number;
+}
+
+/** Need drained by ill-fitting clothing and restored by a good fit. Rates are points per hour. */
+export interface ClothingComfortNeedConfig {
+  need: string;
+  drainPerMismatchPerHour?: number;
+  maxDrainPerHour?: number;
+  recoveryPerHour?: number;
+}
+
+/**
+ * Which needs worn clothing affects. An omitted entry uses the default need
+ * (`Hygiene` / `Comfort`); `null` disables that drain.
+ */
+export interface ClothingNeedsConfig {
+  hygiene?: ClothingHygieneNeedConfig | null;
+  comfort?: ClothingComfortNeedConfig | null;
+}
+
+export const DEFAULT_CLOTHING_HYGIENE: Required<ClothingHygieneNeedConfig> = {
+  need: 'Hygiene',
+  drainPerDirtyItemPerHour: 1,
+  maxDrainPerHour: 3,
+};
+
+export const DEFAULT_CLOTHING_COMFORT: Required<ClothingComfortNeedConfig> = {
+  need: 'Comfort',
+  drainPerMismatchPerHour: 1.5,
+  maxDrainPerHour: 6,
+  recoveryPerHour: 5,
+};
+
 export interface WearableConfig {
   slots: string[];
   categories: string[];
@@ -56,6 +93,8 @@ export interface WearableConfig {
   primaryBodyAttributes: string[];
   estimatedMetrics: Record<string, EstimatedMetric>;
   sizeSystems: Record<string, SizeSystem>;
+  /** Needs drained by dirty or ill-fitting clothing. See {@link getClothingNeeds}. */
+  clothingNeeds?: ClothingNeedsConfig;
 }
 
 let _config: WearableConfig = {
@@ -97,3 +136,17 @@ export const getAppearanceKeys = () => _config.appearanceKeys;
 export const getPrimaryBodyAttributes = () => _config.primaryBodyAttributes;
 export const getEstimatedMetrics = () => _config.estimatedMetrics;
 export const getSizeSystems = () => _config.sizeSystems;
+
+/** Resolved clothing need config: defaults filled in, `null` where disabled. */
+export function getClothingNeeds(): {
+  hygiene: Required<ClothingHygieneNeedConfig> | null;
+  comfort: Required<ClothingComfortNeedConfig> | null;
+} {
+  const { hygiene, comfort } = _config.clothingNeeds ?? {};
+  return {
+    hygiene:
+      hygiene === null ? null : { ...DEFAULT_CLOTHING_HYGIENE, ...hygiene },
+    comfort:
+      comfort === null ? null : { ...DEFAULT_CLOTHING_COMFORT, ...comfort },
+  };
+}

@@ -1,4 +1,7 @@
-import { getMacros, getTerms } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
+import {
+  getMacros,
+  getTerms,
+} from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import { buildEntityVars } from '@chemicalluck/sim-engine/features/linguistics/lib/context';
 import {
   type TemplateContext,
@@ -15,7 +18,10 @@ import {
   normalizeWeights,
 } from '@chemicalluck/sim-engine/features/rng/lib/weights';
 import type { Weights } from '@chemicalluck/sim-engine/features/rng/weights.types';
-import type { BodyAttributes, CharacterProfile } from '@chemicalluck/sim-engine/types';
+import type {
+  BodyAttributes,
+  CharacterProfile,
+} from '@chemicalluck/sim-engine/types';
 
 // ── JSON schema ───────────────────────────────────────────────────────────────
 

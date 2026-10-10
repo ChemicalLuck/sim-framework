@@ -6,8 +6,11 @@ import type {
   WearableTemplate,
 } from '@chemicalluck/sim-engine/types/item.types';
 
+import type { ShopEntryOptions, ShopGate } from './authoring.types';
+
 export interface Shop {
   text: string;
+  priceMultiplier?: number;
   tabs: ShopTab[];
 }
 
@@ -27,12 +30,14 @@ declare module '@chemicalluck/sim-engine/types/effect.types' {
   }
 }
 
-export type ShopEntry =
+export type ShopEntry = (
   | { kind: 'item'; data: Item }
   | { kind: 'wearable'; data: Wearable }
-  | { kind: 'template'; data: WearableTemplate };
+  | { kind: 'template'; data: WearableTemplate }
+) &
+  ShopEntryOptions;
 
-export interface ShopTab {
+export interface ShopTab extends ShopGate {
   title: string;
   items: ShopEntry[];
 }

@@ -4,6 +4,7 @@ import {
 } from '@chemicalluck/sim-engine/features/core/types';
 import { getNamedNpcDefs } from '@chemicalluck/sim-engine/features/npcs/lib/named-npcs';
 import { worldRng } from '@chemicalluck/sim-engine/features/rng/lib/rng';
+import { gameHour } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import { getLocationById } from '@chemicalluck/sim-engine/features/travel/selectors';
 
 import { setNearby } from './slice';
@@ -33,7 +34,7 @@ export function handleUpdateNearby({
           )) &&
         !oldNearby.includes(npc.id),
     );
-    const hour = new Date(newState.present.time.timestamp).getHours();
+    const hour = gameHour(newState.present.time.timestamp);
     const slot = schedule?.find(
       (slot) => hour >= slot.after && hour <= slot.before,
     );
@@ -46,7 +47,7 @@ export function handleUpdateNearby({
     nearby = filtered.slice(0, count).map((npc) => npc.id);
   }
 
-  const hour = new Date(newState.present.time.timestamp).getHours();
+  const hour = gameHour(newState.present.time.timestamp);
   for (const def of getNamedNpcDefs()) {
     if (!def.schedule?.length) continue;
     for (const entry of def.schedule) {

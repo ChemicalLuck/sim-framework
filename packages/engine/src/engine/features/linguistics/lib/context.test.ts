@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { CharacterProfile } from '@chemicalluck/sim-engine/types';
 
 import { buildEntityVars, buildTemplateContext } from './context';
@@ -47,6 +48,18 @@ describe('buildEntityVars', () => {
     });
     expect(vars['npc0.name']).toBe('They');
     expect(vars['npc0.firstName']).toBe('Alex');
+  });
+
+  it('exposes the id under the prefix only when one is given', () => {
+    const vars = buildEntityVars('npc0', {
+      id: 'alex_stone',
+      profile: profile({ appearance: { id: 'not-the-id' } }),
+      pronouns,
+    });
+    expect(vars['npc0.id']).toBe('alex_stone');
+    expect(
+      buildEntityVars('npc0', { profile: profile(), pronouns }),
+    ).not.toHaveProperty('npc0.id');
   });
 
   it('uses bare keys for an empty prefix', () => {

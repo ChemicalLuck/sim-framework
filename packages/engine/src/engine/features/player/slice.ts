@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+
 import { getBodyAttributes } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 import { conflictingSlots } from '@chemicalluck/sim-engine/features/outfits/lib/wearable-config';
 import type { Player } from '@chemicalluck/sim-engine/features/player/types';

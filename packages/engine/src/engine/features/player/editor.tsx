@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
@@ -7,11 +8,13 @@ import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-chan
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import type { LocationNode } from '@chemicalluck/sim-engine/features/travel/types';
 
+import { DEFAULT_SKILL_MAX } from './lib/skills';
 import { SkillsPanel } from './skills-panel';
 
 interface PlayerCfg {
   postCharacterCreationView: string;
   characterCreationSkillPoints: number;
+  skillMax?: number;
   startLocation: string;
   bodyParts?: string[];
   initialItems?: string[];
@@ -109,6 +112,7 @@ function PlayerDefaultsPanel() {
   const [skillPoints, setSkillPoints] = useState(
     cfg.characterCreationSkillPoints,
   );
+  const [skillMax, setSkillMax] = useState(cfg.skillMax ?? DEFAULT_SKILL_MAX);
   const [postView, setPostView] = useState(cfg.postCharacterCreationView);
   const [bodyParts, setBodyParts] = useState(cfg.bodyParts);
   const [initialItems, setInitialItems] = useState(cfg.initialItems);
@@ -126,6 +130,7 @@ function PlayerDefaultsPanel() {
       JSON.stringify({
         startLocation,
         skillPoints,
+        skillMax,
         postView,
         bodyParts,
         initialItems,
@@ -134,6 +139,7 @@ function PlayerDefaultsPanel() {
       JSON.stringify({
         startLocation: cfg.startLocation,
         skillPoints: cfg.characterCreationSkillPoints,
+        skillMax: cfg.skillMax ?? DEFAULT_SKILL_MAX,
         postView: cfg.postCharacterCreationView,
         bodyParts: cfg.bodyParts,
         initialItems: cfg.initialItems,
@@ -142,6 +148,7 @@ function PlayerDefaultsPanel() {
     [
       startLocation,
       skillPoints,
+      skillMax,
       postView,
       bodyParts,
       initialItems,
@@ -153,6 +160,7 @@ function PlayerDefaultsPanel() {
   function discard() {
     setStartLocation(cfg.startLocation);
     setSkillPoints(cfg.characterCreationSkillPoints);
+    setSkillMax(cfg.skillMax ?? DEFAULT_SKILL_MAX);
     setPostView(cfg.postCharacterCreationView);
     setBodyParts(cfg.bodyParts);
     setInitialItems(cfg.initialItems);
@@ -165,6 +173,7 @@ function PlayerDefaultsPanel() {
         ...cfg,
         startLocation,
         characterCreationSkillPoints: skillPoints,
+        skillMax,
         postCharacterCreationView: postView,
         bodyParts,
         initialItems,
@@ -224,6 +233,25 @@ function PlayerDefaultsPanel() {
           <p className="text-xs text-zinc-600">
             Points players may distribute across skills at character creation
             (max 3 per skill).
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs text-zinc-400 block">Skill Max</label>
+          <Input
+            type="number"
+            aria-label="Skill Max"
+            value={skillMax}
+            onChange={(e) => {
+              setSkillMax(Number(e.target.value));
+            }}
+            min={1}
+            className="h-9 text-sm bg-zinc-800 border-zinc-600 w-32"
+          />
+          <p className="text-xs text-zinc-600">
+            Top of the skill scale (0 – max): caps player skills, sets the
+            default NPC skill range (0 – max / 2) and scales encounter skill
+            weights.
           </p>
         </div>
 

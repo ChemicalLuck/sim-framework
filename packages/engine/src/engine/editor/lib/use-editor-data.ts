@@ -24,6 +24,9 @@ function notifyEditorData(): void {
   for (const cb of listeners) cb();
 }
 
+/** The data endpoint reported the file absent (HTTP 404). */
+export class EditorDataNotFoundError extends Error {}
+
 function ensureResource(url: string): void {
   if (cache.has(url)) return;
   let resolve!: () => void;
@@ -32,8 +35,17 @@ function ensureResource(url: string): void {
   });
   const entry: Resource = { status: 'pending', promise };
   fetch(url)
-    .then((r) => {
-      if (!r.ok) throw new Error(`HTTP ${String(r.status)}`);
+    .then(async (r) => {
+      if (r.status === 404) throw new EditorDataNotFoundError('HTTP 404');
+      if (!r.ok) {
+        // The data server sends the read error's message with a 500.
+        const detail = await Promise.resolve()
+          .then(() => r.text())
+          .catch(() => '');
+        throw new Error(
+          `HTTP ${String(r.status)}${detail ? `: ${detail}` : ''}`,
+        );
+      }
       return r.json() as Promise<unknown>;
     })
     .then((data) => {
@@ -69,6 +81,29 @@ export function preloadEditorData(...urls: string[]): void {
 
 export function readEditorData(url: string): unknown {
   return readResource(url);
+}
+
+/**
+ * Like {@link readEditorData}, but an absent file reads as `undefined` instead
+ * of throwing — for content files a game may legitimately omit (e.g. the
+ * optional `weather.json`). Other failures (server or parse errors) still throw.
+ */
+export function readOptionalEditorData(url: string): unknown {
+  try {
+    return readResource(url);
+  } catch (e) {
+    if (e instanceof EditorDataNotFoundError) return undefined;
+    throw e;
+  }
+}
+
+/**
+ * Like {@link readOptionalEditorData}, but an absent file reads as `fallback` —
+ * the empty value of the file's shape (e.g. `[]` for a list file).
+ */
+export function readEditorDataOr<T>(url: string, fallback: T): T {
+  const data = readOptionalEditorData(url);
+  return data === undefined ? fallback : (data as T);
 }
 
 function updateCache(url: string, data: unknown): void {
@@ -132,8 +167,22 @@ export interface EditorDataHandle<T> {
   discard: () => void;
 }
 
-export function useEditorData<T>(endpoint: string): EditorDataHandle<T> {
-  const initialData = readResource(endpoint) as T;
+export interface EditorDataOptions<T> {
+  /**
+   * The value an absent file (HTTP 404) reads as — the empty value of its shape
+   * (e.g. `[]` for a list file). The panel then opens empty, and saving creates
+   * the file. Without it, an absent file throws like any other read error.
+   */
+  whenAbsent: T;
+}
+
+export function useEditorData<T>(
+  endpoint: string,
+  options?: EditorDataOptions<T>,
+): EditorDataHandle<T> {
+  const initialData = options
+    ? readEditorDataOr(endpoint, options.whenAbsent)
+    : (readResource(endpoint) as T);
   const originalRef = useRef<T>(initialData);
   const [data, setData] = useState<T>(initialData);
   const [saving, setSaving] = useState(false);

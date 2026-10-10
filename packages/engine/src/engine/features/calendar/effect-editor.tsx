@@ -14,7 +14,7 @@ import {
 } from '@chemicalluck/sim-engine/editor/components/effect-form-primitives';
 import { defineEffectEditor } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 
-import type { EventCategory } from './types';
+import type { DayOfWeek, EventCategory } from './types';
 
 type Operation = 'add' | 'remove' | 'clear';
 
@@ -26,6 +26,14 @@ interface CalendarFormState {
   dayOfWeek: string;
   hour: string;
   durationMinutes: string;
+}
+
+/** Parse the day field; blank or out-of-range input falls back to Monday. */
+function toDayOfWeek(raw: string): DayOfWeek {
+  const n = Number(raw);
+  return raw.trim() !== '' && Number.isInteger(n) && n >= 0 && n <= 6
+    ? (n as DayOfWeek)
+    : 1;
 }
 
 const emptyState: CalendarFormState = {
@@ -81,7 +89,7 @@ const calendar = defineEffectEditor<CalendarFormState>({
         id: s.id.trim(),
         label: s.label.trim(),
         category: (s.category.trim() || 'work') as EventCategory,
-        dayOfWeek: (Number(s.dayOfWeek) || 1) as 1 | 2 | 3 | 4 | 5,
+        dayOfWeek: toDayOfWeek(s.dayOfWeek),
         hour: Number(s.hour) || 0,
         durationMinutes: Number(s.durationMinutes) || 0,
       },
@@ -145,13 +153,13 @@ const calendar = defineEffectEditor<CalendarFormState>({
           </Field>
           <TwoCol>
             <NumField
-              label="Day (1–5)"
+              label="Day (0 Sun – 6 Sat)"
               value={value.dayOfWeek}
               onChange={(v) => {
                 onChange({ dayOfWeek: v });
               }}
-              min="1"
-              max="5"
+              min="0"
+              max="6"
             />
             <NumField
               label="Hour (0–23)"

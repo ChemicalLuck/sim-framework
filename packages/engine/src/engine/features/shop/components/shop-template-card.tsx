@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { ActionButton } from '@chemicalluck/sim-engine/components/action-button';
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import {
@@ -25,7 +26,10 @@ import {
   SelectValue,
 } from '@chemicalluck/sim-engine/components/ui/select';
 import { formatMoney } from '@chemicalluck/sim-engine/features/money/lib/currency';
-import { formatSize, idealSizeLabels } from '@chemicalluck/sim-engine/features/outfits/lib/fit';
+import {
+  formatSize,
+  idealSizeLabels,
+} from '@chemicalluck/sim-engine/features/outfits/lib/fit';
 import {
   getAppearanceKeys,
   getEstimatedMetrics,
@@ -41,9 +45,17 @@ import type {
 
 interface ShopTemplateCardProps {
   template: WearableTemplate;
+  /** From shopEntryPrice: both shown and charged. */
+  price: number;
+  /** Shown instead of the customise button when the entry is locked. */
+  lockedText?: string;
 }
 
-export default function ShopTemplateCard({ template }: ShopTemplateCardProps) {
+export default function ShopTemplateCard({
+  template,
+  price,
+  lockedText,
+}: ShopTemplateCardProps) {
   const [selectedAppearance, setSelectedAppearance] =
     useState<WearableAppearance>(() => {
       const initial: WearableAppearance = {};
@@ -85,13 +97,18 @@ export default function ShopTemplateCard({ template }: ShopTemplateCardProps) {
       </CardHeader>
       <CardContent className="text-sm flex flex-col gap-1">
         <span className="text-muted-foreground">
-          Price: {formatMoney(template.value)}
+          Price: {formatMoney(price)}
         </span>
       </CardContent>
       <Dialog>
         <CardFooter className="px-3 justify-center">
           <DialogTrigger asChild>
-            <Button variant="outline">Customize & Buy</Button>
+            <Button variant="outline" disabled={lockedText != null}>
+              Customize & Buy
+              {lockedText != null && (
+                <span className="text-xs italic">({lockedText})</span>
+              )}
+            </Button>
           </DialogTrigger>
         </CardFooter>
         <DialogContent className="sm:max-w-[500px]">
@@ -170,13 +187,13 @@ export default function ShopTemplateCard({ template }: ShopTemplateCardProps) {
                     selectedAppearance,
                     composedSize,
                   ),
-                  cost: template.value,
+                  cost: price,
                 },
               ]}
               disabled={Object.keys(selectedAppearance).length === 0}
             >
               Buy{system ? ` (${composedSize ?? ''})` : ''} for{' '}
-              {formatMoney(template.value)}
+              {formatMoney(price)}
             </ActionButton>
           </DialogFooter>
         </DialogContent>

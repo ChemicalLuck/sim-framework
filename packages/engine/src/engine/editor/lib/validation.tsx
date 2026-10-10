@@ -15,12 +15,15 @@ import {
   nodeRefRewriters,
   referenceProviders,
   referenceRewriters,
+  requiredDataFiles,
 } from 'virtual:references';
+
 import {
   type DataByFile,
   type ReferenceContributions,
   type ValidationIssue,
   collectReferences,
+  missingRequiredFiles,
   requiredFiles,
   reverseReferences,
   validateReferences,
@@ -28,7 +31,7 @@ import {
 
 import {
   preloadEditorData,
-  readEditorData,
+  readOptionalEditorData,
   subscribeEditorData,
 } from './use-editor-data';
 
@@ -51,15 +54,30 @@ export type ReferencesTo = (namespace: string, id: string) => string[];
 
 interface ReferencesValue {
   issues: ValidationIssue[];
+  /** Required data files (see `requiredDataFiles`) the game doesn't have. */
+  missingFiles: string[];
   referencesTo: ReferencesTo;
 }
 
-const EMPTY: ReferencesValue = { issues: [], referencesTo: () => [] };
+const EMPTY: ReferencesValue = {
+  issues: [],
+  missingFiles: [],
+  referencesTo: () => [],
+};
 
 const ReferencesContext = createContext<ReferencesValue>(EMPTY);
 
 export function useValidationIssues(): ValidationIssue[] {
   return use(ReferencesContext).issues;
+}
+
+/**
+ * Required data files that are absent. Their panels open empty (saving creates
+ * the file), so this is where the absence surfaces; an absent optional file
+ * (e.g. weather.json) is not listed.
+ */
+export function useMissingRequiredFiles(): string[] {
+  return use(ReferencesContext).missingFiles;
 }
 
 export function useReferencesTo(): ReferencesTo {
@@ -86,14 +104,18 @@ function ReferencesRunner({ onChange }: RunnerProps) {
   const [version, bump] = useReducer((n: number) => n + 1, 0);
   useEffect(() => subscribeEditorData(bump), [bump]);
 
-  // Recompute only when the cache changes (version bump). readEditorData
-  // suspends until every required file has loaded — so this must run during
-  // render, not inside the effect below.
+  // Recompute only when the cache changes (version bump). The read suspends
+  // until every file has loaded — so this must run during render, not inside
+  // the effect below. A file the game doesn't have (e.g. an optional
+  // weather.json) reads as undefined and is skipped, like a namespace with no
+  // source file; real read or parse errors still throw.
   // eslint-disable-next-line react-x/no-unnecessary-use-memo
   const records = useMemo(() => {
-    const dataByFile: DataByFile = Object.fromEntries(
-      FILES.map((file) => [file, readEditorData(urlFor(file))]),
-    );
+    const dataByFile: DataByFile = {};
+    for (const file of FILES) {
+      const data = readOptionalEditorData(urlFor(file));
+      if (data !== undefined) dataByFile[file] = data;
+    }
     return {
       refs: collectReferences(
         contributions.referenceProviders,
@@ -101,6 +123,11 @@ function ReferencesRunner({ onChange }: RunnerProps) {
         dataByFile,
       ),
       issues: validateReferences(dataByFile, contributions),
+      missingFiles: missingRequiredFiles(
+        contributions,
+        dataByFile,
+        requiredDataFiles,
+      ),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version]);
@@ -108,7 +135,11 @@ function ReferencesRunner({ onChange }: RunnerProps) {
   useEffect(() => {
     const referencesTo: ReferencesTo = (namespace, id) =>
       reverseReferences(records.refs, namespace, id);
-    onChange({ issues: records.issues, referencesTo });
+    onChange({
+      issues: records.issues,
+      missingFiles: records.missingFiles,
+      referencesTo,
+    });
   }, [records, onChange]);
 
   return null;
@@ -124,6 +155,7 @@ const PREFIX_TO_PATH: Record<string, string> = {
   edges: '/world',
   minimap: '/world',
   player: '/world',
+  'wearables-config': '/wearables-config',
 };
 
 /** Editor route a reference source (`prefix:id`) links to. */

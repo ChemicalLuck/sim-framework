@@ -25,6 +25,10 @@ export type Wearable = ItemFields & {
   // (most accessories). When present, `size` is the chosen composite label.
   sizeSystem?: string;
   size?: string;
+  // Copied from the template. Totals across equipped wearables are exposed
+  // through selectEquippedAttributeTotal and the `equipped.<attr>` condition.
+  warmth?: number;
+  attributes?: WearableAttributes;
 };
 
 export type InventoryItem = Item | Wearable;
@@ -36,6 +40,9 @@ export type Category = string;
 export type Coverage = 0 | 1 | 2;
 
 export type Style = string;
+
+/** Game-defined wearable stats, e.g. `{ "formality": 2, "waterproof": true }`. */
+export type WearableAttributes = Record<string, number | string | boolean>;
 
 export type WearableAppearanceKey = string;
 export type WearableAppearance = Partial<Record<WearableAppearanceKey, string>>;
@@ -50,4 +57,7 @@ export interface WearableTemplate {
   // Key into the configured size systems; when set, the shop offers a size
   // choice per dimension. Absent on sizeless garments.
   sizeSystem?: string;
+  warmth?: number;
+  // Passed through unchanged onto every wearable generated from the template.
+  attributes?: WearableAttributes;
 }

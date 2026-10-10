@@ -9,6 +9,17 @@ import {
 } from '@chemicalluck/sim-engine/editor/lib/effect-editor';
 import type { Effect } from '@chemicalluck/sim-engine/types/effect.types';
 
+/** `"a, b"` → `{ npcId: 'a', npcIds: ['a', 'b'] }` (npcIds only for several). */
+function npcFields(raw: string): { npcId: string; npcIds?: string[] } {
+  const ids = raw
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+  return ids.length > 1
+    ? { npcId: ids[0], npcIds: ids }
+    : { npcId: ids[0] ?? '' };
+}
+
 interface EncounterFormState {
   encounterId: string;
   npcId: string;
@@ -21,14 +32,17 @@ const encounter = defineEffectEditor<EncounterFormState>({
   defaultState: { encounterId: '', npcId: '' },
   toFormState: (e) => {
     if (e.kind !== 'encounter') return { encounterId: '', npcId: '' };
-    return { encounterId: e.encounterId, npcId: e.npcId };
+    return {
+      encounterId: e.encounterId,
+      npcId: (e.npcIds ?? [e.npcId]).join(', '),
+    };
   },
   buildEffect: (s) => {
     if (!s.encounterId.trim()) return null;
     return {
       kind: 'encounter',
       encounterId: s.encounterId.trim(),
-      npcId: s.npcId.trim(),
+      ...npcFields(s.npcId),
     };
   },
   Fields: ({ value, onChange, availableData }) => (
@@ -43,7 +57,7 @@ const encounter = defineEffectEditor<EncounterFormState>({
         placeholder="twister"
       />
       <Field>
-        <Label>NPC ID</Label>
+        <Label>NPC IDs (comma-separated, slot order)</Label>
         <Input
           value={value.npcId}
           onChange={(e) => {
@@ -76,7 +90,13 @@ export const viewSections: ViewSectionSpec[] = [
         typeof raw.encounterId === 'string' ? raw.encounterId : '';
       return {
         encounterId,
-        npcId: encounterId && typeof raw.npcId === 'string' ? raw.npcId : '',
+        npcId: !encounterId
+          ? ''
+          : Array.isArray(raw.npcIds)
+            ? raw.npcIds.filter((id) => typeof id === 'string').join(', ')
+            : typeof raw.npcId === 'string'
+              ? raw.npcId
+              : '',
       };
     },
 
@@ -86,7 +106,7 @@ export const viewSections: ViewSectionSpec[] = [
         kind: 'view',
         activeViewId: 'EncounterView',
         encounterId: encounterId.trim(),
-        npcId: npcId.trim(),
+        ...npcFields(npcId),
       } as unknown as Effect;
     },
 
@@ -103,7 +123,7 @@ export const viewSections: ViewSectionSpec[] = [
             placeholder="twister"
           />
           <Field>
-            <Label>NPC ID</Label>
+            <Label>NPC IDs (comma-separated, slot order)</Label>
             <Input
               value={values.npcId}
               onChange={(e) => {

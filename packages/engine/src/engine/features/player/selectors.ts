@@ -1,11 +1,16 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
 import { addIndefiniteArticle } from '@chemicalluck/sim-engine/lib/linguistics';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
-import type { ActionGroup, BodyAttributes, Equipment } from '@chemicalluck/sim-engine/types';
+import type {
+  ActionGroup,
+  BodyAttributes,
+  Equipment,
+} from '@chemicalluck/sim-engine/types';
 import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
-import { selectNarrativeVars } from '../linguistics/selectors';
+import { selectTemplateVars } from '../linguistics/extension-vars-selector';
 import { describeAppearance } from '../npcs/lib/appearance-config';
 import { estimatePlayerSizes, evaluateFit } from '../outfits/lib/fit';
 import {
@@ -93,7 +98,7 @@ export const selectAppearanceDescription = createSelector(
 export const selectPlayerDescription = createSelector(
   (state: RootState) => state.present.player.profile,
   (state: RootState) => state.present.player.body,
-  selectNarrativeVars,
+  selectTemplateVars,
   (state: RootState) => state.present.linguistics.wordChoices,
   (state: RootState) => state.present.rng.seed,
   (profile, body, vars, wordChoices, seed) =>

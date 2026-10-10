@@ -10,6 +10,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Sun',
       iconColor: 'text-yellow-400',
       precipitationChance: 0.05,
+      needEffects: {},
+      wetsClothing: false,
     },
     hot_sunny: {
       id: 'hot_sunny',
@@ -19,6 +21,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Sun',
       iconColor: 'text-orange-400',
       precipitationChance: 0.02,
+      needEffects: { Hygiene: 2 },
+      wetsClothing: false,
     },
     partly_cloudy: {
       id: 'partly_cloudy',
@@ -28,6 +32,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Cloud',
       iconColor: 'text-zinc-300',
       precipitationChance: 0.15,
+      needEffects: {},
+      wetsClothing: false,
     },
     cloudy: {
       id: 'cloudy',
@@ -37,6 +43,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Cloud',
       iconColor: 'text-zinc-400',
       precipitationChance: 0.25,
+      needEffects: {},
+      wetsClothing: false,
     },
     overcast: {
       id: 'overcast',
@@ -46,6 +54,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Cloud',
       iconColor: 'text-zinc-500',
       precipitationChance: 0.35,
+      needEffects: {},
+      wetsClothing: false,
     },
     light_rain: {
       id: 'light_rain',
@@ -55,6 +65,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'CloudRain',
       iconColor: 'text-blue-400',
       precipitationChance: 0.7,
+      needEffects: { Energy: 0.5 },
+      wetsClothing: true,
     },
     rainy: {
       id: 'rainy',
@@ -64,6 +76,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'CloudRain',
       iconColor: 'text-blue-500',
       precipitationChance: 0.9,
+      needEffects: { Energy: 1 },
+      wetsClothing: true,
     },
     windy: {
       id: 'windy',
@@ -73,6 +87,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Wind',
       iconColor: 'text-zinc-300',
       precipitationChance: 0.2,
+      needEffects: {},
+      wetsClothing: false,
     },
     snowy: {
       id: 'snowy',
@@ -82,6 +98,8 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'CloudSnow',
       iconColor: 'text-blue-300',
       precipitationChance: 0.8,
+      needEffects: { Energy: 2, Hunger: 3 },
+      wetsClothing: true,
     },
     freezing: {
       id: 'freezing',
@@ -91,5 +109,7 @@ export const WEATHER_CONDITIONS: Record<WeatherConditionId, WeatherCondition> =
       iconName: 'Snowflake',
       iconColor: 'text-blue-200',
       precipitationChance: 0.5,
+      needEffects: { Energy: 3, Hunger: 4 },
+      wetsClothing: false,
     },
   };

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { BodyAttributes } from '@chemicalluck/sim-engine/types/character.types';
 import type { Wearable } from '@chemicalluck/sim-engine/types/item.types';
 
@@ -86,8 +87,12 @@ const config = { sizeSystems, estimatedMetrics };
 
 // Force exact estimated measurements by storing them as primary attributes,
 // which resolveMetric returns directly.
-const body = (over: Record<string, number>): BodyAttributes =>
-  ({ height: 170, weight: 70, bodyFat: 20, ...over });
+const body = (over: Record<string, number>): BodyAttributes => ({
+  height: 170,
+  weight: 70,
+  bodyFat: 20,
+  ...over,
+});
 
 const wearable = (sizeSystem: string, size: string): Wearable => ({
   kind: 'wearable',

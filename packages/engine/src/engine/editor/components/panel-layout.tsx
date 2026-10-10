@@ -1,5 +1,6 @@
 import { Copy, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +21,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@chemicalluck/sim-engine/components/ui/dialog';
-import { Field, FieldGroup } from '@chemicalluck/sim-engine/components/ui/field';
+import {
+  Field,
+  FieldGroup,
+} from '@chemicalluck/sim-engine/components/ui/field';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { Label } from '@chemicalluck/sim-engine/components/ui/label';
 import { ScrollArea } from '@chemicalluck/sim-engine/components/ui/scroll-area';

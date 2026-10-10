@@ -49,19 +49,25 @@ bare identifier is a parse error — quote string literals.
 
 Built-in identifiers:
 
-| Identifier                                               | Kind      | Feature       |
-| -------------------------------------------------------- | --------- | ------------- |
-| `money`                                                  | number    | money         |
-| `need.<Name>`                                            | number    | needs         |
-| `npcNeed.<name>`                                         | number    | encounter     |
-| `skill.<id>`                                             | number    | player        |
-| `location`                                               | string    | player        |
-| `gametime`, `gamehour`                                   | number    | time          |
-| `relationship.<metric>`, `relationship.<npcId>.<metric>` | number    | relationships |
-| `milestone.<id>`                                         | condition | milestones    |
-| `container.<id>.has_items`, `container.<id>.has_dirty`   | condition | containers    |
-| `has_dirty_clothes`, `has_wet_clothes`                   | condition | clothing      |
-| `season == '<id>'`, `weather == '<id>'`                  | condition | weather       |
+| Identifier                                                | Kind      | Feature       |
+| --------------------------------------------------------- | --------- | ------------- |
+| `money`                                                   | number    | money         |
+| `need.<Name>`                                             | number    | needs         |
+| `npcNeed.<name>`, `npcNeed.<slot>.<name>`                 | number    | encounter     |
+| `self.skill.<id>`, `self.need.<id>`                       | number    | encounter     |
+| `npc.skill.<id>`, `npc.need.<id>`, `npc.relationship.<m>` | number    | encounter     |
+| `npc.<slot>.skill.<id>` (and `need`, `relationship`)      | number    | encounter     |
+| `skill.<id>`                                              | number    | player        |
+| `equipped.<attr>`                                         | number    | outfits       |
+| `location`                                                | string    | player        |
+| `gametime`, `gamehour`                                    | number    | time          |
+| `gameweekday` (0=Sun…6=Sat), `gameday`, `gamemonth`       | number    | time          |
+| `nearby` (NPCs at current location)                       | number    | npcs          |
+| `relationship.<metric>`, `relationship.<npcId>.<metric>`  | number    | relationships |
+| `milestone.<id>`                                          | condition | milestones    |
+| `container.<id>.has_items`, `container.<id>.has_dirty`    | condition | containers    |
+| `has_dirty_clothes`, `has_wet_clothes`                    | condition | clothing      |
+| `season == '<id>'`, `weather == '<id>'`                   | condition | weather       |
 
 ## Built-In Types
 
@@ -69,7 +75,7 @@ Built-in identifiers:
 
 - `const` — numeric literal
 - `string` — string literal
-- `date` — ISO date string (compared as timestamp)
+- `date` — ISO date string (compared as timestamp; no offset = game/UTC time)
 
 **Condition kinds:**
 

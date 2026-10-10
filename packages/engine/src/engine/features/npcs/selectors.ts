@@ -1,4 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
+
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 export const selectNpcs = (state: RootState) => state.present.npcs.characters;

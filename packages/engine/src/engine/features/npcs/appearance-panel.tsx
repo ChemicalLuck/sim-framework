@@ -1,11 +1,16 @@
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
 import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
 import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-changes';
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
-import { getMacros, getTerms } from '@chemicalluck/sim-engine/features/linguistics/lib/config';
+import { extensionTemplateLintVars } from '@chemicalluck/sim-engine/features/linguistics/extension-lint-vars';
+import {
+  getMacros,
+  getTerms,
+} from '@chemicalluck/sim-engine/features/linguistics/lib/config';
 import type { TemplateLintContext } from '@chemicalluck/sim-engine/features/linguistics/lib/lint';
 import { baseTemplateVariableNames } from '@chemicalluck/sim-engine/features/linguistics/lib/variables';
 import type {
@@ -1096,12 +1101,22 @@ const SIDEBAR_ITEMS = [
 
 type SidebarId = (typeof SIDEBAR_ITEMS)[number]['id'];
 
+const EMPTY_APPEARANCE: AppearanceJsonData = {
+  features: [],
+  ageDistribution: { min: 18, max: 60, mean: 28, stdDev: 8 },
+  bodyAttributes: [],
+  display: { strangerFeatureIds: [], metaFeatureIds: [] },
+};
+
 export function AppearancePanel() {
   const {
     data: initial,
     saving,
     save,
-  } = useEditorData<AppearanceJsonData>('/editor/api/data/appearance');
+  } = useEditorData<AppearanceJsonData>('/editor/api/data/appearance', {
+    // appearance.json is optional: without one the panel opens empty.
+    whenAbsent: EMPTY_APPEARANCE,
+  });
 
   const [data, setData] = useState<AppearanceJsonData>(initial);
   const [section, setSection] = useState<SidebarId>('features');
@@ -1277,11 +1292,14 @@ export function AppearancePanel() {
         );
 
       case 'description': {
+        const extensionVars = extensionTemplateLintVars();
         const descriptionContext: TemplateLintContext = {
           variables: [
             ...baseTemplateVariableNames(),
             ...data.features.map((f) => f.id),
+            ...extensionVars.variables,
           ],
+          extensionNamespaces: extensionVars.extensionNamespaces,
           macros: [...getMacros().entries()].map(([name, { params }]) => ({
             name,
             params,

@@ -1,4 +1,9 @@
-import { getMinimapConfig } from '@chemicalluck/sim-engine/features/minimap/lib/minimap';
+import {
+  DEFAULT_MINIMAP_VIEWBOX,
+  type MinimapNode,
+  getMinimapConfig,
+  resolveMinimapView,
+} from '@chemicalluck/sim-engine/features/minimap/lib/minimap';
 import { selectCurrentLocation } from '@chemicalluck/sim-engine/features/player/selectors';
 import { getWorld } from '@chemicalluck/sim-engine/features/travel/lib/world';
 import type { LocationNode } from '@chemicalluck/sim-engine/features/travel/types';
@@ -21,32 +26,25 @@ function getAncestorChain(locationId: string): LocationNode[] {
   return chain;
 }
 
-function getExteriorAncestorId(
-  locationId: string,
-  nodes: Record<string, unknown>,
-): string | undefined {
-  let current = findLocation(locationId);
-  while (current) {
-    if (nodes[current.id]) return current.id;
-    if (!current.parent) break;
-    current = findLocation(current.parent);
-  }
-  return undefined;
-}
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function Minimap() {
-  const { nodes, zones } = getMinimapConfig();
   const currentLocation = useEngineSelector(selectCurrentLocation);
-  const activeId = getExteriorAncestorId(currentLocation.id, nodes);
+  const view = resolveMinimapView(
+    currentLocation.id,
+    getMinimapConfig(),
+    findLocation,
+  );
+  const nodes = view?.nodes ?? {};
+  const zones = view?.zones ?? [];
+  const activeId = view?.activeId;
   const breadcrumb = getAncestorChain(currentLocation.id);
   const showBreadcrumb = breadcrumb.length > 1;
 
   return (
     <div>
       <svg
-        viewBox="0 0 640 200"
+        viewBox={view?.viewBox ?? DEFAULT_MINIMAP_VIEWBOX}
         className="w-full rounded-md border border-border"
         style={{ maxHeight: 175 }}
         aria-label="World map"
@@ -82,9 +80,10 @@ export function Minimap() {
 
         {/* Edges */}
         {getWorld().edges.map((edge) => {
-          const a = nodes[edge.nodes[0]];
-          const b = nodes[edge.nodes[1]];
-          // if (!a || !b) return null;
+          const a = nodes[edge.nodes[0]] as MinimapNode | undefined;
+          const b = nodes[edge.nodes[1]] as MinimapNode | undefined;
+          // Edges to locations not on this map (another map, or no node) are skipped.
+          if (!a || !b) return null;
 
           const touchesActive = activeId && edge.nodes.includes(activeId);
 

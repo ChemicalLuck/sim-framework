@@ -4,6 +4,7 @@ import reducer, {
   addWearMinutes,
   cleanItems,
   ensureItems,
+  setCondition,
   setWet,
 } from './slice';
 import { DIRTY_THRESHOLD_MINUTES } from './types';
@@ -82,6 +83,32 @@ describe('clothing slice', () => {
       isDirty: false,
       wearMinutes: 0,
     });
+  });
+
+  it('setCondition overrides only the given fields', () => {
+    const next = reducer(
+      { shirt: { isWet: false, isDirty: true, wearMinutes: 500 } },
+      setCondition({ ids: ['shirt', 'hat'], wet: true }),
+    );
+    expect(next.shirt).toEqual({
+      isWet: true,
+      isDirty: true,
+      wearMinutes: 500,
+    });
+    expect(next.hat).toEqual({ isWet: true, isDirty: false, wearMinutes: 0 });
+  });
+
+  it('setCondition derives isDirty from wearMinutes when dirty is omitted', () => {
+    const next = reducer(
+      { shirt: { isWet: false, isDirty: false, wearMinutes: 0 } },
+      setCondition({ ids: ['shirt'], wearMinutes: DIRTY_THRESHOLD_MINUTES }),
+    );
+    expect(next.shirt?.isDirty).toBe(true);
+    const cleaned = reducer(
+      next,
+      setCondition({ ids: ['shirt'], wearMinutes: 0 }),
+    );
+    expect(cleaned.shirt?.isDirty).toBe(false);
   });
 
   it("cleanItems with ids: '*' resets every tracked item", () => {

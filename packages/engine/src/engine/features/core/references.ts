@@ -4,6 +4,7 @@ import {
   type ReferenceRewriter,
   collectActionGroupRefs,
   collectEffectRefs,
+  flattenConditions,
   rewriteActionGroupRefs,
   rewriteEffectRefs,
 } from '@chemicalluck/sim-engine/lib/validation';
@@ -82,14 +83,26 @@ export const referenceProviders: ReferenceProvider[] = [
           'scripts',
           extract,
         ),
-        ...script.scenes.flatMap((scene) =>
-          collectActionGroupRefs(
+        ...collectEffectRefs(
+          flattenConditions(script.endCondition),
+          `script:${script.id}`,
+          'scripts',
+          extract,
+        ),
+        ...script.scenes.flatMap((scene) => [
+          ...collectActionGroupRefs(
             scene.actions,
             `script:${script.id}`,
             'scripts',
             extract,
           ),
-        ),
+          ...collectEffectRefs(
+            scene.completionEffects,
+            `script:${script.id}`,
+            'scripts',
+            extract,
+          ),
+        ]),
       ]),
   },
   {
@@ -135,6 +148,10 @@ export const referenceRewriters: ReferenceRewriter[] = [
       for (const script of data as JsonScript[]) {
         count += rewriteEffectRefs(script.completionEffects, rewriteNode);
         count += rewriteEffectRefs(script.leave?.effects, rewriteNode);
+        count += rewriteEffectRefs(
+          flattenConditions(script.endCondition),
+          rewriteNode,
+        );
         for (const scene of script.scenes) {
           count += rewriteActionGroupRefs(
             scene.actions,
@@ -143,6 +160,7 @@ export const referenceRewriters: ReferenceRewriter[] = [
             oldId,
             newId,
           );
+          count += rewriteEffectRefs(scene.completionEffects, rewriteNode);
         }
       }
       return count;

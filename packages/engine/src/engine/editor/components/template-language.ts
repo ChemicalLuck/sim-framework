@@ -12,6 +12,7 @@ import {
 import { type Diagnostic, linter } from '@codemirror/lint';
 import type { Extension } from '@codemirror/state';
 import { tags } from '@lezer/highlight';
+
 import {
   type TemplateLintContext,
   lintTemplate,

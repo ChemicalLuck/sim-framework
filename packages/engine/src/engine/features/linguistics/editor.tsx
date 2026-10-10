@@ -1,5 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useMemo, useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { TemplateEditor } from '@chemicalluck/sim-engine/editor/components/template-editor';
@@ -8,6 +9,7 @@ import { useReportDirty } from '@chemicalluck/sim-engine/editor/lib/unsaved-chan
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
 import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 
+import { extensionTemplateLintVars } from './extension-lint-vars';
 import type { TemplateLintContext } from './lib/lint';
 import { NARRATIVE_VAR_NAMES, PRONOUN_FIELDS } from './lib/variables';
 import type {
@@ -285,17 +287,23 @@ function TermEditor({
   );
 }
 
+const EMPTY_LINGUISTICS: LinguisticsJsonData = { macros: [], terms: [] };
+
 function LinguisticsPanel() {
   const {
     data: initial,
     saving,
     save,
-  } = useEditorData<LinguisticsJsonData>('/editor/api/data/linguistics');
+  } = useEditorData<LinguisticsJsonData>('/editor/api/data/linguistics', {
+    // linguistics.json is optional: without one the panel opens empty.
+    whenAbsent: EMPTY_LINGUISTICS,
+  });
 
   const [data, setData] = useState<LinguisticsJsonData>(initial);
 
   const context: TemplateLintContext = useMemo(() => {
     const appearanceFeatures = getAppearanceLists().map((f) => f.id);
+    const extensionVars = extensionTemplateLintVars();
     return {
       // Macros operate on their Character param, so player-resolving references
       // aren't offered bare — use the param instead (`{c.subject}`,
@@ -306,7 +314,9 @@ function LinguisticsPanel() {
           (f) => !['subject', 'possessive', 'reflexive'].includes(f),
         ),
         ...NARRATIVE_VAR_NAMES,
+        ...extensionVars.variables,
       ],
+      extensionNamespaces: extensionVars.extensionNamespaces,
       appearanceFeatures,
       macros: data.macros
         .filter((m) => m.name)

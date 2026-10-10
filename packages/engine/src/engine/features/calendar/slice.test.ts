@@ -32,6 +32,16 @@ describe('calendar slice', () => {
     expect(next.events).toEqual([]);
   });
 
+  it('stores weekend events', () => {
+    const saturday: ScheduledEvent = { ...event, id: 'match', dayOfWeek: 6 };
+    const sunday: ScheduledEvent = { ...event, id: 'brunch', dayOfWeek: 0 };
+    const next = reducer(
+      reducer({ events: [] }, addCalendarEvent(saturday)),
+      addCalendarEvent(sunday),
+    );
+    expect(next.events).toEqual([saturday, sunday]);
+  });
+
   it('addCalendarEvent appends a new event', () => {
     const next = reducer({ events: [] }, addCalendarEvent(event));
     expect(next.events).toEqual([event]);

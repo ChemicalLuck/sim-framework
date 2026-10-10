@@ -1,5 +1,9 @@
 import { toast } from 'sonner';
-import { depositItem, withdrawItem } from '@chemicalluck/sim-engine/features/containers/slice';
+
+import {
+  depositItem,
+  withdrawItem,
+} from '@chemicalluck/sim-engine/features/containers/slice';
 import {
   type EffectContext,
   dispatchWithGroup,
@@ -7,6 +11,7 @@ import {
 import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 import { clampAdd } from '@chemicalluck/sim-engine/lib/maths';
 
+import { getSkillMax } from './lib/skills';
 import {
   adjustBodyAttribute,
   equipItem,
@@ -65,7 +70,7 @@ export function handleSkillEffect(
   { dispatch, group, prevState }: EffectContext,
 ) {
   const current = prevState.present.player.skills[effect.skill] ?? 0;
-  const next = clampAdd(current, effect.delta, 0, 10);
+  const next = clampAdd(current, effect.delta, 0, getSkillMax());
   dispatchWithGroup(
     dispatch,
     updateSkill({ skill: effect.skill, value: next }),

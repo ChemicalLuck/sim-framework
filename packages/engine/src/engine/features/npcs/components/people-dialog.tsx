@@ -1,5 +1,6 @@
 import { RefreshCw, Users } from 'lucide-react';
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Card } from '@chemicalluck/sim-engine/components/ui/card';
 import {
@@ -29,7 +30,10 @@ import { regenerateNpcs } from '@chemicalluck/sim-engine/features/npcs/slice';
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import { selectRelationships } from '@chemicalluck/sim-engine/features/relationships/selectors';
 import { setView } from '@chemicalluck/sim-engine/features/view/slice';
-import { useEngineDispatch, useEngineSelector } from '@chemicalluck/sim-engine/state/store';
+import {
+  useEngineDispatch,
+  useEngineSelector,
+} from '@chemicalluck/sim-engine/state/store';
 
 const GROUP_LABELS: Record<string, string> = {
   romantic: 'Romantic',

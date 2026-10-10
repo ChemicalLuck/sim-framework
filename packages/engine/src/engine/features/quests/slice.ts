@@ -1,5 +1,9 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
-import type { ObjectiveState, Quest } from '@chemicalluck/sim-engine/features/quests/types';
+
+import type {
+  ObjectiveState,
+  Quest,
+} from '@chemicalluck/sim-engine/features/quests/types';
 
 const questsSlice = createSlice({
   name: 'quests',

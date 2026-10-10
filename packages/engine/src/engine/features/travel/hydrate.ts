@@ -1,6 +1,9 @@
 import { hydrateActionGroup } from '@chemicalluck/sim-engine/features/core/hydrate';
 import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
-import type { LocationNode, WorldGraph } from '@chemicalluck/sim-engine/features/travel/types';
+import type {
+  LocationNode,
+  WorldGraph,
+} from '@chemicalluck/sim-engine/features/travel/types';
 
 import type { JsonLocation } from './authoring.types';
 import type { Edge } from './types';
@@ -21,6 +24,7 @@ export function hydrateLocation(
     kind: locationJson.kind,
     parent: locationJson.parent,
     condition: locationJson.condition,
+    lockedText: locationJson.lockedText,
     nearby: locationJson.nearby as LocationNode['nearby'],
     description: locationJson.description,
     entryText: locationJson.entryText,

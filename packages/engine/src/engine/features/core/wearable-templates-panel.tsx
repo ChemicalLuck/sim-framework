@@ -47,6 +47,8 @@ interface RawTemplate {
   coverage?: number;
   options: Record<string, string[]>;
   sizeSystem?: string;
+  warmth?: number;
+  attributes?: Record<string, number | string | boolean>;
 }
 
 const NO_SIZE_SYSTEM = '__none__';
@@ -343,6 +345,23 @@ function TemplateDetail({ template, onChange }: TemplateDetailProps) {
                 coverage: parseInt(e.target.value) || 1,
               });
             }}
+            className="bg-zinc-800 border-zinc-600"
+          />
+        </Field>
+
+        <Field className="flex-1">
+          <Label>Warmth</Label>
+          <Input
+            type="number"
+            value={template.warmth ?? ''}
+            onChange={(e) => {
+              const n = parseFloat(e.target.value);
+              onChange({
+                ...template,
+                warmth: Number.isFinite(n) ? n : undefined,
+              });
+            }}
+            placeholder="—"
             className="bg-zinc-800 border-zinc-600"
           />
         </Field>

@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
+
 import { resolvePronouns } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 import type { NPC } from '@chemicalluck/sim-engine/features/npcs/types';
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
 
+import { selectTemplateVars } from './extension-vars-selector';
 import { type EntityInput, buildTemplateContext } from './lib/context';
 import type { TemplateContext } from './lib/template';
-import { selectNarrativeVars } from './selectors';
 
 /**
  * Build a unified template context for the current player + the given NPCs
- * (exposed as `npc0`, `npc1`, …) plus global narrative variables. Use the
+ * (exposed as `npc0`, `npc1`, …) plus global narrative variables and
+ * extension-provided ones (`{<extension>.<key>}`). Use the
  * returned context with `renderText` to interpolate scene/conversation text.
  */
 export function useTemplateContext(
@@ -18,7 +20,7 @@ export function useTemplateContext(
 ): TemplateContext {
   const profile = useEngineSelector((s) => s.present.player.profile);
   const body = useEngineSelector((s) => s.present.player.body);
-  const narrativeVars = useEngineSelector(selectNarrativeVars);
+  const narrativeVars = useEngineSelector(selectTemplateVars);
   const wordChoices = useEngineSelector(
     (s) => s.present.linguistics.wordChoices,
   );

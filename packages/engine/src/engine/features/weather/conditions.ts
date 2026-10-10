@@ -1,13 +1,8 @@
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
-import { WEATHER_CONDITIONS } from './lib/conditions';
+import { getWeatherConditions, isWeatherConditionId } from './lib/config';
 import { selectSeason, selectWeatherConditionId } from './selectors';
-import type {
-  SeasonCondition,
-  SeasonId,
-  WeatherConditionExpr,
-  WeatherConditionId,
-} from './types';
+import type { SeasonCondition, SeasonId, WeatherConditionExpr } from './types';
 
 declare module '@chemicalluck/sim-engine/types/condition.types' {
   interface ConditionMap {
@@ -25,10 +20,6 @@ const SEASON_IDS: readonly SeasonId[] = [
 
 function isSeasonId(value: string): value is SeasonId {
   return (SEASON_IDS as readonly string[]).includes(value);
-}
-
-function isWeatherConditionId(value: string): value is WeatherConditionId {
-  return value in WEATHER_CONDITIONS;
 }
 
 export const comparisonParsers = [
@@ -52,7 +43,7 @@ export const comparisonParsers = [
     }
     if (!isWeatherConditionId(v)) {
       throw new Error(
-        `Unknown weather '${v}' (expected ${Object.keys(WEATHER_CONDITIONS).join(', ')})`,
+        `Unknown weather '${v}' (expected ${Object.keys(getWeatherConditions()).join(', ')})`,
       );
     }
     return { kind: 'weather', conditionId: v };

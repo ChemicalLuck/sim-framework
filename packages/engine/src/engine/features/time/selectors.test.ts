@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 import { selectTimeOfDay } from './selectors';
@@ -7,7 +8,7 @@ import { selectTimeOfDay } from './selectors';
 const stateAtHour = (hour: number): RootState =>
   ({
     present: {
-      time: { timestamp: new Date(2026, 0, 1, hour, 0, 0).getTime() },
+      time: { timestamp: Date.UTC(2026, 0, 1, hour, 0, 0) },
     },
   }) as unknown as RootState;
 

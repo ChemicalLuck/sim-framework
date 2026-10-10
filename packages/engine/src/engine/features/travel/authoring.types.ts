@@ -1,4 +1,7 @@
-import type { JsonAction, JsonActionGroup } from '@chemicalluck/sim-engine/features/core/types';
+import type {
+  JsonAction,
+  JsonActionGroup,
+} from '@chemicalluck/sim-engine/features/core/types';
 import type { Condition } from '@chemicalluck/sim-engine/types/condition.types';
 
 export type { JsonAction };
@@ -9,6 +12,7 @@ export interface JsonLocation {
   kind: 'exterior' | 'interior';
   parent?: string;
   condition?: Condition;
+  lockedText?: string;
   nearby?: unknown;
   description?: string;
   entryText?: string;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { Button } from '@chemicalluck/sim-engine/components/ui/button';
 import { Input } from '@chemicalluck/sim-engine/components/ui/input';
 import { useRegisterSave } from '@chemicalluck/sim-engine/editor/lib/save-context';
@@ -85,7 +86,10 @@ export function SkillsPanel() {
     data: initial,
     saving,
     save,
-  } = useEditorData<SkillDefinition[]>('/editor/api/data/skills');
+  } = useEditorData<SkillDefinition[]>('/editor/api/data/skills', {
+    // skills.json is optional: without one the panel opens empty.
+    whenAbsent: [],
+  });
   const [skills, setSkills] = useState<SkillDefinition[]>(initial);
   const dirty = JSON.stringify(skills) !== JSON.stringify(initial);
   useReportDirty({

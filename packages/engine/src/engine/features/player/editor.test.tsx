@@ -1,7 +1,11 @@
 import type { Mock } from 'vitest';
 import { describe, expect, it, vi } from 'vitest';
+
 import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-data';
-import { mockEditorDataHandle, renderEditorPanel } from '@chemicalluck/sim-engine/test-utils/render';
+import {
+  mockEditorDataHandle,
+  renderEditorPanel,
+} from '@chemicalluck/sim-engine/test-utils/render';
 
 import editor from './editor';
 
@@ -74,5 +78,22 @@ describe('player editor panel', () => {
 
     expect(getByText('Player Defaults')).toBeInTheDocument();
     expect(getByDisplayValue('bedroom')).toBeInTheDocument();
+  });
+
+  it('renders the skill max, defaulting to 10 when player.json omits it', () => {
+    (useEditorData as Mock).mockImplementation((url: string) => {
+      if (url === '/editor/api/data/player')
+        return mockEditorDataHandle({
+          postCharacterCreationView: 'DefaultView',
+          characterCreationSkillPoints: 5,
+          startLocation: 'bedroom',
+        });
+      if (url === '/editor/api/data/locations')
+        return mockEditorDataHandle([{ id: 'bedroom', name: 'Bedroom' }]);
+      throw new Error(`Unexpected editor data url: ${url}`);
+    });
+
+    const { getByLabelText } = renderEditorPanel(<PlayerDefaultsPanel />);
+    expect((getByLabelText('Skill Max') as HTMLInputElement).value).toBe('10');
   });
 });

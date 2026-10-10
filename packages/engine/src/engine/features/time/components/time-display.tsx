@@ -7,13 +7,14 @@ export default function TimeDisplay() {
   return (
     <div className="flex flex-col items-center gap-0.5 py-1">
       <span className="text-sm font-semibold tabular-nums">
-        {date.toLocaleString('en-GB', { timeStyle: 'short' })}
+        {date.toLocaleString('en-GB', { timeStyle: 'short', timeZone: 'UTC' })}
       </span>
       <span className="text-xs text-muted-foreground">
         {date.toLocaleString('en-GB', {
           weekday: 'short',
           day: 'numeric',
           month: 'short',
+          timeZone: 'UTC',
         })}
       </span>
     </div>

@@ -10,7 +10,9 @@ import { SidebarComponentContext } from '@chemicalluck/sim-engine/components/sid
 import { SidebarProvider } from '@chemicalluck/sim-engine/components/ui/sidebar';
 import { Toaster } from '@chemicalluck/sim-engine/components/ui/sonner';
 import { ThemeProvider } from '@chemicalluck/sim-engine/components/ui/theme-provider';
+import { registerPersistFlush } from '@chemicalluck/sim-engine/features/save/saves';
 import {
+  type AutosaveOptions,
   type IronmanMode,
   configureRunOptions,
   getRunOptions,
@@ -41,12 +43,18 @@ export interface GameConfig {
    * checkbox) or `always`.
    */
   ironman?: IronmanMode;
+  /**
+   * Snapshots made by `autosave` effects: how many rotating ones to keep
+   * (default 3). Ironman runs make none.
+   */
+  autosave?: AutosaveOptions;
 }
 
 function setupGame(config: GameConfig) {
   configureRunOptions({
     ...(config.undoLimit !== undefined && { undoLimit: config.undoLimit }),
     ...(config.ironman !== undefined && { ironman: config.ironman }),
+    ...(config.autosave !== undefined && { autosave: config.autosave }),
   });
 
   initProcessEffects(
@@ -59,6 +67,7 @@ function setupGame(config: GameConfig) {
     config.persistTransforms ?? [],
     { undoLimit: getRunOptions().undoLimit },
   );
+  registerPersistFlush(() => persistor.flush());
 
   gameExtensions.storeInitializers.forEach((init) => {
     init(store as unknown as EngineStore);

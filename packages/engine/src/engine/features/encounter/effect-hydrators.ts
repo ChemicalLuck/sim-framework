@@ -11,6 +11,7 @@ const hydrators = [
       kind: 'encounter',
       encounterId: e.encounterId,
       npcId: e.npcId,
+      ...(e.npcIds?.length ? { npcIds: e.npcIds } : {}),
     }),
   ),
 ];

@@ -3,6 +3,7 @@ import {
   dispatchWithGroup,
 } from '@chemicalluck/sim-engine/features/core/types';
 // NPC needs live on the active encounter state — encounter slice owns them
+import { getEncounterEffectNpc } from '@chemicalluck/sim-engine/features/encounter/lib/actor';
 import { updateNpcNeed } from '@chemicalluck/sim-engine/features/encounter/slice';
 import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
@@ -24,7 +25,11 @@ export function handleNeedsEffect(
     logger.debug('Adjusting NPC need:', effect.need, 'delta:', effect.delta);
     dispatchWithGroup(
       dispatch,
-      updateNpcNeed({ need: effect.need, delta: effect.delta }),
+      updateNpcNeed({
+        need: effect.need,
+        delta: effect.delta,
+        npcId: getEncounterEffectNpc() ?? undefined,
+      }),
       group,
     );
     return;

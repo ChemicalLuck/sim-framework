@@ -19,12 +19,21 @@ interface ReferenceContributions {
   referenceRewriters: unknown[];
 }
 
+interface ReferencesModule extends ReferenceContributions {
+  /** Data files the feature manifests declare required (not `optional`). */
+  requiredDataFiles: string[];
+}
+
 interface ValidationModule {
   validateReferences: (
     dataByFile: Record<string, unknown>,
     contributions: ReferenceContributions,
   ) => ValidationIssue[];
-  requiredFiles: (contributions: ReferenceContributions) => string[];
+  missingRequiredFiles: (
+    contributions: ReferenceContributions,
+    dataByFile: Record<string, unknown>,
+    required: readonly string[],
+  ) => string[];
 }
 
 function loadDataDir(dataDir: string): Record<string, unknown> {
@@ -61,7 +70,7 @@ export async function runCheck(cwd: string): Promise<number> {
   try {
     const refs = (await server.ssrLoadModule(
       "virtual:references",
-    )) as ReferenceContributions;
+    )) as ReferencesModule;
     const validation = (await server.ssrLoadModule(
       "@chemicalluck/sim-engine/lib/validation",
     )) as ValidationModule;
@@ -76,9 +85,13 @@ export async function runCheck(cwd: string): Promise<number> {
 
     const dataByFile = loadDataDir(path.join(cwd, "src", "game", "data"));
 
-    const missing = validation
-      .requiredFiles(contributions)
-      .filter((file) => !(file in dataByFile));
+    // Only required files are reported: an absent optional one (e.g. a game
+    // without weather.json) is legitimately not there.
+    const missing = validation.missingRequiredFiles(
+      contributions,
+      dataByFile,
+      refs.requiredDataFiles,
+    );
     const issues = validation.validateReferences(dataByFile, contributions);
 
     if (missing.length > 0) {

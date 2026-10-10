@@ -48,6 +48,38 @@ const clothingSlice = createSlice({
       }
     },
 
+    /**
+     * Overrides the given fields on each item, seeding untracked items first.
+     * When `dirty` is omitted but `wearMinutes` is given, `isDirty` follows the
+     * dirty threshold so the two stay consistent.
+     */
+    setCondition: (
+      state,
+      action: PayloadAction<{
+        ids: string[];
+        wet?: boolean;
+        dirty?: boolean;
+        wearMinutes?: number;
+      }>,
+    ) => {
+      const { ids, wet, dirty, wearMinutes } = action.payload;
+      for (const id of ids) {
+        const item = (state[id] ??= {
+          isWet: false,
+          isDirty: false,
+          wearMinutes: 0,
+        });
+        if (wet != null) item.isWet = wet;
+        if (wearMinutes != null) {
+          item.wearMinutes = Math.max(0, wearMinutes);
+          if (dirty == null) {
+            item.isDirty = item.wearMinutes >= DIRTY_THRESHOLD_MINUTES;
+          }
+        }
+        if (dirty != null) item.isDirty = dirty;
+      }
+    },
+
     cleanItems: (state, action: PayloadAction<{ ids: string[] | '*' }>) => {
       const { ids } = action.payload;
       const targets = ids === '*' ? Object.keys(state) : ids;
@@ -58,7 +90,7 @@ const clothingSlice = createSlice({
   },
 });
 
-export const { ensureItems, addWearMinutes, setWet, cleanItems } =
+export const { ensureItems, addWearMinutes, setWet, setCondition, cleanItems } =
   clothingSlice.actions;
 
 export default clothingSlice.reducer;

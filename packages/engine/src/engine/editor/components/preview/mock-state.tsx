@@ -7,6 +7,8 @@ import {
   useMemo,
   useState,
 } from 'react';
+
+import { parseGameDate } from '@chemicalluck/sim-engine/features/time/lib/game-time';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 
 /**
@@ -42,9 +44,10 @@ export const DEFAULT_PREVIEW_STATE: PreviewState = {
 
 /** Hand-assemble a `RootState` covering every slice the condition DSL reads. */
 export function buildMockRootState(state: PreviewState): RootState {
-  const date = new Date(`${state.date}T00:00:00`);
-  if (!Number.isNaN(date.getTime())) date.setHours(state.hour);
-  const timestamp = Number.isNaN(date.getTime()) ? 0 : date.getTime();
+  const midnight = parseGameDate(`${state.date}T00:00:00`);
+  const timestamp = Number.isNaN(midnight)
+    ? 0
+    : midnight + state.hour * 60 * 60 * 1000;
 
   const present = {
     money: state.money,

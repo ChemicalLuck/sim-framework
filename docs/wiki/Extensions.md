@@ -14,6 +14,7 @@ extensions/<name>/
   selectors.ts    # derived state
   effects.ts      # default export: { <kind>: handler } → merged into effect handlers
   actions.ts      # default export: [(locationId, state) => ActionGroup[]] providers
+  template-vars.ts # default export: (state) => { key: value }; optional `keys` list
   post-effects.ts # optional side-effects (toasts, analytics)
   data.ts         # registers content (exports `${name}Data`)
   data.json       # extension content
@@ -27,6 +28,10 @@ extensions/<name>/
 Only include the files you need. A UI-only extension might have just `slice.ts`,
 `selectors.ts`, and `components/`.
 
+The folder name need not be a JS identifier: `my-ext/` works, and everything keyed by
+name (store slice, `{my-ext.<key>}` template variables, …) uses `my-ext` as is. Only
+`data.ts` must export a camel-cased name: `myExtData`.
+
 ## Extending the engine via module augmentation
 
 Everything an extension adds to engine-owned maps goes through TypeScript module
@@ -34,13 +39,17 @@ augmentation, conventionally in `types.ts`:
 
 ```ts
 // A new effect kind
-declare module '@chemicalluck/sim-engine/types/effect.types' {
-  interface EffectMap { education: EducationEffect; }
+declare module "@chemicalluck/sim-engine/types/effect.types" {
+  interface EffectMap {
+    education: EducationEffect;
+  }
 }
 
 // Hydrated content available on the loaded Content object
-declare module '@chemicalluck/sim-engine/data' {
-  interface ContentExtensions { education: { courses: Course[] }; }
+declare module "@chemicalluck/sim-engine/data" {
+  interface ContentExtensions {
+    education: { courses: Course[] };
+  }
 }
 ```
 
@@ -57,6 +66,28 @@ declare module '@chemicalluck/sim-engine/data' {
   The plugin imports it as `${name}Data` and wires it into content loading.
 - **`views.tsx`** — export view components; they merge into the view registry and can be
   targeted by a `{ "kind": "view", "activeViewId": "..." }` effect.
+- **`template-vars.ts`** — `export default (state) => Record<string, string | number | boolean>`.
+  Each key is exposed to text templates (location descriptions, scenes, scripts,
+  conversations, the player's appearance description, …) namespaced by folder name, so `education/template-vars.ts` returning
+  `{ term: 'autumn', examWeek: true }` gives `{education.term}` and
+  `{if education.term == 'autumn'}…{/if}`. `true` renders as `true`; `false` counts as
+  unset, so `{if education.examWeek}` works as a flag. The provider runs on every state
+  change, so keep it cheap. Type it with `TemplateVarProvider` from
+  `@chemicalluck/sim-engine/features/linguistics/lib/extension-vars`:
+
+  ```ts
+  import type { TemplateVarProvider } from "@chemicalluck/sim-engine/features/linguistics/lib/extension-vars";
+
+  const templateVars: TemplateVarProvider = (state) => ({
+    term: state.present.education.term,
+  });
+  export default templateVars;
+  ```
+
+  The editor's template linter cannot run the provider, so also export the keys it
+  returns: `export const keys = ['term', 'examWeek'];`. The linter then accepts
+  `{education.term}` and still flags `{education.typo}`. Without `keys` it accepts any
+  `{education.<key>}`.
 
 ## Registering extra views without an extension
 

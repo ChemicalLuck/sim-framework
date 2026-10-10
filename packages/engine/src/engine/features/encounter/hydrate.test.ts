@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { buildRegistry } from '@chemicalluck/sim-engine/data/registry';
 import type { HydrationContext } from '@chemicalluck/sim-engine/features/core/hydrate';
 import type { MilestoneCondition } from '@chemicalluck/sim-engine/features/milestones/types';
@@ -14,7 +15,9 @@ import type {
   JsonEncounter,
   JsonEncounterAction,
   JsonEncounterState,
+  JsonViewEncounterEffect,
 } from './authoring.types';
+import effectHydrators from './effect-hydrators';
 import {
   hydrateEncounter,
   hydrateEncounterAction,
@@ -57,11 +60,7 @@ function makeCtx(overrides: Partial<HydrationContext> = {}): HydrationContext {
   return {
     items: buildRegistry('item', [item], (i) => i.id),
     wearables: buildRegistry('wearable', [wearable], (w) => w.id),
-    templates: buildRegistry(
-      'template',
-      [templateWithId],
-      (t) => t.id,
-    ),
+    templates: buildRegistry('template', [templateWithId], (t) => t.id),
     scenes: buildRegistry(
       'scene',
       [{ ...baseScene, id: 'room' }] as (Scene & { id: string })[],
@@ -178,5 +177,93 @@ describe('hydrateEncounter', () => {
     const result = hydrateEncounter(json, ctx);
     expect(result.stopEffects).toHaveLength(1);
     expect(result.stopEffects?.[0]).toMatchObject({ kind: 'needs' });
+  });
+});
+
+describe('hydrate encounter stop fields', () => {
+  const ctx = makeCtx();
+
+  it('preserves npcStop, stopCondition and hydrates stopEffectsByReason', () => {
+    const result = hydrateEncounter(
+      {
+        id: 'enc2',
+        name: 'Chat',
+        initialStateId: 'start',
+        stopCondition: milestoneCondition,
+        stopEffectsByReason: {
+          npc: [{ kind: 'needs', need: 'Energy', delta: -5 }],
+        },
+        states: [
+          {
+            id: 'start',
+            name: 'Start',
+            text: '',
+            stopCondition: milestoneCondition,
+            actions: [
+              { id: 'go', text: 'Leave', bodyPart: 'feet', npcStop: true },
+            ],
+          },
+        ],
+      },
+      ctx,
+    );
+    expect(result.stopCondition).toEqual(milestoneCondition);
+    expect(result.states[0].stopCondition).toEqual(milestoneCondition);
+    expect(result.states[0].actions[0].npcStop).toBe(true);
+    expect(result.stopEffectsByReason?.npc?.[0]).toMatchObject({
+      kind: 'needs',
+    });
+  });
+});
+
+describe('hydrate encounter action actor', () => {
+  it('preserves actor', () => {
+    const result = hydrateEncounterAction(
+      { id: 'a', text: 'A', bodyPart: 'hands', actor: 'npc' },
+      makeCtx(),
+    );
+    expect(result.actor).toBe('npc');
+  });
+});
+
+describe('hydrate multi-NPC encounter fields', () => {
+  it('preserves action target and npcTurnOrder', () => {
+    const ctx = makeCtx();
+    expect(
+      hydrateEncounterAction(
+        { id: 'a', text: 'A', bodyPart: 'hands', target: 2 },
+        ctx,
+      ).target,
+    ).toBe(2);
+    expect(
+      hydrateEncounter(
+        {
+          id: 'e',
+          name: 'E',
+          states: [],
+          initialStateId: 's',
+          npcTurnOrder: [1, 0],
+        },
+        ctx,
+      ).npcTurnOrder,
+    ).toEqual([1, 0]);
+  });
+
+  it('hydrates view_encounter npcIds into the encounter effect', () => {
+    const [hydrator] = effectHydrators;
+    const json: JsonViewEncounterEffect = {
+      kind: 'view',
+      activeViewId: 'EncounterView',
+      encounterId: 'party',
+      npcId: 'a',
+      npcIds: ['a', 'b'],
+    };
+    expect(hydrator.test(json)).toBe(true);
+    expect(hydrator.hydrate(json, makeCtx())).toEqual({
+      kind: 'encounter',
+      encounterId: 'party',
+      npcId: 'a',
+      npcIds: ['a', 'b'],
+    });
   });
 });

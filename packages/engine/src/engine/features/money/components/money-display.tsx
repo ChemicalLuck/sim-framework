@@ -1,4 +1,5 @@
 import { Wallet } from 'lucide-react';
+
 import { formatMoney } from '@chemicalluck/sim-engine/features/money/lib/currency';
 import { selectMoney } from '@chemicalluck/sim-engine/features/money/selectors';
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
