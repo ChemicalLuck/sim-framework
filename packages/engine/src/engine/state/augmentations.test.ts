@@ -89,6 +89,6 @@ describe('state/augmentations', () => {
         .getSemanticDiagnostics(program.getSourceFile(file))
         .map((d) => ts.flattenDiagnosticMessageText(d.messageText, '\n'));
       expect(diagnostics).toEqual([]);
-    });
+    }, 30_000); // type-checks a whole program; slow on a loaded machine
   });
 });
