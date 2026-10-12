@@ -46,4 +46,21 @@ describe('money editor panel', () => {
     if (!initial) throw new Error('Initial Amount input not found');
     expect(initial.value).toBe('250');
   });
+
+  it('seeds the credit floor from currency.json', () => {
+    (useEditorData as Mock).mockImplementation((url: string) => {
+      if (url === '/editor/api/data/currency')
+        return mockEditorDataHandle({
+          code: 'GBP',
+          locale: 'en-GB',
+          creditFloor: -1000,
+        });
+      return mockEditorDataHandle(0);
+    });
+
+    const { getByLabelText } = renderEditorPanel(<MoneyPanel />);
+    expect((getByLabelText('Credit Floor') as HTMLInputElement).value).toBe(
+      '-1000',
+    );
+  });
 });

@@ -16,6 +16,7 @@ import { useEditorData } from '@chemicalluck/sim-engine/editor/lib/use-editor-da
 interface CurrencyCfg {
   locale: string;
   code: string;
+  creditFloor?: number;
 }
 
 const CURRENCY_PRESETS: { code: string; locale: string; label: string }[] = [
@@ -94,7 +95,11 @@ function MoneyPanel() {
             onValueChange={(code) => {
               const preset = CURRENCY_PRESETS.find((p) => p.code === code);
               if (preset)
-                setCurrency({ code: preset.code, locale: preset.locale });
+                setCurrency((prev) => ({
+                  ...prev,
+                  code: preset.code,
+                  locale: preset.locale,
+                }));
               else setCurrency((prev) => ({ ...prev, code }));
             }}
           >
@@ -149,6 +154,29 @@ function MoneyPanel() {
             min={0}
             className="h-9 text-sm bg-zinc-800 border-zinc-600 w-48"
           />
+        </div>
+        <div className="space-y-2">
+          <label className="text-xs text-zinc-400 block" htmlFor="credit-floor">
+            Credit Floor
+          </label>
+          <Input
+            id="credit-floor"
+            type="number"
+            value={currency.creditFloor ?? 0}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              setCurrency((prev) => ({
+                ...prev,
+                creditFloor: value === 0 ? undefined : value,
+              }));
+            }}
+            max={0}
+            className="h-9 text-sm bg-zinc-800 border-zinc-600 w-48"
+          />
+          <p className="text-xs text-zinc-600">
+            Lowest balance a shop purchase may leave. Set it below 0 to allow an
+            overdraft.
+          </p>
         </div>
       </div>
     </div>

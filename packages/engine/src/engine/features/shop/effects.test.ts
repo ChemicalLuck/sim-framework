@@ -1,6 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { EffectContext } from '@chemicalluck/sim-engine/features/core/types';
+import { configureCurrency } from '@chemicalluck/sim-engine/features/money/lib/currency';
 import type { RootState } from '@chemicalluck/sim-engine/state/store';
 import type { InventoryItem } from '@chemicalluck/sim-engine/types/item.types';
 
@@ -66,5 +67,41 @@ describe('purchase effect', () => {
     const { dispatch, ctx } = makeContext(50);
     handlePurchaseEffect(effect, ctx);
     expect(dispatch).toHaveBeenCalledTimes(2);
+  });
+
+  describe('with a credit floor', () => {
+    afterEach(() => {
+      configureCurrency({});
+    });
+
+    it('allows a purchase into the overdraft above the floor', () => {
+      configureCurrency({ creditFloor: -1000 });
+      const { dispatch, ctx } = makeContext(-350);
+      handlePurchaseEffect(effect, ctx);
+      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch.mock.calls[1]?.[0]).toMatchObject({ payload: -50 });
+    });
+
+    it('allows a purchase that lands exactly on the floor', () => {
+      configureCurrency({ creditFloor: -1000 });
+      const { dispatch, ctx } = makeContext(-950);
+      handlePurchaseEffect(effect, ctx);
+      expect(dispatch).toHaveBeenCalledTimes(2);
+    });
+
+    it('rejects a purchase that would go below the floor', () => {
+      configureCurrency({ creditFloor: -1000 });
+      const { dispatch, ctx } = makeContext(-951);
+      handlePurchaseEffect(effect, ctx);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
+
+    it('resets to a floor of 0 when the config omits it', () => {
+      configureCurrency({ creditFloor: -1000 });
+      configureCurrency({});
+      const { dispatch, ctx } = makeContext(49);
+      handlePurchaseEffect(effect, ctx);
+      expect(dispatch).not.toHaveBeenCalled();
+    });
   });
 });
