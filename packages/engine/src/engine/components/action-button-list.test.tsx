@@ -1,11 +1,21 @@
 import { screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { parseCondition } from '@chemicalluck/sim-engine/lib/conditions';
 import { renderWithStore } from '@chemicalluck/sim-engine/test-utils/render';
 import type { Action } from '@chemicalluck/sim-engine/types';
 
 import { ActionButtonList } from './action-button-list';
+
+// A game decorator marking "Leap" as risky while money is low.
+vi.mock('virtual:game-extensions', () => ({
+  actionDecorators: [
+    (a: Action, state: { present: { money: number } }) =>
+      a.text === 'Leap' && state.present.money < 100
+        ? { prefix: '⚠ ', suffix: ' (risky)', className: 'risky' }
+        : null,
+  ],
+}));
 
 const reducer = (state = { present: { money: 10 } }) => state;
 
@@ -55,5 +65,40 @@ describe('ActionButtonList', () => {
       { reducer },
     );
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('renders decorator prefixes, suffixes and classes from state', () => {
+    renderWithStore(
+      <ActionButtonList actions={[action('Leap'), action('Walk')]} />,
+      { reducer },
+    );
+    const leap = screen.getByRole('button', { name: /Leap/ });
+    expect(leap).toHaveTextContent('⚠ Leap (risky)');
+    expect(leap).toHaveClass('risky');
+    const walk = screen.getByRole('button', { name: /Walk/ });
+    expect(walk).not.toHaveTextContent('⚠');
+    expect(walk).not.toHaveTextContent('(risky)');
+    expect(walk).not.toHaveClass('risky');
+  });
+
+  it('leaves actions undecorated when the decorator returns null', () => {
+    renderWithStore(<ActionButtonList actions={[action('Leap')]} />, {
+      reducer: (state = { present: { money: 500 } }) => state,
+    });
+    const leap = screen.getByRole('button', { name: /Leap/ });
+    expect(leap).not.toHaveTextContent('⚠');
+    expect(leap).not.toHaveClass('risky');
+  });
+
+  it('decorates locked actions too', () => {
+    renderWithStore(
+      <ActionButtonList
+        actions={[action('Leap', 'money >= 1000000', 'Requires £1m')]}
+      />,
+      { reducer },
+    );
+    const button = screen.getByRole('button', { name: /Leap/ });
+    expect(button).toBeDisabled();
+    expect(button).toHaveTextContent('⚠ Leap (risky)');
   });
 });

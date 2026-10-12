@@ -1,5 +1,6 @@
 import { shallowEqual } from 'react-redux';
 
+import { useActionDecorations } from '@chemicalluck/sim-engine/features/view/use-action-decorations';
 import { isConditionMet } from '@chemicalluck/sim-engine/lib/conditions';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 import { useEngineSelector } from '@chemicalluck/sim-engine/state/store';
@@ -30,11 +31,13 @@ const ActionButtonList = ({
     (state) => actions.map((a) => isConditionMet(state, a.condition)),
     shallowEqual,
   );
+  const decorations = useActionDecorations(actions);
   const visible = actions.filter((a, i) => met[i] || a.lockedText);
   if (visible.length === 0) return null;
   return (
     <div className="flex flex-col items-start max-md:gap-0.5 md:gap-2.5">
       {actions.map((action, i) => {
+        const { prefix, suffix, className } = decorations[i];
         if (met[i]) {
           return (
             <ActionButton
@@ -42,9 +45,11 @@ const ActionButtonList = ({
               effects={[...(action.effects ?? []), ...(defaultEffects ?? [])]}
               eventIds={action.eventIds}
               callback={callback}
-              className={TOUCH_ROW}
+              className={cn(TOUCH_ROW, className)}
             >
+              {prefix}
               {action.text}
+              {suffix}
             </ActionButton>
           );
         }
@@ -57,12 +62,15 @@ const ActionButtonList = ({
             className={cn(
               'flex items-center gap-2 text-sm font-medium text-primary opacity-40',
               TOUCH_ROW,
+              className,
             )}
           >
             <span className="select-none" aria-hidden="true">
               ›
             </span>
+            {prefix}
             {action.text}
+            {suffix}
             <span className="text-xs italic">({action.lockedText})</span>
           </button>
         );

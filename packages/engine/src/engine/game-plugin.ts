@@ -118,6 +118,15 @@ const DEFAULT_SLOTS: FeatureSlotSpec[] = [
     exportName: 'actionGroupProviders',
   },
   {
+    filename: 'action-decorators.ts',
+    aliasPrefix: 'ActionDecorators',
+    importStyle: 'default',
+    aggregation: 'spread-into-array',
+    appliesTo: 'game',
+    virtualModule: VIRTUAL_EXTENSIONS_ID,
+    exportName: 'actionDecorators',
+  },
+  {
     filename: 'template-vars.ts',
     aliasPrefix: 'TemplateVars',
     importStyle: 'default',

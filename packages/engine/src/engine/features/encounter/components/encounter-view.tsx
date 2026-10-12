@@ -14,6 +14,7 @@ import {
 import { renderText } from '@chemicalluck/sim-engine/features/linguistics/lib/template';
 import { useTemplateContext } from '@chemicalluck/sim-engine/features/linguistics/use-template-context';
 import { selectNpcsByIds } from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { useActionDecorations } from '@chemicalluck/sim-engine/features/view/use-action-decorations';
 import { cn } from '@chemicalluck/sim-engine/lib/css';
 import {
   useEngineDispatch,
@@ -45,15 +46,19 @@ function EncounterView() {
   const slotNpcs = useEngineSelector(selectSlotNpcs);
   const ctx = useTemplateContext(slotNpcs);
 
-  if (!encounter || !currentStateId) return null;
-
-  const currentState = encounter.states.find((s) => s.id === currentStateId);
-  if (!currentState) return null;
-
-  const resolvedText = renderText(currentState.text, ctx);
+  const currentState = currentStateId
+    ? encounter?.states.find((s) => s.id === currentStateId)
+    : undefined;
 
   // Player-takeable actions whose condition is met, grouped by body part
-  const availableActions = playerActions(fullState, currentState);
+  const availableActions = currentState
+    ? playerActions(fullState, currentState)
+    : [];
+  const decorations = useActionDecorations(availableActions);
+
+  if (!encounter || !currentState) return null;
+
+  const resolvedText = renderText(currentState.text, ctx);
 
   const actionsByBodyPart: Record<string, typeof availableActions> = {};
   for (const action of availableActions) {
@@ -106,6 +111,8 @@ function EncounterView() {
               {actions.map((action) => {
                 const isActive =
                   playerActiveActions[action.bodyPart] === action.id;
+                const { prefix, suffix, className } =
+                  decorations[availableActions.indexOf(action)];
                 return (
                   <button
                     key={action.id}
@@ -117,9 +124,12 @@ function EncounterView() {
                       isActive
                         ? 'border-primary bg-primary/10 text-primary'
                         : 'border-zinc-600 text-zinc-300 hover:border-zinc-400 hover:text-zinc-100',
+                      className,
                     )}
                   >
+                    {prefix}
                     {action.text}
+                    {suffix}
                   </button>
                 );
               })}

@@ -14,6 +14,7 @@ extensions/<name>/
   selectors.ts    # derived state
   effects.ts      # default export: { <kind>: handler } → merged into effect handlers
   actions.ts      # default export: [(locationId, state) => ActionGroup[]] providers
+  action-decorators.ts # default export: [(action, state) => decoration | null]
   template-vars.ts # default export: (state) => { key: value }; optional `keys` list
   post-effects.ts # optional side-effects (toasts, analytics)
   data.ts         # registers content (exports `${name}Data`)
@@ -88,6 +89,28 @@ declare module "@chemicalluck/sim-engine/data" {
   returns: `export const keys = ['term', 'examWeek'];`. The linter then accepts
   `{education.term}` and still flags `{education.typo}`. Without `keys` it accepts any
   `{education.<key>}`.
+
+- **`action-decorators.ts`** — `export default [(action, state) => decoration | null]`.
+  Annotates rendered actions from live state without changing them: each decorator may
+  return `{ prefix?, suffix?, className? }`, added around the action's text and to its
+  button, or `null` to leave it alone. Decorators run for every action the engine
+  renders (scene, location, script, item, conversation and encounter actions, locked
+  ones included) on each state change, so keep them cheap. Several decorations on one
+  action are combined in order. Encounter actions arrive as `EncounterAction`s (they
+  have an `id` and `bodyPart`):
+
+  ```ts
+  import type { ActionDecorator } from "@chemicalluck/sim-engine/features/view/lib/action-decorators";
+
+  const crossing: ActionDecorator = (action, state) =>
+    "effects" in action &&
+    action.effects?.some(
+      (e) => e.kind === "crossing" && e.gate >= state.present.willpower.level,
+    )
+      ? { prefix: "⚠ " }
+      : null;
+  export default [crossing];
+  ```
 
 ## Registering extra views without an extension
 
