@@ -4,6 +4,7 @@ import WithSidebar from '@chemicalluck/sim-engine/components/with-sidebar';
 import { getAppearanceLists } from '@chemicalluck/sim-engine/features/npcs/lib/appearance-config';
 import { describeStranger } from '@chemicalluck/sim-engine/features/npcs/lib/npcs';
 import { selectNpcById } from '@chemicalluck/sim-engine/features/npcs/selectors';
+import { getRelationshipDisplay } from '@chemicalluck/sim-engine/features/relationships/display';
 import {
   selectNpcKnown,
   selectNpcRelationship,
@@ -15,9 +16,35 @@ interface NpcViewProps {
   npcId: string;
 }
 
+function RelationshipValues({ npcId }: NpcViewProps) {
+  const { relationship } = useEngineSelector(selectNpcRelationship(npcId));
+
+  return (
+    <section className="mb-6">
+      <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+        Relationship
+      </h3>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+        {Object.entries(relationship).map(([metric, value]) => (
+          <div key={`${metric}-dt`}>
+            <dt className="text-muted-foreground">{metric}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
+function RelationshipSection({ npcId }: NpcViewProps) {
+  const display = getRelationshipDisplay();
+  if (display === 'hidden') return null;
+  const Section = display === 'values' ? RelationshipValues : display;
+  return <Section npcId={npcId} />;
+}
+
 function NpcView({ npcId }: NpcViewProps) {
   const npc = useEngineSelector(selectNpcById(npcId));
-  const { relationship } = useEngineSelector(selectNpcRelationship(npcId));
   const known = useEngineSelector(selectNpcKnown(npcId));
 
   if (!npc) {
@@ -66,19 +93,7 @@ function NpcView({ npcId }: NpcViewProps) {
         </section>
       )}
 
-      <section className="mb-6">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-          Relationship
-        </h3>
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
-          {Object.entries(relationship).map(([metric, value]) => (
-            <div key={`${metric}-dt`}>
-              <dt className="text-muted-foreground">{metric}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <RelationshipSection npcId={npcId} />
 
       <div className="flex gap-2">
         <ActionButton effects={effects.viewConversation(npcId)}>

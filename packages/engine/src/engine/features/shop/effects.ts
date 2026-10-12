@@ -5,7 +5,10 @@ import {
   type EffectContext,
   dispatchWithGroup,
 } from '@chemicalluck/sim-engine/features/core/types';
-import { formatMoney } from '@chemicalluck/sim-engine/features/money/lib/currency';
+import {
+  canAfford,
+  formatMoney,
+} from '@chemicalluck/sim-engine/features/money/lib/currency';
 import { increaseMoneyByAmount } from '@chemicalluck/sim-engine/features/money/slice';
 import { GlobalLogger } from '@chemicalluck/sim-engine/lib/logger';
 
@@ -18,7 +21,7 @@ export function handlePurchaseEffect(
   { dispatch, group, prevState }: EffectContext,
 ) {
   const balance = prevState.present.money;
-  if (balance < effect.cost) {
+  if (!canAfford(balance, effect.cost)) {
     logger.debug('Purchase declined, insufficient funds:', effect);
     toast.error(`Not enough money to buy ${effect.item.name}`);
     return;

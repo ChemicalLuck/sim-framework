@@ -136,6 +136,54 @@ describe('virtual:game-extensions template-vars slot', () => {
   });
 });
 
+describe('virtual:game-extensions action-decorators slot', () => {
+  let gameDir: string;
+
+  beforeEach(() => {
+    gameDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sim-game-'));
+    fs.mkdirSync(path.join(gameDir, 'data'));
+    fs.mkdirSync(path.join(gameDir, 'extensions', 'willpower'), {
+      recursive: true,
+    });
+  });
+
+  afterEach(() => {
+    fs.rmSync(gameDir, { recursive: true, force: true });
+  });
+
+  function generateExtensions(): string {
+    const plugin = gamePlugin({ gameDir, engineDir: ENGINE_DIR });
+    const resolveId = plugin.resolveId as (id: string) => string | null;
+    const load = plugin.load as (id: string) => string | null;
+    const resolved = resolveId('virtual:game-extensions');
+    if (!resolved) throw new Error('virtual:game-extensions did not resolve');
+    return load(resolved) ?? '';
+  }
+
+  it('exports an empty decorator list when no extension supplies one', () => {
+    expect(generateExtensions()).toMatch(
+      /export const actionDecorators = \[\s*\];/,
+    );
+  });
+
+  it("spreads an extension's action-decorators.ts default export", () => {
+    const file = path.join(
+      gameDir,
+      'extensions',
+      'willpower',
+      'action-decorators.ts',
+    );
+    fs.writeFileSync(file, 'export default [() => null];');
+    const code = generateExtensions();
+    expect(code).toContain(
+      `import willpowerActionDecorators from ${JSON.stringify(file)};`,
+    );
+    expect(code).toMatch(
+      /export const actionDecorators = \[\s*\.\.\.willpowerActionDecorators\s*\];/,
+    );
+  });
+});
+
 describe('virtual:game-setup quests hydration', () => {
   let gameDir: string;
 

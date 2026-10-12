@@ -245,6 +245,11 @@ an entry costs its item or template `value`. Optional fields:
 - `condition` on a tab or entry hides it while unmet; add `lockedText` to show it
   disabled with that text instead, as with actions.
 
+A purchase is refused when it would take the balance below the credit floor, 0 by
+default. Set `creditFloor` in `currency.json` to allow an overdraft, e.g.
+`{ "locale": "en-GB", "code": "GBP", "creditFloor": -1000 }` lets purchases take the
+balance down to −£1,000.
+
 ## Weather
 
 Weather is generated per day from the game seed, then varies hour by hour: spells of a
