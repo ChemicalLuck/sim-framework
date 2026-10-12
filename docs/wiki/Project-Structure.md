@@ -41,6 +41,10 @@ interface GameConfig {
   undoLimit?: number; // Back-button undo steps (default 10, 0 disables)
   ironman?: "never" | "optional" | "always"; // ironman runs (default 'never')
   autosave?: { rotate: number }; // rotating `autosave` snapshots kept (default 3)
+  relationshipDisplay?:
+    | "values"
+    | "hidden"
+    | React.ComponentType<{ npcId: string }>;
 }
 ```
 
@@ -54,6 +58,11 @@ run and can't be changed mid-run. A custom sidebar can read it with
 oldest is dropped (checkpoints made with `"keep": true` don't count; `0` keeps only
 checkpoints). Ironman runs, including every run under `ironman: 'always'`, make no
 autosave snapshots.
+
+`relationshipDisplay` controls the **Relationship** section of the NPC view (opened from
+People). `'values'` (default) lists each metric's number; `'hidden'` leaves the section
+out, e.g. when relationship values are meant to stay hidden from the player; a component
+receives `{ npcId }` and renders the section instead, e.g. a stage name and soft hints.
 
 ```tsx
 <GameEngine config={{ sidebar: MySidebar }} />

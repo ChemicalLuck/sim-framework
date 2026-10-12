@@ -10,6 +10,10 @@ import { SidebarComponentContext } from '@chemicalluck/sim-engine/components/sid
 import { SidebarProvider } from '@chemicalluck/sim-engine/components/ui/sidebar';
 import { Toaster } from '@chemicalluck/sim-engine/components/ui/sonner';
 import { ThemeProvider } from '@chemicalluck/sim-engine/components/ui/theme-provider';
+import {
+  type RelationshipDisplay,
+  configureRelationshipDisplay,
+} from '@chemicalluck/sim-engine/features/relationships/display';
 import { registerPersistFlush } from '@chemicalluck/sim-engine/features/save/saves';
 import {
   type AutosaveOptions,
@@ -48,6 +52,12 @@ export interface GameConfig {
    * (default 3). Ironman runs make none.
    */
   autosave?: AutosaveOptions;
+  /**
+   * The Relationship section of the NPC view: `values` lists each metric
+   * (default), `hidden` leaves it out, and a component (`{ npcId }` props)
+   * renders the section instead.
+   */
+  relationshipDisplay?: RelationshipDisplay;
 }
 
 function setupGame(config: GameConfig) {
@@ -56,6 +66,8 @@ function setupGame(config: GameConfig) {
     ...(config.ironman !== undefined && { ironman: config.ironman }),
     ...(config.autosave !== undefined && { autosave: config.autosave }),
   });
+
+  configureRelationshipDisplay(config.relationshipDisplay ?? 'values');
 
   initProcessEffects(
     gameExtensions.effectHandlers,
