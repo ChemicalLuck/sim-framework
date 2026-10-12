@@ -1,5 +1,13 @@
 # @chemicalluck/sim-engine
 
+## 0.5.0
+
+### Minor Changes
+
+- f2b4cd1: Add the `action-decorators.ts` extension slot: decorators add a prefix, suffix or class to rendered actions from live state.
+- b976257: Add `GameConfig.relationshipDisplay` to hide the NPC view's relationship values or replace that section with a game component.
+- fa4e4c4: Add `creditFloor` to `currency.json` so shop purchases can take the balance into an overdraft.
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,15 @@
 # sim-game
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [f2b4cd1]
+- Updated dependencies [b976257]
+- Updated dependencies [fa4e4c4]
+  - @chemicalluck/sim-engine@0.5.0
+  - @chemicalluck/sim-cli@0.2.3
+
 ## 0.0.6
 
 ### Patch Changes
